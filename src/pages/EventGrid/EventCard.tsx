@@ -6,18 +6,19 @@ import { Box } from '@mui/system';
 import { CardMedia } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface EventCardProps {
     event: Event;
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
-    
-    let date;
-    if (event.date) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        date = event.date.toDate();
+
+    const navigate = useNavigate(); // or const history = useHistory(); in v5
+
+    let date: Date | undefined;
+    if (event.eventDateTime) {
+        date = event.eventDateTime.toDate();
     }
 
     const imageUrl = event.imageUrl || defaultImage;
@@ -25,9 +26,10 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
     const [isClicked, setIsClicked] = useState(false);
 
     const handleCardClick = () => {
-        setIsClicked(!isClicked); 
+        setIsClicked(!isClicked);
+        navigate(`/${event.id}`); // Use event.id or the appropriate identifier
     };
-
+    
     return (
         <Card 
             sx={{ 
@@ -60,7 +62,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
                 />
                 <Box position="absolute" bottom={0} left={0} bgcolor="linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5))" color="white">
                     <Box bgcolor="DarkCyan" color="white" p={1}>
-                        <Typography variant="body1">{date && date.toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}</Typography>
+                        <Typography variant="body1"> {date && date.toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}</Typography>
                     </Box>
                     <Box bgcolor="SteelBlue" color="white" p={1}>
                         <Typography variant="body1">{date && date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</Typography>

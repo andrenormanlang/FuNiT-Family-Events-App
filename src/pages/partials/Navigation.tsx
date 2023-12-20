@@ -23,9 +23,12 @@ const Navbar: React.FC = () => {
     <StyledAppBar position="static">
       <Container maxWidth="lg">
         <Toolbar>
-          <Typography variant="h6" component="div" flexGrow={1}>
-            FunniT
-          </Typography>
+          {/* NavLink with Typography for the logo */}
+          <NavLink to="/" style={{ color: 'inherit', textDecoration: 'none', flexGrow: 1 }}>
+            <Typography variant="h6" component="div">
+              FunniT
+            </Typography>
+          </NavLink>
           <Box display={isMobile ? 'none' : 'block'}>
             <Button color="inherit" component={NavLink} to="/">Home</Button>
             <Button color="inherit">About</Button>

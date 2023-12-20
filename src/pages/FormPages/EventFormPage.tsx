@@ -44,7 +44,9 @@ const eventSchema = z.object({
     address: z.string().min(1, 'Please enter an address'),
     // image: z.union([z.instanceof(File), z.null()]),
     ageGroup: z.enum(ageGroups),
-    category: z.enum(categoryValues)
+    category: z.enum(categoryValues),
+    email: z.string().email().optional(),
+    website: z.string().url().optional()
 });
 
 type EventData = z.infer<typeof eventSchema>;
@@ -161,10 +163,8 @@ const EventForm: React.FC = () => {
                         name="eventDateTime"
                         control={control}
                         defaultValue={new Date()}
-                        render={({ field }) => (
-                            <DesktopDateTimePicker label="Event Date Time" value={field.value} onChange={field.onChange} />
-                            )}
-                            />
+                        render={({ field }) => <DesktopDateTimePicker label="Event Date Time" value={field.value} onChange={field.onChange} />}
+                    />
                 </LocalizationProvider>
                 {/* <FormControl fullWidth>
                     <InputLabel id="city-label">City</InputLabel>
@@ -178,7 +178,43 @@ const EventForm: React.FC = () => {
                     control={control}
                     defaultValue=""
                     render={({ field }) => (
-                        <PlacesAutocomplete field={field} /* selectedCity={selectedCity} */ error={!!errors.address} helperText={errors.address?.message} selectedCity={''} />
+                        <PlacesAutocomplete
+                            field={field}
+                            /* selectedCity={selectedCity} */ error={!!errors.address}
+                            helperText={errors.address?.message}
+                            selectedCity={''}
+                        />
+                    )}
+                />
+
+                <Controller
+                    name="email"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="Email (Optional)"
+                            error={!!errors.email}
+                            helperText={errors.email?.message}
+                            fullWidth
+                            sx={{ mt: 2, mb: 2 }}
+                        />
+                    )}
+                />
+                <Controller
+                    name="website"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="Website (Optional)"
+                            error={!!errors.website}
+                            helperText={errors.website?.message}
+                            fullWidth
+                            sx={{ mt: 2, mb: 2 }}
+                        />
                     )}
                 />
                 <Controller
