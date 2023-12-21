@@ -5,7 +5,7 @@ import { db } from '../../services/firebase';
 import { Event } from '../../types/Event.types';
 import { Box, Grid, Card, CardContent, CardMedia, Typography, CircularProgress, Alert, Button } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
-
+import useAuth from '../../hooks/useAuth';
 
 const formatDateTime = (date: Date): string => {
     const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -27,6 +27,7 @@ const EventPage = () => {
     const [event, setEvent] = useState<Event | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
+    const { signedInUser } = useAuth();
 
     const fetchEventById = useCallback(async (eventId: string) => {
         setIsLoading(true);
@@ -158,9 +159,11 @@ const EventPage = () => {
                                 </Typography>
                                 <Typography variant="body2" style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={handleWebsiteClick}>{event.website || 'N/A'}</Typography>
                             </CardContent>
+                            {signedInUser && (
                             <Button variant="contained" color="primary" className="w-auto" sx={{ ml:2, mb: 2 }}>
                                 Save Event
                             </Button>
+                            )}
                         </Card>
                     </Grid>
                 </Grid>

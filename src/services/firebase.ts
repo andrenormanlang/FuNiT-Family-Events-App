@@ -3,9 +3,8 @@ import { getAuth } from 'firebase/auth'
 import { CollectionReference, collection, DocumentData, getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
 import { Event } from '../types/Event.types'
-// import { UserDoc } from '../types/User.types'
-// import { Place } from '../types/Place.types'
-// import { Photo } from '../types/Photo.types'
+import { UserInfo } from '../types/User.types'
+
 
 // Firebase configuration
 const firebaseConfig = {
@@ -36,5 +35,6 @@ const createCollection = <T = DocumentData>(collectionName: string) => {
 
 // Export collection references
 export const eventsCol = createCollection<Event>('events')
+export const usersCol = createCollection<UserInfo>('users')
 
 export default app
