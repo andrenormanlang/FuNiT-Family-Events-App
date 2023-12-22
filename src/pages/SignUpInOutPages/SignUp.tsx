@@ -127,8 +127,8 @@ const SignUp = () => {
                     <div className="text-center mt-3">
                         <span className="text-sm">
                             Already have an account? <br />
-                            <Link to='/sign-in' className="text-blue-500 hover:text-blue-700">
-                                Sign In
+                            <Link to='/login' className="text-blue-500 hover:text-blue-700">
+                                Login
                             </Link>
                         </span>
                     </div>

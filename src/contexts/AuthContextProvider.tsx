@@ -14,8 +14,8 @@ import { createContext, useEffect, useState } from 'react'
 import { CircularProgress } from '@mui/material';
 import { useSnackbar } from './SnackBarProvider';
 import { auth, usersCol } from '../services/firebase'
-// import { UserInfo } from '../types/User.types'
-// import useGetUser from '../hooks/useGetUser'
+import { UserInfo } from '../types/User.types'
+import useGetUser from '../hooks/useGetUser';
 
 type AuthContextType = {
 	reloadUser: () => Promise<boolean>
@@ -28,7 +28,7 @@ type AuthContextType = {
 	signOutUser: () => Promise<void>
 	signUpUser: (email: string, name: string, password: string) => Promise<void>
 	signedInUser: User|null
-	// signedInUserDoc: UserInfo|null
+	signedInUserDoc: UserInfo|null
 	signedInUserEmail: string|null
 	signedInUserName: string|null
 	signedInUserPhotoUrl: string|null
@@ -48,7 +48,7 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 	const [signedInUserName, setSignedInUserName] = useState<string|null>(null)
 	const [signedInUserPhotoUrl, setSignedInUserPhotoUrl] = useState<string|null>(null)
 
-	// const { data: signedInUserDoc } = useGetUser(signedInUser?.uid ?? '')
+	const { data: signedInUserDoc } = useGetUser(signedInUser?.uid ?? '')
 
 	const reloadUser = async () => {
 		if (!auth.currentUser) {
@@ -186,7 +186,7 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 			signOutUser,
 			signUpUser,
 			signedInUser,
-			// signedInUserDoc,
+			signedInUserDoc,
 			signedInUserEmail,
 			signedInUserName,
 			signedInUserPhotoUrl
