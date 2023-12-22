@@ -1,14 +1,14 @@
-import {  useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {  doc, getDoc, setDoc } from 'firebase/firestore';
+import { deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Event } from '../../types/Event.types';
 import { Box, Grid, Card, CardContent, CardMedia, Typography, CircularProgress, Alert, Button } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
 import useAuth from '../../hooks/useAuth';
-import { getAuth } from 'firebase/auth';
-import { SavedEvent } from '../../types/SavedEvent.types';
+// import { SavedEvent } from '../../types/SavedEvent.types';
 import { auth } from '../../services/firebase';
+import { useSavedEvents } from '../../contexts/SavedEventsProvider';
 
 const formatDateTime = (date: Date): string => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -24,7 +24,21 @@ const formatDateTime = (date: Date): string => {
     return `${day} ${month} ${year} ${hours}:${minutes}`;
 };
 
-
+const eventData = (event: Event) => {
+    return {
+        id: event.id,
+        address: event.address,
+        ageGroup: event.ageGroup,
+        category: event.category,
+        eventDateTime: event.eventDateTime, // Make sure to handle Timestamp conversion if necessary
+        description: event.description,
+        email: event.email ?? null, // Replace undefined with null
+        isApproved: event.isApproved ?? null,
+        imageUrl: event.imageUrl,
+        name: event.name,
+        website: event.website ?? null // Replace undefined with null
+    };
+};
 
 const EventPage = () => {
     const { id } = useParams();
@@ -34,6 +48,7 @@ const EventPage = () => {
     const [error, setError] = useState('');
     const { signedInUser } = useAuth();
     const [isSaved, setIsSaved] = useState(false);
+    const { updateSavedEventsCount } = useSavedEvents();
 
     if (!id) {
         console.log('No id found in URL parameters.');
@@ -41,32 +56,31 @@ const EventPage = () => {
 
     useEffect(() => {
         const fetchEvent = async () => {
-          if (id) {
-            setIsLoading(true);
-            try {
-              const docRef = doc(db, 'events', id);
-              const docSnap = await getDoc(docRef);
-      
-              if (docSnap.exists()) {
-                // Combine the document ID with the document's data into one object
-                const eventData = { id: docSnap.id, ...docSnap.data() } as Event;
-                setEvent(eventData);
-              } else {
-                setError('No such document!');
-                console.log(`No such document with id: ${id}`);
-              }
-            } catch (err) {
-              setError('An error occurred while fetching the event.');
-              console.error(err);
-            } finally {
-              setIsLoading(false);
-            }
-          }
-        };
-      
-        fetchEvent();
-      }, [id]);
+            if (id) {
+                setIsLoading(true);
+                try {
+                    const docRef = doc(db, 'events', id);
+                    const docSnap = await getDoc(docRef);
 
+                    if (docSnap.exists()) {
+                        // Combine the document ID with the document's data into one object
+                        const eventData = { id: docSnap.id, ...docSnap.data() } as Event;
+                        setEvent(eventData);
+                    } else {
+                        setError('No such document!');
+                        console.log(`No such document with id: ${id}`);
+                    }
+                } catch (err) {
+                    setError('An error occurred while fetching the event.');
+                    console.error(err);
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        fetchEvent();
+    }, [id]);
 
     if (isLoading) {
         return (
@@ -92,34 +106,45 @@ const EventPage = () => {
         );
     }
 
-
     const handleSaveClick = async () => {
         console.log('Save Event button clicked');
     
-        const auth = getAuth();
+        // Get the current user from Firebase Auth
         const user = auth.currentUser;
     
-        if (user && event && event.id ) {
-            const savedEventId = `${user.uid}_${event.id}`; // Unique identifier
-            const savedEvent: SavedEvent = {
-                id: savedEventId,
-                eventId: event.id, // ID of the event being saved
-                userId: user.uid // ID of the user who saved the event
-            };
+        // Check if a user is signed in and an event is selected
+        if (user && event && event.id) {
+            // Generate a unique ID for the saved event
+            const savedEventRef = doc(db, 'savedEvents', `${user.uid}_${event.id}`);
     
-            try {
-                const docRef = doc(db, 'savedEvents', savedEventId); // Create a DocumentReference
-                await setDoc(docRef, savedEvent); // Use the DocumentReference
-                setIsSaved(true);
-                alert('Event saved successfully!');
-                console.log('Document written with ID: ', docRef.id);
-                console.log('setIsSaved state updated:', savedEvent);
-            } catch (err) {
-                console.error('Error adding document: ', err);
+            // Check if the event has already been saved by this user
+            const docSnap = await getDoc(savedEventRef);
+    
+            if (docSnap.exists()) {
+                // If the event is already saved, remove it
+                await deleteDoc(savedEventRef);
+                console.log('Event unsaved successfully');
+            } else {
+                // If the event hasn't been saved by this user, save it
+                const newSavedEvent = {
+                    userId: user.uid,
+                    eventId: event.id,
+                    eventData: eventData(event)
+                };
+                await setDoc(savedEventRef, newSavedEvent);
+                console.log('Event saved successfully');
             }
+    
+            // Toggle the isSaved state
+            setIsSaved(!isSaved);
+    
+            // Update the saved events count in the context
+            updateSavedEventsCount();
+        } else {
+            console.log('User not signed in or event data missing');
         }
     };
-    
+
     let formattedDateTime = '';
     if (event && event.eventDateTime) {
         const dateTime = event.eventDateTime.toDate(); // Convert to JavaScript Date object if necessary
@@ -141,7 +166,6 @@ const EventPage = () => {
         window.open(`mailto:${event.email}`);
     };
 
-
     const handleGoBack = () => {
         navigate('/'); // Navigate to the homepage
     };
@@ -149,8 +173,8 @@ const EventPage = () => {
     console.log('event:', event);
     console.log('event.id:', event.id);
     console.log('auth.currentUser:', auth.currentUser);
-    console.log('event:', event)
-    
+    console.log('event:', event);
+
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Box sx={{ maxWidth: 1000, width: '100%', p: 2 }}>

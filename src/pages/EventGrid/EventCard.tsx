@@ -7,19 +7,23 @@ import { CardMedia } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@mui/material/styles';
 
 interface EventCardProps {
     event: Event;
+    isSaved: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event }) => {
+const EventCard: React.FC<EventCardProps> = ({ event, isSaved  }) => {
 
     const navigate = useNavigate(); // or const history = useHistory(); in v5
 
+    const theme = useTheme()
+
     let date: Date | undefined;
-    if (event.eventDateTime) {
-        date = event.eventDateTime.toDate();
-    }
+if (event && event.eventDateTime) {
+    date = event.eventDateTime.toDate();
+}
 
     const imageUrl = event.imageUrl || defaultImage;
 
@@ -30,6 +34,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
         navigate(`/${event.id}`); // Use event.id or the appropriate identifier
     };
     
+    console.log("isSaved:", isSaved); 
     return (
         <Card 
             sx={{ 
@@ -37,6 +42,9 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
                 flexDirection: 'column', 
                 minHeight: 300, 
                 height: '100%',
+                backgroundColor: theme.palette.background.default,
+                border: isSaved ? '5px solid green' : 'none', //
+                typography: theme.typography,
                 transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out', 
                 '&:hover': {
                     transform: 'scale(1.05)', 
