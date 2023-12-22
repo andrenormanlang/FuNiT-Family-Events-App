@@ -73,9 +73,10 @@ const SavedEvents = () => {
                     You have no saved events at the moment.
                 </Typography>
             ) : (
-            <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1000px' }}>
+            <Grid container spacing={2} justifyContent="space-between" style={{ maxWidth: '1000px' }}>
                 {savedEvents.map((savedEvent) => (
-                    <Grid item key={savedEvent.id} xs={12} sm={6} md={4} lg={3}>
+                    <Grid item key={savedEvent.id} xs={8} sm={7} md={4} lg={4} xl={4}>
+                        
                         <Box position="relative">
                         <EventCard event={savedEvent.eventData} isSaved={true} /> {/* Pass isSaved as true */}
                             <Tooltip title="Unsave Event" placement="top">

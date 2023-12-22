@@ -6,11 +6,13 @@ import { getDocs, collection, query, where } from 'firebase/firestore';
 import { db, eventsCol } from '../../services/firebase';
 import { Event } from '../../types/Event.types';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useTheme } from '@mui/material/styles';
 
 const EventGrid = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [savedEventIds, setSavedEventIds] = useState<string[]>([]);
   const auth = getAuth();
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -49,10 +51,10 @@ const EventGrid = () => {
   }, []);
 
   return (
-    <Box display="flex" justifyContent="center" marginTop={1} marginBottom={4}>
-            <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1000px' }}>
+    <Box display="flex" justifyContent="center" marginTop={1} marginBottom={theme.spacing(4)}>
+            <Grid container spacing={2} justifyContent="space-between" style={{ maxWidth: '1000px' }}>
         {events.map((event) => (
-          <Grid item key={event.id} xs={5} sm={5} md={4.1} lg={4} xl={4}>
+          <Grid item key={event.id} xs={8} sm={7} md={4} lg={4} xl={4}>
             <EventCard event={event} isSaved={savedEventIds.includes(event.id)} />
           </Grid>
         ))}

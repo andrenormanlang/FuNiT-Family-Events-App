@@ -40,8 +40,7 @@ if (event && event.eventDateTime) {
             sx={{ 
                 display: 'flex', 
                 flexDirection: 'column', 
-                minHeight: 300, 
-                height: '100%',
+                height: 395,
                 backgroundColor: theme.palette.background.default,
                 border: isSaved ? '5px solid green' : 'none', //
                 typography: theme.typography,
@@ -62,10 +61,8 @@ if (event && event.eventDateTime) {
                     image={imageUrl}
                     alt={event.name}
                     sx={{
-                        height: 'auto',
-                        maxHeight: 200, // Limit the image height
-                        objectFit: 'cover',
-                        width: '100%' // Ensure it takes the full width of the card
+                        height: 220, // Set a fixed height for the image
+                        objectFit: 'cover' // Ensure it takes the full width of the card
                     }}
                 />
                 <Box position="absolute" bottom={0} left={0} bgcolor="linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5))" color="white">
@@ -78,22 +75,22 @@ if (event && event.eventDateTime) {
                 </Box>
             </Box>
             <CardContent>
-                <Typography variant="h6" component="div" gutterBottom>
+                <Typography fontSize={20}  component="div" gutterBottom>
                     {event.name}
                 </Typography>
                 {/* <Typography variant="subtitle2" color="textSecondary" paragraph>
                     {event.description}
                 </Typography> */}
                 <Box marginBottom={1}>
-                    <Typography variant="subtitle2" color="primary">
-                        Category: {event.category}
+                    <Typography fontSize={15} fontWeight={600} color="primary">
+                       {event.category}
                     </Typography>
                 </Box>
-                <Typography variant="body2" color="textSecondary">
+                <Typography fontSize={13} fontWeight={600} color="textSecondary">
                     {event.address}
                 </Typography>
-                <Typography variant="body2" color="textSecondary">
-                    Age: {event.ageGroup}
+                <Typography fontSize={13} fontWeight={600} color="textSecondary">
+                    {event.ageGroup}
                 </Typography>
             </CardContent>
         </Card>
