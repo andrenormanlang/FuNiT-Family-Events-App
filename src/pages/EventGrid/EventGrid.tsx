@@ -57,7 +57,7 @@ const EventGrid = () => {
 
   return (
     <Box display="flex" justifyContent="center" marginTop={1} marginBottom={theme.spacing(4)}>
-            <Grid container spacing={2} justifyContent="space-between" style={{ maxWidth: '1000px' }}>
+            <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1000px' }}>
         {events.map((event) => (
           <Grid item key={event.id} xs={8} sm={7} md={4} lg={4} xl={4}>
             <EventCard event={event} isSaved={savedEventIds.includes(event.id)} />
