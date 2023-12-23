@@ -31,6 +31,8 @@ const eventData = (event: Event) => {
         ageGroup: event.ageGroup,
         category: event.category,
         eventDateTime: event.eventDateTime, // Make sure to handle Timestamp conversion if necessary
+        eventDateStart: event.eventDateStart, // Make sure to handle Timestamp conversion if necessary
+        eventDateEnd: event.eventDateEnd, // Make sure to handle Timestamp conversion if necessary
         description: event.description,
         email: event.email ?? null, // Replace undefined with null
         isApproved: event.isApproved ?? null,
@@ -170,10 +172,10 @@ const EventPage = () => {
         navigate('/'); // Navigate to the homepage
     };
 
-    'event:', event;
-    'event.id:', event.id;
-    'auth.currentUser:', auth.currentUser;
-    'event:', event;
+   event;
+     event.id;
+    auth.currentUser;
+     event;
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

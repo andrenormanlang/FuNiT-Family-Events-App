@@ -33,6 +33,7 @@ const categoryValues = [
     'Health and Wellness',
     'Music',
     'Outdoor Adventures',
+    'Theatre & Dance',
     'Other'
 ] as const;
 
@@ -45,8 +46,8 @@ const eventSchema = z.object({
     // image: z.union([z.instanceof(File), z.null()]),
     ageGroup: z.enum(ageGroups),
     category: z.enum(categoryValues),
-    email: z.string().email().optional(),
-    website: z.string().url().optional()
+    email: z.union([z.string().email(), z.literal("")]).optional(),
+    website: z.union([z.string().url(), z.literal("")]).optional(),
 });
 
 type EventData = z.infer<typeof eventSchema>;
@@ -75,8 +76,8 @@ const EventForm: React.FC = () => {
     if (!isLoaded) return <div>Loading...</div>;
 
     const onSubmit = async (data: EventData) => {
-        'Selected image:', selectedImage;
-        'Form submitted', data;
+        selectedImage;
+        data;
         setIsSubmitting(true);
         let imageUrl = '';
         if (selectedImage) {
@@ -125,9 +126,9 @@ const EventForm: React.FC = () => {
         }
     };
 
-    'error', errors;
-    'is submitting', isSubmitting;
-    'events', eventsCol;
+     errors;
+    isSubmitting;
+     eventsCol;
     return (
         <Box sx={{ width: { xs: '80%', sm: '60%', md: '40%' }, margin: 'auto' }}>
             {' '}

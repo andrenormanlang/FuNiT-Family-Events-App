@@ -6,6 +6,8 @@ export type Event = {
     ageGroup: string;
     category: Category;
     eventDateTime: Timestamp;
+    eventDateStart: Timestamp;
+    eventDateEnd: Timestamp;
     description: string;
     email?: string;
     isApproved: boolean;
