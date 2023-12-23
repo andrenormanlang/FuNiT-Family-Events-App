@@ -75,8 +75,8 @@ const EventForm: React.FC = () => {
     if (!isLoaded) return <div>Loading...</div>;
 
     const onSubmit = async (data: EventData) => {
-        console.log('Selected image:', selectedImage);
-        console.log('Form submitted', data);
+        'Selected image:', selectedImage;
+        'Form submitted', data;
         setIsSubmitting(true);
         let imageUrl = '';
         if (selectedImage) {
@@ -113,21 +113,21 @@ const EventForm: React.FC = () => {
             setIsSubmitting(false);
         }
 
-        console.log(data);
+        data;
     };
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files[0]) {
-            console.log(event.target.files[0]); // Log the selected file
+            event.target.files[0]; // Log the selected file
             setSelectedImage(event.target.files[0]);
             const imageUrl = URL.createObjectURL(event.target.files[0]);
             setImagePreviewUrl(imageUrl); // Store the image URL in state
         }
     };
 
-    console.log('error', errors);
-    console.log('is submitting', isSubmitting);
-    console.log('events', eventsCol);
+    'error', errors;
+    'is submitting', isSubmitting;
+    'events', eventsCol;
     return (
         <Box sx={{ width: { xs: '80%', sm: '60%', md: '40%' }, margin: 'auto' }}>
             {' '}

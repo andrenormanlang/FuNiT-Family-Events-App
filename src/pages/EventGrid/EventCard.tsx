@@ -14,16 +14,15 @@ interface EventCardProps {
     isSaved: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event, isSaved  }) => {
-
+const EventCard: React.FC<EventCardProps> = ({ event, isSaved }) => {
     const navigate = useNavigate(); // or const history = useHistory(); in v5
 
-    const theme = useTheme()
+    const theme = useTheme();
 
     let date: Date | undefined;
-if (event && event.eventDateTime) {
-    date = event.eventDateTime.toDate();
-}
+    if (event && event.eventDateTime) {
+        date = event.eventDateTime.toDate();
+    }
 
     const imageUrl = event.imageUrl || defaultImage;
 
@@ -33,28 +32,26 @@ if (event && event.eventDateTime) {
         setIsClicked(!isClicked);
         navigate(`/${event.id}`); // Use event.id or the appropriate identifier
     };
-    
-    console.log("isSaved:", isSaved); 
+
     return (
-        <Card 
-            sx={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
+        <Card
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
                 height: 395,
                 backgroundColor: theme.palette.background.default,
                 border: isSaved ? '5px solid green' : 'none', //
                 typography: theme.typography,
-                transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out', 
+                transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
                 '&:hover': {
-                    transform: 'scale(1.05)', 
-                    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)' 
+                    transform: 'scale(1.05)',
+                    boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)'
                 },
                 ...(isClicked && {
-                    boxShadow: '0 8px 16px 0 rgba(0, 0, 0, 0.4)' 
-                }) 
+                    boxShadow: '0 8px 16px 0 rgba(0, 0, 0, 0.4)'
+                })
             }}
-            onClick={handleCardClick}
-        >
+            onClick={handleCardClick}>
             <Box position="relative">
                 <CardMedia
                     component="img"
@@ -75,7 +72,7 @@ if (event && event.eventDateTime) {
                 </Box>
             </Box>
             <CardContent>
-                <Typography fontSize={20}  component="div" gutterBottom>
+                <Typography fontSize={20} component="div" gutterBottom>
                     {event.name}
                 </Typography>
                 {/* <Typography variant="subtitle2" color="textSecondary" paragraph>
@@ -83,7 +80,7 @@ if (event && event.eventDateTime) {
                 </Typography> */}
                 <Box marginBottom={1}>
                     <Typography fontSize={15} fontWeight={600} color="primary">
-                       {event.category}
+                        {event.category}
                     </Typography>
                 </Box>
                 <Typography fontSize={13} fontWeight={600} color="textSecondary">

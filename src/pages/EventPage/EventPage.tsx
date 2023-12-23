@@ -51,7 +51,7 @@ const EventPage = () => {
     const { updateSavedEventsCount } = useSavedEvents();
 
     if (!id) {
-        console.log('No id found in URL parameters.');
+        ('No id found in URL parameters.');
     }
 
     useEffect(() => {
@@ -68,7 +68,7 @@ const EventPage = () => {
                         setEvent(eventData);
                     } else {
                         setError('No such document!');
-                        console.log(`No such document with id: ${id}`);
+                        `No such document with id: ${id}`;
                     }
                 } catch (err) {
                     setError('An error occurred while fetching the event.');
@@ -107,23 +107,23 @@ const EventPage = () => {
     }
 
     const handleSaveClick = async () => {
-        console.log('Save Event button clicked');
-    
+        ('Save Event button clicked');
+
         // Get the current user from Firebase Auth
         const user = auth.currentUser;
-    
+
         // Check if a user is signed in and an event is selected
         if (user && event && event.id) {
             // Generate a unique ID for the saved event
             const savedEventRef = doc(db, 'savedEvents', `${user.uid}_${event.id}`);
-    
+
             // Check if the event has already been saved by this user
             const docSnap = await getDoc(savedEventRef);
-    
+
             if (docSnap.exists()) {
                 // If the event is already saved, remove it
                 await deleteDoc(savedEventRef);
-                console.log('Event unsaved successfully');
+                ('Event unsaved successfully');
             } else {
                 // If the event hasn't been saved by this user, save it
                 const newSavedEvent = {
@@ -132,16 +132,16 @@ const EventPage = () => {
                     eventData: eventData(event)
                 };
                 await setDoc(savedEventRef, newSavedEvent);
-                console.log('Event saved successfully');
+                ('Event saved successfully');
             }
-    
+
             // Toggle the isSaved state
             setIsSaved(!isSaved);
-    
+
             // Update the saved events count in the context
             updateSavedEventsCount();
         } else {
-            console.log('User not signed in or event data missing');
+            ('User not signed in or event data missing');
         }
     };
 
@@ -170,10 +170,10 @@ const EventPage = () => {
         navigate('/'); // Navigate to the homepage
     };
 
-    console.log('event:', event);
-    console.log('event.id:', event.id);
-    console.log('auth.currentUser:', auth.currentUser);
-    console.log('event:', event);
+    'event:', event;
+    'event.id:', event.id;
+    'auth.currentUser:', auth.currentUser;
+    'event:', event;
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

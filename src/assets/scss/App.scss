@@ -2,6 +2,11 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+#App {
+    min-height: 100vh;
+    margin-bottom: 40px;
+  }
+
 .file-upload-button {
     display: inline-block;
     padding: 10px 20px;
