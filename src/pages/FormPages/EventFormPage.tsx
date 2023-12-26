@@ -3,8 +3,7 @@ import { Timestamp } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { TextField, Button, CircularProgress, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
-import { Box } from '@mui/system';
+import { Box, TextField, Button, CircularProgress, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -20,7 +19,9 @@ const ageGroups = [
     '1-3 Years', // Toddlers
     '4-6 Years', // Preschool to Early School Age
     '7-9 Years', // Mid School Age
-    '10-12 Years' // Preteens
+    '7-12 Years', // Mid School Age
+    '10-12 Years', // Preteens
+    'All Ages'
 ] as const;
 
 const categoryValues = [
@@ -32,7 +33,7 @@ const categoryValues = [
     'Games',
     'Health and Wellness',
     'Music',
-    'Outdoor Adventures',
+    'Outdoor Activities',
     'Theatre & Dance',
     'Other'
 ] as const;

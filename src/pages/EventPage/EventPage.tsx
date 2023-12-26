@@ -31,8 +31,8 @@ const eventData = (event: Event) => {
         ageGroup: event.ageGroup,
         category: event.category,
         eventDateTime: event.eventDateTime, // Make sure to handle Timestamp conversion if necessary
-        eventDateStart: event.eventDateStart, // Make sure to handle Timestamp conversion if necessary
-        eventDateEnd: event.eventDateEnd, // Make sure to handle Timestamp conversion if necessary
+        // eventDateStart: event.eventDateStart, // Make sure to handle Timestamp conversion if necessary
+        // eventDateEnd: event.eventDateEnd, // Make sure to handle Timestamp conversion if necessary
         description: event.description,
         email: event.email ?? null, // Replace undefined with null
         isApproved: event.isApproved ?? null,
@@ -81,7 +81,19 @@ const EventPage = () => {
             }
         };
 
+        const checkIfEventIsSaved = async () => {
+           
+            const currentUser = auth.currentUser;
+            if (currentUser && id) {
+                const savedEventRef = doc(db, 'savedEvents', `${currentUser.uid}_${id}`);
+                const docSnap = await getDoc(savedEventRef);
+                setIsSaved(docSnap.exists());
+            }
+        };
+    
+
         fetchEvent();
+        checkIfEventIsSaved();
     }, [id]);
 
     if (isLoading) {
@@ -251,3 +263,4 @@ const EventPage = () => {
 };
 
 export default EventPage;
+

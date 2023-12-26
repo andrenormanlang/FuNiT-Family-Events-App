@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Event } from '../../types/Event.types';
-import { Box } from '@mui/system';
+import {Box} from '@mui/material';
 import { CardMedia } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
 import { useState } from 'react';
@@ -38,7 +38,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved }) => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: 395,
+                height: 420,
                 backgroundColor: theme.palette.background.default,
                 border: isSaved ? '5px solid green' : 'none', //
                 typography: theme.typography,
