@@ -23,6 +23,7 @@ export type SignUp = {
 }
 
 export type UserUpdate = {
+    preventDefault(): unknown
 	displayName: string
 	email: string
 	photoFile: FileList

@@ -10,6 +10,7 @@ import LogOutPage from './pages/UserPages/LogOutPage';
 import AuthOnly from './components/Auth/AuthOnly';
 import SavedEvents from './pages/SavedEvents/SavedEvents';
 import SavedEventsProvider from './contexts/SavedEventsProvider';
+import Profile from './pages/UserPages/Profile/ProfilePage';
 
 function App() {
   return (
@@ -25,8 +26,8 @@ function App() {
             <Route path='/login' element={<LogInPage />} />
 
             {/* Protected Routes */}
-            <Route path='/event-form' element={<AuthOnly><EventForm /></AuthOnly>} />
-            
+            <Route path='/event-form' element={<AuthOnly><EventForm /></AuthOnly>} />            
+            <Route path='/profile' element={<AuthOnly><Profile /></AuthOnly>} />
             <Route path='/saved-events' element={<AuthOnly><SavedEvents /></AuthOnly>} />
             <Route path='/logout' element={<AuthOnly><LogOutPage /></AuthOnly>} />
           </Routes>
