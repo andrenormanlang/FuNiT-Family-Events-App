@@ -78,15 +78,11 @@ const Profile = () => {
 
                 const uploadTask = uploadBytesResumable(fileRef, photo);
 
-                uploadTask.on(
-                    'state_changed',
-                    (snapshot) => {
+                uploadTask.on('state_changed',snapshot => {
                         setUploadProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 1000) / 10);
-                    },
-                    (error) => {
+                    },(error) => {
                         showMessage(error.message);
-                    },
-                    async () => {
+                    },async () => {
                         setUploadProgress(null);
                         resetField('photoFile');
 
@@ -94,56 +90,57 @@ const Profile = () => {
                         await setPhotoUrl(photoUrl);
                         await reloadUser();
                         if (photoRef.current) photoRef.current = null;
-                    }
-                );
-            }
-
-            if (data.email && data.email !== signedInUserEmail) {
-                await setEmail(data.email);
-                showMessage('Email updated successfully');
-            }
-
-            if (data.password) {
-                try {
-                    await setPassword(data.password);
-
-                    const docRef = doc(usersCol, signedInUser.uid);
-                    updateDoc(docRef, {
-                        updatedAt: serverTimestamp()
                     });
-
-                    showMessage('Password updated successfully');
-                } catch (error) {
-                    showMessage('Please sign out and in again before changing password');
                 }
 
-                setValue('password', '');
-                setValue('passwordConfirm', '');
-            }
+                if (data.email && data.email !== signedInUserEmail) {
+                    await setEmail(data.email);
+                    showMessage('Email updated successfully');
+                }
 
-            await reloadUser();
+                if (data.password) {
+                    try {
+                        await setPassword(data.password);
 
-            setIsSubmitting(false);
-        } catch (error) {
-            if (error instanceof FirebaseError) {
-                showMessage(error.message);
-            } else {
-                showMessage('Something went wrong when trying to update profile');
+                        const docRef = doc(usersCol, signedInUser.uid);
+                        updateDoc(docRef, {
+                            updatedAt: serverTimestamp()
+                        });
+
+                        showMessage('Password updated successfully');
+                    } catch (error) {
+                        showMessage('Please sign out and in again before changing password');
+                    }
+
+                    setValue('password', '');
+                    setValue('passwordConfirm', '');
+                }
+
+                await reloadUser();
+
+                setIsSubmitting(false);
+            } catch (error) {
+                if (error instanceof FirebaseError) {
+                    // Check for the specific error code
+                    if (error.code === 'auth/credential-too-old-login-again') {
+                        // Display a specific message for this error
+                        showMessage('Your session is too old. Please log out and log back in to update your profile.');
+                    } else {
+                        // Handle other Firebase errors
+                        showMessage(error.message);
+                    }
+                } else {
+                    // Handle non-Firebase errors
+                    showMessage('Something went wrong when trying to update profile');
+                }
+                setIsSubmitting(false);
             }
-            setIsSubmitting(false);
-        }
     };
 
     const handleUpdatePhoto = async (photoUrl: string) => {
-        try {
             await setPhotoUrl(photoUrl);
             await reloadUser();
-
             showMessage('Profile photo updated successfully');
-        } catch (error) {
-            console.error(error);
-            showMessage('Error updating profile photo');
-        }
     };
 
     // Inside handleUpdatePhoto
@@ -152,7 +149,7 @@ const Profile = () => {
         <Container>
             <Grid container justifyContent="center">
                 <Grid item xs={12} md={8} lg={6}>
-                    <Card>
+                <Card sx={{ backgroundColor: '#b2eae8' }}>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>
                                 Update Profile
@@ -233,7 +230,7 @@ const Profile = () => {
                                         </label>
                                         {uploadProgress !== null ? (
                                             <>
-                                                <LinearProgress variant="determinate" value={uploadProgress} />
+                                                <LinearProgress variant="determinate" value={uploadProgress}  sx={{height: 15, mt:2}} />
                                                 <Typography variant="body2" color="textSecondary">
                                                     {`${uploadProgress}%`}
                                                 </Typography>
@@ -249,6 +246,18 @@ const Profile = () => {
                                     </Typography>
                                 </FormControl>
 
+                                
+                                <TextField
+                                    id="email"
+                                    label="Change Email"
+                                    type="email"
+                                    {...register('email')}
+                                    error={!!errors.email}
+                                    helperText={errors.email?.message}
+                                    fullWidth
+                                    margin="normal"
+                                />
+                                
                                 {/* Password Fields */}
                                 <TextField
                                     id="password"
@@ -270,6 +279,7 @@ const Profile = () => {
                                     helperText={errors.passwordConfirm?.message}
                                     fullWidth
                                     margin="normal"
+                                    sx={{ mb: 2 }}
                                 />
 
                                 {/* Submit Button */}
