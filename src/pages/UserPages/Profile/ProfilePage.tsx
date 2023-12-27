@@ -23,11 +23,9 @@ import { CameraAlt } from '@mui/icons-material';
 import { useSnackbar } from '../../../contexts/SnackBarProvider';
 
 const Profile = () => {
-
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [uploadProgress, setUploadProgress] = useState<number | null>(null);
     const { showMessage } = useSnackbar();
- 
 
     const {
         reloadUser,
@@ -55,6 +53,9 @@ const Profile = () => {
         }
     });
 
+    const [imagePreview, setImagePreview] = useState(
+        signedInUserPhotoUrl || 'https://via.placeholder.com/225'
+    );
     const passwordRef = useRef('');
     passwordRef.current = watch('password') ?? '';
 
@@ -64,7 +65,6 @@ const Profile = () => {
     if (!signedInUser) return;
 
     const onUpdateProfile: SubmitHandler<UserUpdate> = async (data) => {
-        
         console.log(data);
 
         try {
@@ -97,7 +97,6 @@ const Profile = () => {
                         );
                     },
                     (error) => {
-                        
                         showMessage(error.message);
                     },
                     async () => {
@@ -105,6 +104,7 @@ const Profile = () => {
                         resetField('photoFile');
 
                         const photoUrl = await getDownloadURL(fileRef);
+                        setImagePreview(photoUrl);
                         setPhotoUrl(photoUrl);
                         await reloadUser();
                         if (photoRef.current) photoRef.current = null;
@@ -128,7 +128,6 @@ const Profile = () => {
 
                     showMessage('Password updated successfully');
                 } catch (error) {
-                    
                     showMessage(
                         'Please sign out and in again before changing password'
                     );
@@ -154,6 +153,15 @@ const Profile = () => {
         }
     };
 
+    const handleUpdatePhoto = async (photoUrl: string) => {
+        await setPhotoUrl(photoUrl);
+        await reloadUser();
+    };
+
+    console.log('imagePreview State:', imagePreview);
+
+    // Inside handleUpdatePhoto
+
     return (
         <Container>
             <Grid container justifyContent="center">
@@ -175,11 +183,10 @@ const Profile = () => {
                                 component="form"
                                 onSubmit={handleSubmit(onUpdateProfile)}
                                 noValidate>
-                                
                                 {/* Name Field */}
                                 <TextField
                                     id="displayName"
-                                    label="Name"
+                                    label="New Name"
                                     type="text"
                                     {...register('displayName')}
                                     error={!!errors.displayName}
@@ -191,23 +198,37 @@ const Profile = () => {
                                 {/* Photo Upload Section */}
                                 <Box
                                     display="flex"
-                                    justifyContent="space-between"
+                                    justifyContent="center"
                                     alignItems="center"
                                     my={3}>
                                     <Avatar
-                                        src={
-                                            signedInUserPhotoUrl ||
-                                            'https://via.placeholder.com/225'
-                                        }
-                                        sx={{ width: 100, height: 100 }}
+                                        key={imagePreview}
+                                        src={imagePreview}
+                                        sx={{ width: 150, height: 150, mb: 2 }} // Increased size and margin bottom
                                     />
                                     <input
                                         accept="image/*"
                                         type="file"
                                         id="icon-button-file"
                                         style={{ display: 'none' }}
-                                        {...register('photoFile')}
+                                        {...register('photoFile')} // Second usage of onChange
                                     />
+                                    {photoRef.current &&
+                                        photoRef.current.length > 0 && (
+                                            <Typography variant="body2">
+                                                {photoRef.current[0].name} (
+                                                {Math.round(
+                                                    photoRef.current[0].size /
+                                                        1024
+                                                )}{' '}
+                                                kB)
+                                            </Typography>
+                                        )}
+                                </Box>
+                                <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    alignItems="center">
                                     <label htmlFor="icon-button-file">
                                         <IconButton
                                             color="primary"
@@ -216,19 +237,33 @@ const Profile = () => {
                                             <CameraAlt />
                                         </IconButton>
                                     </label>
-                                    {photoRef.current && photoRef.current.length > 0 && (
-                                        <Typography variant="body2">
-                                            {photoRef.current[0].name}
-                                            {' '}
-                                            ({Math.round(photoRef.current[0].size / 1024)} kB)
-                                        </Typography>
-                                    )}
+                                    <Button
+                                        onClick={() => handleUpdatePhoto('')}
+                                        size="small"
+                                        variant="contained"
+                                        color="secondary"
+                                        sx={{ mx: 2 }}>
+                                        {' '}
+                                        {/* Margin on both sides */}
+                                        Delete photo
+                                    </Button>
+                                    <Button
+                                        onClick={() =>
+                                            handleUpdatePhoto(
+                                                'https://picsum.photos/200'
+                                            )
+                                        }
+                                        size="small"
+                                        variant="contained"
+                                        color="secondary">
+                                        Random photo
+                                    </Button>
                                 </Box>
 
                                 {/* Password Fields */}
                                 <TextField
                                     id="password"
-                                    label="Password"
+                                    label="Change Password"
                                     type="password"
                                     {...register('password')}
                                     error={!!errors.password}
@@ -239,7 +274,7 @@ const Profile = () => {
 
                                 <TextField
                                     id="passwordConfirm"
-                                    label="Confirm Password"
+                                    label="Confirm New Password"
                                     type="password"
                                     {...register('passwordConfirm')}
                                     error={!!errors.passwordConfirm}

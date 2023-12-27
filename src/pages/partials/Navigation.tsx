@@ -34,10 +34,14 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
     }
 }));
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
+    position: 'sticky', // Changed from 'static' to 'sticky'
+    top: 0, // Ensures the AppBar sticks to the top
+    zIndex: + 1, // Ensure AppBar stays on top of other content, like a drawer
     [theme.breakpoints.up('sm')]: {
         marginBottom: theme.spacing(4)
     }
 }));
+
 
 const Navbar: React.FC = () => {
     const theme = useTheme();
@@ -47,7 +51,6 @@ const Navbar: React.FC = () => {
     const {
         signedInUser,
         signOutUser,
-        signedInUserEmail,
         signedInUserName,
         signedInUserPhotoUrl
     } = useAuth();
@@ -63,7 +66,7 @@ const Navbar: React.FC = () => {
     };
 
     return (
-        <StyledAppBar position="static">
+        <StyledAppBar>
             <Container maxWidth="lg">
                 <Toolbar>
                     <NavLink
@@ -90,26 +93,7 @@ const Navbar: React.FC = () => {
                                     to="/profile">
                                     Profile
                                 </Button>
-                                <IconButton
-                                    color="inherit"
-                                    component={NavLink}
-                                    to="/profile"
-                                    sx={{ p: 0, marginLeft: 2 }}>
-                                    <Avatar
-                                        src={signedInUserPhotoUrl || undefined}
-                                        alt={signedInUserName || 'Profile'}
-                                        sx={{ width: 30, height: 30 }}
-                                    />
-                                </IconButton>
-                                <Typography
-                                    variant="subtitle1"
-                                    component="span"
-                                    sx={{ marginLeft: 1 }}>
-                                    {signedInUserName}
-                                </Typography>
-                                <Button color="inherit" onClick={handleLogout}>
-                                    Logout
-                                </Button>
+
                                 <Button
                                     color="inherit"
                                     component={NavLink}
@@ -137,20 +121,40 @@ const Navbar: React.FC = () => {
                                         Saved Events
                                     </Button>
                                 </Badge>
+                                <IconButton
+                                    color="inherit"
+                                    component={NavLink}
+                                    to="/profile"
+                                    sx={{ p: 0, marginLeft: 2 }}>
+                                    <Avatar
+                                        src={signedInUserPhotoUrl || undefined}
+                                        alt={signedInUserName || 'Profile'}
+                                        sx={{ width: 50, height: 50 }}
+                                    />
+                                </IconButton>
+                                {/* <Typography
+                                                variant="subtitle1"
+                                                component="span"
+                                                sx={{ marginLeft: 1 }}>
+                                                {signedInUserName}
+                                            </Typography> */}
+                                <Button color="inherit" onClick={handleLogout}>
+                                    Logout
+                                </Button>
                             </>
                         ) : (
                             <>
                                 <Button
                                     color="inherit"
                                     component={NavLink}
-                                    to="/login">
-                                    Login
+                                    to="/register">
+                                    Register
                                 </Button>
                                 <Button
                                     color="inherit"
                                     component={NavLink}
-                                    to="/register">
-                                    Register
+                                    to="/login">
+                                    Login
                                 </Button>
                             </>
                         )}
@@ -178,6 +182,28 @@ const Navbar: React.FC = () => {
                     <CloseIcon />
                 </IconButton>
                 <List sx={{ width: '100%' }}>
+                    {signedInUser && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                marginBottom: 2 // Adds some spacing below the avatar
+                            }}>
+                            <Avatar
+                                src={signedInUserPhotoUrl || undefined}
+                                alt={signedInUserName || 'Profile'}
+                                sx={{
+                                    width: 100,
+                                    height: 100,
+                                    marginBottom: 1
+                                }} // Increase avatar size
+                            />
+                            <Typography variant="subtitle1" gutterBottom sx={{ textTransform: 'uppercase' }}>
+                                {signedInUserName}
+                            </Typography>
+                        </Box>
+                    )}
                     <ListItem>
                         <ListItemButton
                             onClick={handleDrawerToggle}
@@ -198,14 +224,6 @@ const Navbar: React.FC = () => {
                     {signedInUser ? (
                         // Logged-in user menu items
                         <>
-                            <Avatar
-                                src={signedInUserPhotoUrl || undefined}
-                                alt={signedInUserName || 'Profile'}
-                                sx={{ width: 60, height: 60, marginBottom: 1 }}
-                            />
-                            <Typography variant="subtitle1" gutterBottom>
-                                {signedInUserName}
-                            </Typography>
                             <ListItem>
                                 <ListItemButton
                                     component={NavLink}
