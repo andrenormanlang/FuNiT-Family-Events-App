@@ -12,6 +12,7 @@ import SavedEvents from './pages/SavedEvents/SavedEvents';
 import SavedEventsProvider from './contexts/SavedEventsProvider';
 import Profile from './pages/UserPages/Profile/ProfilePage';
 import AuthContextProvider from './contexts/AuthContextProvider';
+import AdminEventsListPage from './pages/AdminPages/AdminReviewList';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
 
               {/* Protected Routes */}
               <Route path='/event-form' element={<AuthOnly><EventForm /></AuthOnly>} />            
+              <Route path='/events-list' element={<AuthOnly><AdminEventsListPage /></AuthOnly>} />            
               <Route path='/profile' element={<AuthOnly><Profile /></AuthOnly>} />
               <Route path='/saved-events' element={<AuthOnly><SavedEvents /></AuthOnly>} />
               <Route path='/logout' element={<AuthOnly><LogOutPage /></AuthOnly>} />
