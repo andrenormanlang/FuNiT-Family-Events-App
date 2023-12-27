@@ -17,9 +17,10 @@ import {
     TextField,
     Typography,
     Avatar,
-    IconButton
+    IconButton,
+    FormControl
 } from '@mui/material';
-import { CameraAlt } from '@mui/icons-material';
+import { CameraAlt, Delete, Shuffle } from '@mui/icons-material';
 import { useSnackbar } from '../../../contexts/SnackBarProvider';
 
 const Profile = () => {
@@ -53,9 +54,6 @@ const Profile = () => {
         }
     });
 
-    const [imagePreview, setImagePreview] = useState(
-        signedInUserPhotoUrl || 'https://via.placeholder.com/225'
-    );
     const passwordRef = useRef('');
     passwordRef.current = watch('password') ?? '';
 
@@ -65,8 +63,6 @@ const Profile = () => {
     if (!signedInUser) return;
 
     const onUpdateProfile: SubmitHandler<UserUpdate> = async (data) => {
-        console.log(data);
-
         try {
             setIsSubmitting(true);
 
@@ -78,23 +74,14 @@ const Profile = () => {
             if (data.photoFile.length) {
                 const photo = data.photoFile[0];
 
-                const fileRef = ref(
-                    storage,
-                    `users/${signedInUser.uid}/${photo.name}`
-                );
+                const fileRef = ref(storage, `users/${signedInUser.uid}/${photo.name}`);
 
                 const uploadTask = uploadBytesResumable(fileRef, photo);
 
                 uploadTask.on(
                     'state_changed',
                     (snapshot) => {
-                        setUploadProgress(
-                            Math.round(
-                                (snapshot.bytesTransferred /
-                                    snapshot.totalBytes) *
-                                    1000
-                            ) / 10
-                        );
+                        setUploadProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 1000) / 10);
                     },
                     (error) => {
                         showMessage(error.message);
@@ -104,8 +91,7 @@ const Profile = () => {
                         resetField('photoFile');
 
                         const photoUrl = await getDownloadURL(fileRef);
-                        setImagePreview(photoUrl);
-                        setPhotoUrl(photoUrl);
+                        await setPhotoUrl(photoUrl);
                         await reloadUser();
                         if (photoRef.current) photoRef.current = null;
                     }
@@ -128,9 +114,7 @@ const Profile = () => {
 
                     showMessage('Password updated successfully');
                 } catch (error) {
-                    showMessage(
-                        'Please sign out and in again before changing password'
-                    );
+                    showMessage('Please sign out and in again before changing password');
                 }
 
                 setValue('password', '');
@@ -141,24 +125,26 @@ const Profile = () => {
 
             setIsSubmitting(false);
         } catch (error) {
-            console.error(error);
             if (error instanceof FirebaseError) {
                 showMessage(error.message);
             } else {
-                showMessage(
-                    'Something went wrong when trying to update profile'
-                );
+                showMessage('Something went wrong when trying to update profile');
             }
             setIsSubmitting(false);
         }
     };
 
     const handleUpdatePhoto = async (photoUrl: string) => {
-        await setPhotoUrl(photoUrl);
-        await reloadUser();
-    };
+        try {
+            await setPhotoUrl(photoUrl);
+            await reloadUser();
 
-    console.log('imagePreview State:', imagePreview);
+            showMessage('Profile photo updated successfully');
+        } catch (error) {
+            console.error(error);
+            showMessage('Error updating profile photo');
+        }
+    };
 
     // Inside handleUpdatePhoto
 
@@ -172,17 +158,9 @@ const Profile = () => {
                                 Update Profile
                             </Typography>
 
-                            {uploadProgress !== null && (
-                                <LinearProgress
-                                    variant="determinate"
-                                    value={uploadProgress}
-                                />
-                            )}
+                            {uploadProgress !== null && <LinearProgress variant="determinate" value={uploadProgress} />}
 
-                            <Box
-                                component="form"
-                                onSubmit={handleSubmit(onUpdateProfile)}
-                                noValidate>
+                            <Box component="form" onSubmit={handleSubmit(onUpdateProfile)} noValidate>
                                 {/* Name Field */}
                                 <TextField
                                     id="displayName"
@@ -196,69 +174,80 @@ const Profile = () => {
                                 />
 
                                 {/* Photo Upload Section */}
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    my={3}>
+                                <Box display="flex" justifyContent="center" alignItems="center" my={3}>
                                     <Avatar
-                                        key={imagePreview}
-                                        src={imagePreview}
+                                        id="photoUrl"
+                                        src={signedInUserPhotoUrl || 'https://via.placeholder.com/200'}
                                         sx={{ width: 150, height: 150, mb: 2 }} // Increased size and margin bottom
                                     />
-                                    <input
-                                        accept="image/*"
-                                        type="file"
-                                        id="icon-button-file"
-                                        style={{ display: 'none' }}
-                                        {...register('photoFile')} // Second usage of onChange
-                                    />
-                                    {photoRef.current &&
-                                        photoRef.current.length > 0 && (
-                                            <Typography variant="body2">
-                                                {photoRef.current[0].name} (
-                                                {Math.round(
-                                                    photoRef.current[0].size /
-                                                        1024
-                                                )}{' '}
-                                                kB)
-                                            </Typography>
-                                        )}
                                 </Box>
-                                <Box
-                                    display="flex"
-                                    justifyContent="center"
-                                    alignItems="center">
-                                    <label htmlFor="icon-button-file">
-                                        <IconButton
-                                            color="primary"
-                                            aria-label="upload picture"
-                                            component="span">
-                                            <CameraAlt />
-                                        </IconButton>
-                                    </label>
+                                <Box display="flex" justifyContent="center" alignItems="center">
                                     <Button
+                                        disabled={signedInUserPhotoUrl === null}
                                         onClick={() => handleUpdatePhoto('')}
                                         size="small"
                                         variant="contained"
                                         color="secondary"
                                         sx={{ mx: 2 }}>
-                                        {' '}
-                                        {/* Margin on both sides */}
-                                        Delete photo
+                                        <Delete />
                                     </Button>
                                     <Button
-                                        onClick={() =>
-                                            handleUpdatePhoto(
-                                                'https://picsum.photos/200'
-                                            )
-                                        }
+                                        disabled={signedInUserPhotoUrl === 'https://picsum.photos/200'}
+                                        onClick={() => handleUpdatePhoto('https://picsum.photos/200')}
                                         size="small"
                                         variant="contained"
                                         color="secondary">
-                                        Random photo
+                                        <Shuffle />
                                     </Button>
                                 </Box>
+                                <FormControl
+                                    sx={{
+                                        width: '100%',
+                                        backgroundColor: '#f5f5f5',
+                                        padding: '10px',
+                                        borderRadius: '4px',
+                                        mt: 2
+                                    }}>
+                                    <FormControl>
+                                        <input
+                                            accept="image/jpeg, image/png, image/webp, image/gif"
+                                            type="file"
+                                            id="icon-button-file"
+                                            style={{ display: 'none' }}
+                                            {...register('photoFile')}
+                                        />
+                                    </FormControl>
+                                    {errors.photoFile && <p className="invalid-value">{errors.photoFile.message ?? 'Invalid value'}</p>}
+                                    <Typography>
+                                        <label htmlFor="icon-button-file">
+                                            <IconButton
+                                                color="primary"
+                                                aria-label="upload picture"
+                                                component="span"
+                                                sx={{
+                                                    backgroundColor: '#e0e0e0',
+                                                    marginRight: '10px'
+                                                }}>
+                                                <CameraAlt />
+                                            </IconButton>
+                                        </label>
+                                        {uploadProgress !== null ? (
+                                            <>
+                                                <LinearProgress variant="determinate" value={uploadProgress} />
+                                                <Typography variant="body2" color="textSecondary">
+                                                    {`${uploadProgress}%`}
+                                                </Typography>
+                                            </>
+                                        ) : (
+                                            photoRef.current &&
+                                            photoRef.current.length > 0 && (
+                                                <span>
+                                                    {photoRef.current[0].name} ({Math.round(photoRef.current[0].size / 1024)} kB)
+                                                </span>
+                                            )
+                                        )}
+                                    </Typography>
+                                </FormControl>
 
                                 {/* Password Fields */}
                                 <TextField
@@ -284,15 +273,8 @@ const Profile = () => {
                                 />
 
                                 {/* Submit Button */}
-                                <Button
-                                    disabled={isSubmitting}
-                                    size="small"
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary">
-                                    {isSubmitting
-                                        ? 'Updating Profile...'
-                                        : 'Update Profile'}
+                                <Button disabled={isSubmitting} size="small" type="submit" variant="contained" color="primary">
+                                    {isSubmitting ? 'Updating Profile...' : 'Update Profile'}
                                 </Button>
                             </Box>
                         </CardContent>
