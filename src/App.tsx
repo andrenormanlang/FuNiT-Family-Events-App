@@ -13,31 +13,69 @@ import SavedEventsProvider from './contexts/SavedEventsProvider';
 import Profile from './pages/UserPages/Profile/ProfilePage';
 import AuthContextProvider from './contexts/AuthContextProvider';
 import AdminEventsListPage from './pages/AdminPages/AdminReviewList';
+import AdminOnly from './components/Auth/AdminOnly';
 
 function App() {
-  return (
-    <SavedEventsProvider>    
-        <AuthContextProvider> {/* Wrap your components with AuthContextProvider */}
-          <div id='App'>
-            <Navbar />
-            <Routes>
-              {/* Unprotected Routes */}
-              <Route path="/:id" element={<EventPage />} />
-              <Route path="/" element={<EventGrid />} />
-              <Route path='/register' element={<SignUp />} />
-              <Route path='/login' element={<LogInPage />} />
+    return (
+        <SavedEventsProvider>
+            <AuthContextProvider>
+                {' '}
+                {/* Wrap your components with AuthContextProvider */}
+                <div id="App">
+                    <Navbar />
+                    <Routes>
+                        {/* Unprotected Routes */}
+                        <Route path="/:id" element={<EventPage />} />
+                        <Route path="/" element={<EventGrid />} />
+                        <Route path="/register" element={<SignUp />} />
+                        <Route path="/login" element={<LogInPage />} />
 
-              {/* Protected Routes */}
-              <Route path='/event-form' element={<AuthOnly><EventForm /></AuthOnly>} />            
-              <Route path='/events-list' element={<AuthOnly><AdminEventsListPage /></AuthOnly>} />            
-              <Route path='/profile' element={<AuthOnly><Profile /></AuthOnly>} />
-              <Route path='/saved-events' element={<AuthOnly><SavedEvents /></AuthOnly>} />
-              <Route path='/logout' element={<AuthOnly><LogOutPage /></AuthOnly>} />
-            </Routes>
-          </div>
-        </AuthContextProvider>
-    </SavedEventsProvider>
-  );
+                        {/* Protected Routes */}
+                        <Route
+                            path="/event-form"
+                            element={
+                                <AuthOnly>
+                                    <EventForm />
+                                </AuthOnly>
+                            }
+                        />
+                        <Route
+                            path="/events-list"
+                            element={
+                                <AdminOnly>
+                                    <AdminEventsListPage />
+                                </AdminOnly>
+                            }
+                        />
+                        <Route
+                            path="/profile"
+                            element={
+                                <AuthOnly>
+                                    <Profile />
+                                </AuthOnly>
+                            }
+                        />
+                        <Route
+                            path="/saved-events"
+                            element={
+                                <AuthOnly>
+                                    <SavedEvents />
+                                </AuthOnly>
+                            }
+                        />
+                        <Route
+                            path="/logout"
+                            element={
+                                <AuthOnly>
+                                    <LogOutPage />
+                                </AuthOnly>
+                            }
+                        />
+                    </Routes>
+                </div>
+            </AuthContextProvider>
+        </SavedEventsProvider>
+    );
 }
 
 export default App;

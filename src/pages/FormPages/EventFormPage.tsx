@@ -49,8 +49,8 @@ const eventSchema = z.object({
     // image: z.union([z.instanceof(File), z.null()]),
     ageGroup: z.enum(ageGroups),
     category: z.enum(categoryValues),
-    email: z.union([z.string().email(), z.literal("")]).optional(),
-    website: z.union([z.string().url(), z.literal("")]).optional(),
+    email: z.union([z.string().email(), z.literal('')]).optional(),
+    website: z.union([z.string().url(), z.literal('')]).optional()
 });
 
 type EventData = z.infer<typeof eventSchema>;
@@ -77,7 +77,7 @@ const EventForm: React.FC = () => {
     });
 
     const { signedInUserInfo } = useAuth();
-    
+
     if (!isLoaded) return <div>Loading...</div>;
 
     const onSubmit = async (data: EventData) => {
@@ -93,18 +93,15 @@ const EventForm: React.FC = () => {
 
         const eventDateTime = data.eventDateTime ? new Date(data.eventDateTime) : new Date();
 
-
-
         const eventData = {
             ...data,
             imageUrl,
             eventDateTime: Timestamp.fromDate(eventDateTime),
             isApproved: signedInUserInfo && signedInUserInfo.isAdmin,
-            createdAt: serverTimestamp(),
+            createdAt: serverTimestamp()
         };
 
         try {
-            
             await addDoc(eventsCol, eventData as Event);
             setValue('name', ''); // Reset the name field value
             setValue('description', ''); // Reset the description field value
@@ -134,9 +131,9 @@ const EventForm: React.FC = () => {
         }
     };
 
-     errors;
+    errors;
     isSubmitting;
-     eventsCol;
+    eventsCol;
     return (
         <Box sx={{ width: { xs: '80%', sm: '60%', md: '40%' }, margin: 'auto' }}>
             {' '}

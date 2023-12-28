@@ -36,24 +36,18 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     position: 'sticky', // Changed from 'static' to 'sticky'
     top: 0, // Ensures the AppBar sticks to the top
-    zIndex: + 1, // Ensure AppBar stays on top of other content, like a drawer
+    zIndex: +1, // Ensure AppBar stays on top of other content, like a drawer
     [theme.breakpoints.up('sm')]: {
         marginBottom: theme.spacing(4)
     }
 }));
-
 
 const Navbar: React.FC = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const [drawerOpen, setDrawerOpen] = useState(false);
     const navigate = useNavigate();
-    const {
-        signedInUser,
-        signOutUser,
-        signedInUserName,
-        signedInUserPhotoUrl
-    } = useAuth();
+    const { signedInUserInfo, signedInUser, signOutUser, signedInUserName, signedInUserPhotoUrl } = useAuth();
     const { savedEventsCount } = useSavedEvents();
 
     const handleDrawerToggle = () => {
@@ -87,17 +81,10 @@ const Navbar: React.FC = () => {
                         <Button color="inherit">About</Button>
                         {signedInUser ? (
                             <>
-                                <Button
-                                    color="inherit"
-                                    component={NavLink}
-                                    to="/profile">
+                                <Button color="inherit" component={NavLink} to="/profile">
                                     Profile
                                 </Button>
-
-                                <Button
-                                    color="inherit"
-                                    component={NavLink}
-                                    to="/event-form">
+                                <Button color="inherit" component={NavLink} to="/event-form">
                                     Tip Us!
                                 </Button>
                                 <Badge
@@ -114,71 +101,55 @@ const Navbar: React.FC = () => {
                                             transform: 'scale(1)'
                                         }
                                     }}>
-                                    <Button
-                                        color="inherit"
-                                        component={NavLink}
-                                        to="/saved-events">
+                                    <Button color="inherit" component={NavLink} to="/saved-events">
                                         Saved Events
                                     </Button>
                                 </Badge>
-                                <IconButton
-                                    color="inherit"
-                                    component={NavLink}
-                                    to="/profile"
-                                    sx={{ p: 0, marginLeft: 2 }}>
+                                    {/* <Typography
+                                                    variant="subtitle1"
+                                                    component="span"
+                                                    sx={{ marginLeft: 1 }}>
+                                                    {signedInUserName}
+                                        </Typography> */}
+                                    {signedInUserInfo && signedInUserInfo.isAdmin && (
+                                    
+                                        <Button color="inherit" component={NavLink} to="/events-list">
+                                            Events List
+                                        </Button>
+                                        
+                                    
+                                    )}
+                                <IconButton color="inherit" component={NavLink} to="/profile" sx={{ p: 0, marginLeft: 2 }}>
                                     <Avatar
                                         src={signedInUserPhotoUrl || undefined}
                                         alt={signedInUserName || 'Profile'}
                                         sx={{ width: 50, height: 50 }}
                                     />
                                 </IconButton>
-                                {/* <Typography
-                                                variant="subtitle1"
-                                                component="span"
-                                                sx={{ marginLeft: 1 }}>
-                                                {signedInUserName}
-                                            </Typography> */}
                                 <Button color="inherit" onClick={handleLogout}>
                                     Logout
                                 </Button>
                             </>
                         ) : (
                             <>
-                                <Button
-                                    color="inherit"
-                                    component={NavLink}
-                                    to="/register">
+                                <Button color="inherit" component={NavLink} to="/register">
                                     Register
                                 </Button>
-                                <Button
-                                    color="inherit"
-                                    component={NavLink}
-                                    to="/login">
+                                <Button color="inherit" component={NavLink} to="/login">
                                     Login
                                 </Button>
                             </>
                         )}
                     </Box>
                     <Box display={isMobile ? 'block' : 'none'}>
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            edge="start"
-                            onClick={handleDrawerToggle}>
+                        <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle}>
                             <MenuIcon />
                         </IconButton>
                     </Box>
                 </Toolbar>
             </Container>
-            <StyledDrawer
-                anchor="left"
-                open={drawerOpen}
-                onClose={handleDrawerToggle}>
-                <IconButton
-                    onClick={handleDrawerToggle}
-                    color="inherit"
-                    aria-label="close drawer"
-                    sx={{ alignSelf: 'flex-end', marginRight: 2 }}>
+            <StyledDrawer anchor="left" open={drawerOpen} onClose={handleDrawerToggle}>
+                <IconButton onClick={handleDrawerToggle} color="inherit" aria-label="close drawer" sx={{ alignSelf: 'flex-end', marginRight: 2 }}>
                     <CloseIcon />
                 </IconButton>
                 <List sx={{ width: '100%' }}>
@@ -205,18 +176,14 @@ const Navbar: React.FC = () => {
                         </Box>
                     )}
                     <ListItem>
-                        <ListItemButton
-                            onClick={handleDrawerToggle}
-                            sx={{ justifyContent: 'center' }}>
+                        <ListItemButton onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
                             <Button color="inherit" component={NavLink} to="/">
                                 Home
                             </Button>
                         </ListItemButton>
                     </ListItem>
                     <ListItem>
-                        <ListItemButton
-                            onClick={handleDrawerToggle}
-                            sx={{ justifyContent: 'center' }}>
+                        <ListItemButton onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
                             <Button color="inherit">About</Button>
                         </ListItemButton>
                     </ListItem>
@@ -225,38 +192,22 @@ const Navbar: React.FC = () => {
                         // Logged-in user menu items
                         <>
                             <ListItem>
-                                <ListItemButton
-                                    component={NavLink}
-                                    to="/profile"
-                                    onClick={handleDrawerToggle}
-                                    sx={{ justifyContent: 'center' }}>
+                                <ListItemButton component={NavLink} to="/profile" onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
                                     <Button color="inherit">Profile</Button>
                                 </ListItemButton>
                             </ListItem>
                             <ListItem>
-                                <ListItemButton
-                                    component={NavLink}
-                                    to="/event-form"
-                                    onClick={handleDrawerToggle}
-                                    sx={{ justifyContent: 'center' }}>
+                                <ListItemButton component={NavLink} to="/event-form" onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
                                     <Button color="inherit">Tip Us!</Button>
                                 </ListItemButton>
                             </ListItem>
                             <ListItem>
-                                <ListItemButton
-                                    component={NavLink}
-                                    to="/saved-events"
-                                    onClick={handleDrawerToggle}
-                                    sx={{ justifyContent: 'center' }}>
-                                    <Button color="inherit">
-                                        Saved Events ({savedEventsCount})
-                                    </Button>
+                                <ListItemButton component={NavLink} to="/saved-events" onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
+                                    <Button color="inherit">Saved Events ({savedEventsCount})</Button>
                                 </ListItemButton>
                             </ListItem>
                             <ListItem>
-                                <ListItemButton
-                                    onClick={handleLogout}
-                                    sx={{ justifyContent: 'center' }}>
+                                <ListItemButton onClick={handleLogout} sx={{ justifyContent: 'center' }}>
                                     <Button color="inherit">Logout</Button>
                                 </ListItemButton>
                             </ListItem>
@@ -265,20 +216,12 @@ const Navbar: React.FC = () => {
                         // Non-logged-in user menu items
                         <>
                             <ListItem>
-                                <ListItemButton
-                                    component={NavLink}
-                                    to="/login"
-                                    onClick={handleDrawerToggle}
-                                    sx={{ justifyContent: 'center' }}>
+                                <ListItemButton component={NavLink} to="/login" onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
                                     <Button color="inherit">Login</Button>
                                 </ListItemButton>
                             </ListItem>
                             <ListItem>
-                                <ListItemButton
-                                    component={NavLink}
-                                    to="/register"
-                                    onClick={handleDrawerToggle}
-                                    sx={{ justifyContent: 'center' }}>
+                                <ListItemButton component={NavLink} to="/register" onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
                                     <Button color="inherit">Register</Button>
                                 </ListItemButton>
                             </ListItem>
