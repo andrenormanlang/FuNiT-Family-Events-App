@@ -52,6 +52,10 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
 
     const reloadUser = async () => {
         if (!auth.currentUser) {
+            // setSignedInUser(null);
+            // setSignedInUserEmail(null);
+            // setSignedInUserName(null);
+            // setSignedInUserPhotoUrl(null);
             return false;
         }
 
@@ -172,6 +176,7 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
                 setSignedInUserName(user.displayName);
                 setSignedInUserPhotoUrl(user.photoURL);
             } else {
+                
                 setSignedInUserEmail(null);
                 setSignedInUserName(null);
                 setSignedInUserPhotoUrl(null);
@@ -201,7 +206,7 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
                 signedInUserPhotoUrl
             }}>
             {isLoading ? (
-                <div className="flex justify-center items-center h-screen">
+                <div className="flex justify-center items-center">
                     <CircularProgress />
                 </div>
             ) : (

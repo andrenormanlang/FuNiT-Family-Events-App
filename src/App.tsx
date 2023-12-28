@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './pages/partials/Navigation';
 import EventGrid from './pages/EventGrid/EventGrid';
 import EventForm from './pages/FormPages/EventFormPage';
+import FourOFour from './pages/UserPages/404Page';
 import './assets/scss/App.scss';
 import EventPage from './pages/EventPage/EventPage';
 import SignUp from './pages/UserPages/SignUp';
@@ -26,6 +27,7 @@ function App() {
                     <Navbar />
                     <Routes>
                         {/* Unprotected Routes */}
+                        {/* <Route path='*' element={< FourOFour />} /> */}
                         <Route path="/:id" element={<EventPage />} />
                         <Route path="/" element={<EventGrid />} />
                         <Route path="/register" element={<SignUp />} />
@@ -73,6 +75,8 @@ function App() {
                                 </AuthOnly>
                             }
                         />
+                        <Route path="/404" element={<FourOFour />} />
+                        <Route path='*' element={< FourOFour />} />
                     </Routes>
                 </div>
             </AuthContextProvider>

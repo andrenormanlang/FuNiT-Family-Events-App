@@ -12,7 +12,7 @@ const AdminOnly: React.FC<IProps> = ({ children, redirectTo = '/' }) => {
 
     if (!signedInUserInfo) {
         return (
-            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+            <Box display="flex" justifyContent="center" alignItems="center" height="">
                 <Box textAlign="center">
                     <CircularProgress />
                     <Typography variant="h6" marginTop={2}>

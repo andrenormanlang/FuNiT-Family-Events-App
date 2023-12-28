@@ -12,38 +12,30 @@ const useStreamEvents = () => {
 
     useEffect(() => {
         const eventsCol = collection(db, 'events');
-        // const q = query(eventsCol);
-
+    
         let q;
         if (signedInUserInfo?.isAdmin) {
-            // Admins see all events
             q = query(eventsCol, orderBy('eventDateTime', 'asc'));
         } else {
-            // Non-admins see only approved events
             q = query(eventsCol, where('isApproved', '==', true), orderBy('eventDateTime', 'asc'));
         }
-
-        const unsubscribe = onSnapshot(
-            q,
-            (snapshot) => {
-                const eventData = snapshot.docs.map((doc) => ({
-                    ...(doc.data() as AppEvent),
-                    id: doc.id
-                }));
-                console.log("Fetched events:", eventData);
-                setEvents(eventData);
-                setIsLoading(false);
-            },
-            
-            (err) => { 
-                console.error('Error getting events: ', err);             
-                setError(err.message);
-                setIsLoading(false);
+    
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const eventData = snapshot.docs.map(doc => ({ ...(doc.data() as AppEvent), id: doc.id }));
+            setEvents(eventData);
+            setIsLoading(false);
+        }, (err) => {
+            setError(err.message);
+            setIsLoading(false);
+        });
+    
+        // Unsubscribe when the component unmounts or dependencies change
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
             }
-        );
-
-        return () => unsubscribe();
-    }, [signedInUserInfo?.isAdmin]);
+        };
+    }, [signedInUserInfo?.isAdmin, signedInUserInfo?.uid]); 
 
     return { events, isLoading, error };
 };

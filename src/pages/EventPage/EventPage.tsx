@@ -48,7 +48,7 @@ const EventPage = () => {
     const [event, setEvent] = useState<Event | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
-    const { signedInUser } = useAuth();
+    const { signedInUser, signedInUserInfo } = useAuth();
     const [isSaved, setIsSaved] = useState(false);
     const { updateSavedEventsCount } = useSavedEvents();
 
@@ -63,14 +63,15 @@ const EventPage = () => {
                 try {
                     const docRef = doc(db, 'events', id);
                     const docSnap = await getDoc(docRef);
-
                     if (docSnap.exists()) {
-                        // Combine the document ID with the document's data into one object
                         const eventData = { id: docSnap.id, ...docSnap.data() } as Event;
-                        setEvent(eventData);
+                        if (eventData.isApproved || (signedInUser && signedInUserInfo?.isAdmin)) {
+                            setEvent(eventData);
+                        } else {
+                            navigate('/404'); 
+                        }                  
                     } else {
-                        setError('No such document!');
-                        `No such document with id: ${id}`;
+                        navigate('/404'); 
                     }
                 } catch (err) {
                     setError('An error occurred while fetching the event.');
@@ -263,4 +264,5 @@ const EventPage = () => {
 };
 
 export default EventPage;
+
 

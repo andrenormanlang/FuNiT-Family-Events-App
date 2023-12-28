@@ -55,8 +55,15 @@ const Navbar: React.FC = () => {
     };
 
     const handleLogout = async () => {
-        await signOutUser();
-        navigate('/');
+        try {
+            await signOutUser(); // Sign out the user
+            navigate('/login'); // Redirect to the home page
+            window.location.reload(); 
+            // Optionally, you can trigger a UI state update or display a success message
+        } catch (error) {
+            console.error('Error during logout:', error);
+            // Handle error, e.g., show an error message to the user
+        }
     };
 
     return (

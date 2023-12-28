@@ -108,7 +108,11 @@ const SavedEvents = () => {
     return (
         <Box display="flex" justifyContent="center" marginTop={2}>
             {isLoading ? (
-                <CircularProgress /> // Show the spinner while fetching data
+                <Grid container justifyContent="center" alignItems="center" >
+                <Grid item>
+                    <CircularProgress />
+                </Grid>
+            </Grid>
             ) : savedEvents.length === 0 ? (
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     You have no saved events at the moment.
