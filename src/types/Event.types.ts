@@ -5,9 +5,10 @@ export type Event = {
     address: string;
     ageGroup: string;
     category: Category;
+    createdAt: Timestamp;
     eventDateTime: Timestamp;
-    eventDateStart: Timestamp;
-    eventDateEnd: Timestamp;
+    // eventDateStart: Timestamp;
+    // eventDateEnd: Timestamp;
     description: string;
     email?: string;
     isApproved: boolean;
@@ -21,9 +22,10 @@ export type AppEvent = {
     address: string;
     ageGroup: string;
     category: Category;
+    createdAt: Timestamp
     eventDateTime: Timestamp;
-    eventDateStart: Timestamp;
-    eventDateEnd: Timestamp;
+    // eventDateStart: Timestamp;
+    // eventDateEnd: Timestamp;
     description: string;
     email?: string;
     isApproved: boolean;

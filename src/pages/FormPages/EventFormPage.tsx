@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp, serverTimestamp } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,6 +12,8 @@ import { eventsCol, storage } from '../../services/firebase';
 import { addDoc } from 'firebase/firestore';
 import { Libraries, useLoadScript } from '@react-google-maps/api';
 import PlacesAutocomplete from '../../helpers/PlacesAutoComplete';
+import { Event } from '../../types/Event.types';
+import useAuth from '../../hooks/useAuth';
 
 const libraries: Libraries = ['places'];
 
@@ -74,6 +76,8 @@ const EventForm: React.FC = () => {
         libraries
     });
 
+    const { signedInUserInfo } = useAuth();
+    
     if (!isLoaded) return <div>Loading...</div>;
 
     const onSubmit = async (data: EventData) => {
@@ -89,16 +93,19 @@ const EventForm: React.FC = () => {
 
         const eventDateTime = data.eventDateTime ? new Date(data.eventDateTime) : new Date();
 
+
+
         const eventData = {
             ...data,
             imageUrl,
-            eventDateTime: Timestamp.fromDate(eventDateTime)
+            eventDateTime: Timestamp.fromDate(eventDateTime),
+            isApproved: signedInUserInfo && signedInUserInfo.isAdmin,
+            createdAt: serverTimestamp(),
         };
 
         try {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            await addDoc(eventsCol, eventData);
+            
+            await addDoc(eventsCol, eventData as Event);
             setValue('name', ''); // Reset the name field value
             setValue('description', ''); // Reset the description field value
             setValue('eventDateTime', new Date()); // Reset the eventDateTime field value
