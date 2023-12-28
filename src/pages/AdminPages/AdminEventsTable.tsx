@@ -1,21 +1,19 @@
-import { DataGrid, GridRenderCellParams, GridRowId } from '@mui/x-data-grid';
+import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 // import { Button } from '@mui/material';
 import { formatDate } from '../../helpers/FormatDate';
 import { simpleAddress } from '../../helpers/SimpleAddress';
 import { AppEvent } from '../../types/Event.types';
 import { doc, updateDoc } from 'firebase/firestore';
-import { Button } from '@mui/material';
+import {  Switch } from '@mui/material';
 import { db } from '../../services/firebase';
 
 const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
-    const handleApprove = async (eventId: GridRowId) => {
-        // Type GridRowId for eventId
-        const eventDocRef = doc(db, 'events', eventId as string); // Casting eventId to string
-        await updateDoc(eventDocRef, {
-            isApproved: true
-        });
-    };
-
+  const handleApproval = async (eventId: string, isCurrentlyApproved: boolean) => {
+    const eventDocRef = doc(db, 'events', eventId as string);
+    await updateDoc(eventDocRef, {
+        isApproved: !isCurrentlyApproved
+    });
+};
     const columns = [
         { field: 'name', headerName: 'Name', width: 200 },
         {
@@ -33,15 +31,17 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
         { field: 'category', headerName: 'Category', width: 200 },
         { field: 'ageGroup', headerName: 'Age Group', width: 100 },
         {
-            field: 'isApproved',
-            headerName: 'Rendered?',
-            renderCell: (params: GridRenderCellParams) => (
-              <Button onClick={() => handleApprove(params.id)} variant="contained" color="primary">
-                  Approve
-              </Button>
+          field: 'isApproved',
+          headerName: 'Approved?',
+          renderCell: (params: GridRenderCellParams) => (
+              <Switch
+                  checked={params.value as boolean}
+                  onChange={() => handleApproval(params.id as string, params.value as boolean)}
+                  color="primary"
+              />
           ),
-            width: 100
-        }
+          width: 100
+      }
 
         // {
         //   field: 'edit',

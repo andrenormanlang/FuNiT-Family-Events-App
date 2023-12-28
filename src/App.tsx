@@ -14,6 +14,7 @@ import Profile from './pages/UserPages/Profile/ProfilePage';
 import AuthContextProvider from './contexts/AuthContextProvider';
 import AdminEventsListPage from './pages/AdminPages/AdminReviewList';
 import AdminOnly from './components/Auth/AdminOnly';
+import SendPassword from './pages/UserPages/SendPassword';
 
 function App() {
     return (
@@ -29,6 +30,7 @@ function App() {
                         <Route path="/" element={<EventGrid />} />
                         <Route path="/register" element={<SignUp />} />
                         <Route path="/login" element={<LogInPage />} />
+                        <Route path="/forgot-password" element={<SendPassword />} />
 
                         {/* Protected Routes */}
                         <Route
