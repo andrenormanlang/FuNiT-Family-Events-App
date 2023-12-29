@@ -158,6 +158,10 @@ const EventEditPage = () => {
         }
     };
 
+    const handleGoBack = () => {
+        navigate('/'); // Navigates to the homepage
+    };
+
     if (isLoading) return <CircularProgress />;
     if (error) return <Alert severity="error">{error}</Alert>;
     if (!event) return <div>Loading event data...</div>; // Show loading state until event data is available
@@ -168,6 +172,7 @@ const EventEditPage = () => {
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
             <Box sx={{ width: { xs: '80%', sm: '60%', md: '70%' }, margin: 'auto', p: 3 }}>
+            
                 <Grid container spacing={2} justifyContent="center">
                     <Grid item xs={12} md={6}>
                         <Card>
@@ -175,6 +180,9 @@ const EventEditPage = () => {
                                 <Typography variant="h4" gutterBottom>
                                     Edit Event
                                 </Typography>
+                                <Button onClick={handleGoBack} color="secondary" variant="contained" sx={{ mb: 2 }}>
+        Go Back
+    </Button>
                                 {event && (
                                     <form
                                         onSubmit={(e) => {
