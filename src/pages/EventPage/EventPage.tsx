@@ -95,7 +95,7 @@ const EventPage = () => {
 
         fetchEvent();
         checkIfEventIsSaved();
-    }, [id]);
+    }, [id, navigate, signedInUser, signedInUserInfo?.isAdmin]);
 
     if (isLoading) {
         return (
@@ -185,10 +185,10 @@ const EventPage = () => {
         navigate('/'); // Navigate to the homepage
     };
 
-   event;
-     event.id;
+    event;
+    event.id;
     auth.currentUser;
-     event;
+    event;
 
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

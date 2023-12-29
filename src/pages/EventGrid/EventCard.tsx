@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Event } from '../../types/Event.types';
-import {Box} from '@mui/material';
+import {Box, Button} from '@mui/material';
 import { CardMedia } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
 import { useState } from 'react';
@@ -12,9 +12,10 @@ import { useTheme } from '@mui/material/styles';
 interface EventCardProps {
     event: Event;
     isSaved: boolean;
+    isAdmin: boolean;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event, isSaved }) => {
+const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin  }) => {
     const navigate = useNavigate(); // or const history = useHistory(); in v5
 
     const theme = useTheme();
@@ -31,6 +32,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved }) => {
     const handleCardClick = () => {
         setIsClicked(!isClicked);
         navigate(`/${event.id}`); // Use event.id or the appropriate identifier
+    };
+
+    const handleEditClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevents the card click event
+        navigate(`/edit-event/${event.id}`);
     };
 
     return (
@@ -52,6 +58,26 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved }) => {
                 })
             }}
             onClick={handleCardClick}>
+             {/* Edit Button */}
+             {isAdmin && (
+                <Button
+                    onClick={handleEditClick}
+                    sx={{
+                        position: 'unset',
+                        top: 8,
+                        right: 8,
+                        bgcolor: 'primary.main',
+                        color: 'white',
+                        '&:hover': {
+                            bgcolor: 'primary.dark',
+                        },
+                        
+                    }}>
+                    Edit
+                </Button>
+            
+            )}
+            {/* Rest of the card content */}
             <Box position="relative">
                 <CardMedia
                     component="img"

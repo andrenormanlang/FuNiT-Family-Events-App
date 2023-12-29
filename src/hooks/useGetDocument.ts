@@ -1,46 +1,56 @@
-import { CollectionReference, doc, getDoc } from 'firebase/firestore'
-import { useCallback, useEffect, useState } from 'react'
+import { CollectionReference, doc, getDoc } from 'firebase/firestore';
+import { useCallback, useEffect, useState } from 'react';
 
 const useGetDocument = <T>(colRef: CollectionReference<T>, documentId: string) => {
-	const [data, setData] = useState<T|null>(null)
-	const [error, setError] = useState(false)
-	const [loading, setLoading] = useState(true)
+    const [data, setData] = useState<T | null>(null);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-	const getData = useCallback(async () => {
-		setError(false)
-		setLoading(true)
+    const getData = useCallback(async () => {
+        setError(false);
+        setLoading(true);
 
-		const docRef = doc(colRef, documentId)
-		const docSnapshot = await getDoc(docRef)
+        console.log(`Fetching document with ID: ${documentId}`); // Log the document ID
 
-		if (!docSnapshot.exists()) {
-			setData(null)
-			setError(true)
-			setLoading(false)
-			return
-		}
+        const docRef = doc(colRef, documentId);
+        try {
+            const docSnapshot = await getDoc(docRef);
 
-		const data: T = {
-			...docSnapshot.data(),
-			_id: docSnapshot.id
-		}
+            if (!docSnapshot.exists()) {
+                console.log('Document does not exist.'); // Log when the document does not exist
+                setData(null);
+                setError(true);
+                setLoading(false);
+                return;
+            }
 
-		setData(data)
-		setLoading(false)
-	}, [colRef, documentId])
+            const data: T = {
+                ...docSnapshot.data(),
+                _id: docSnapshot.id
+            };
 
-	useEffect(() => {
-		if (documentId) {
-			getData()
-		}
-	}, [documentId, getData])
+            console.log('Document fetched:', data); // Log the fetched data
+            setData(data);
+        } catch (err) {
+            console.error('Error fetching document:', err); // Log any errors that occur during fetch
+            setError(true);
+        } finally {
+            setLoading(false);
+        }
+    }, [colRef, documentId]);
 
-	return {
-		data,
-		error,
-		getData,
-		loading,
-	}
-}
+    useEffect(() => {
+        if (documentId) {
+            getData();
+        }
+    }, [documentId, getData]);
 
-export default useGetDocument
+    return {
+        data,
+        error,
+        getData,
+        loading
+    };
+};
+
+export default useGetDocument;

@@ -10,6 +10,7 @@ import { useTheme } from '@mui/material/styles';
 import Pagination from '../../components/MUI/Pagination'
 import { useSearchParams } from 'react-router-dom';
 import useStreamEvents from '../../hooks/useStreamEvents';
+import useAuth from '../../hooks/useAuth';
 
 
 const EventGrid = () => {
@@ -21,6 +22,7 @@ const EventGrid = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
   const itemsPerPage = 6; // Number of items per page
+  const { signedInUserInfo } = useAuth();
 
   // useEffect(() => {
     //  const fetchEvents = () => {
@@ -81,7 +83,7 @@ if (error) {
       <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1000px' }}>
         {eventsForPage.map((event) => (
           <Grid item key={event.id} xs={8} sm={7} md={4} lg={4} xl={4}>
-            <EventCard event={event} isSaved={savedEventIds.includes(event.id)} />
+            <EventCard event={event} isSaved={savedEventIds.includes(event.id)} isAdmin={signedInUserInfo?.isAdmin || false}/>
           </Grid>
         ))}
       </Grid>

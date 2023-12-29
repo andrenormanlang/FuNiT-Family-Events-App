@@ -1,6 +1,7 @@
 import { Timestamp } from 'firebase/firestore'
 
 export type Event = {
+    updatedAt: any;
     id: string;
     address: string;
     ageGroup: string;
