@@ -185,10 +185,11 @@ const EventForm: React.FC = () => {
                     defaultValue=""
                     render={({ field }) => (
                         <PlacesAutocomplete
-                            field={field}
-                            /* selectedCity={selectedCity} */ error={!!errors.address}
+                            value={field.value}
+                            onChange={field.onChange}
+                            error={!!errors.address}
                             helperText={errors.address?.message}
-                            selectedCity={''}
+                            selectedCity={''} // You can provide a dynamic value if needed
                         />
                     )}
                 />

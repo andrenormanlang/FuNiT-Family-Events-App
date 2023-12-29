@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Timestamp, doc, getDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { Timestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { storage } from '../../services/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db } from '../../services/firebase';
-import { Event } from '../../types/Event.types';
+import { Category, Event } from '../../types/Event.types';
 import useAuth from '../../hooks/useAuth';
 import {
     Box,
@@ -23,10 +23,11 @@ import {
     FormControlLabel,
     Switch
 } from '@mui/material';
-import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import PlacesAutocomplete from '../../helpers/PlacesAutoComplete'; // Import your PlacesAutocomplete component
 import { useLoadScript } from '@react-google-maps/api';
+import { FirebaseError } from 'firebase/app';
 
 // Age Groups and Category values
 const ageGroups = ['1-3 Years', '4-6 Years', '7-9 Years', '7-12 Years', '10-12 Years', 'All Ages'];
@@ -72,10 +73,9 @@ const EventEditPage = () => {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     const eventData = { id: docSnap.id, ...docSnap.data() } as Event;
-                    // console.log("Fetched address:", eventData.address); 
+                    // console.log("Fetched address:", eventData.address);
                     setEvent(eventData);
                     setEventDate(eventData.eventDateTime.toDate());
-                    
                 } else {
                     navigate('/404');
                 }
@@ -96,7 +96,6 @@ const EventEditPage = () => {
         }
     }, [event]); // Dependency on event
 
-
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const file = e.target.files[0];
@@ -111,7 +110,7 @@ const EventEditPage = () => {
         }
     };
 
-    const handleAddressChange = (value) => {
+    const handleAddressChange = (value: string) => {
         setAddress(value);
         setEvent((prevEvent) => (prevEvent ? { ...prevEvent, address: value } : null));
     };
@@ -125,15 +124,19 @@ const EventEditPage = () => {
             const updatedEvent = {
                 ...event,
                 eventDateTime: Timestamp.fromDate(eventDate),
-                updatedAt: serverTimestamp()
+                updatedAt: Timestamp.fromDate(new Date()),
             };
 
             const docRef = doc(db, 'events', id);
             await updateDoc(docRef, updatedEvent);
             alert('Event updated successfully!');
             navigate('/');
-        } catch (err) {
-            setError('Error updating event: ' + err.message);
+        } catch (error) {
+            if (error instanceof FirebaseError) {
+                setError(error.message);
+            } else {
+                setError('An error occurred');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -145,7 +148,6 @@ const EventEditPage = () => {
     if (!isLoaded) {
         return <div>Loading Addresses...</div>; // Display loading message until the script is loaded
     }
-
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -187,7 +189,7 @@ const EventEditPage = () => {
                                         <Box sx={{ mb: 2 }}>
                                             <input type="file" onChange={handleImageUpload} accept="image/*" />
                                         </Box>
-                                        <DatePicker
+                                        <DateTimePicker
                                             label="Event Date"
                                             value={eventDate}
                                             onChange={(newDate) => setEventDate(newDate)}
@@ -197,7 +199,13 @@ const EventEditPage = () => {
                                         <Typography variant="body1" gutterBottom sx={{ mb: 0 }}>
                                             Current Address: {event.address}
                                         </Typography>
-                                        <PlacesAutocomplete value={address} onChange={handleAddressChange} />
+                                        <PlacesAutocomplete
+                                            value={address} 
+                                            onChange={handleAddressChange} 
+                                            error={!!error}
+                                            helperText={error}
+                                            selectedCity={''} 
+                                        />
                                         <FormControl fullWidth margin="normal">
                                             <InputLabel>Age Group</InputLabel>
                                             <Select
@@ -214,9 +222,9 @@ const EventEditPage = () => {
                                         <FormControl fullWidth margin="normal">
                                             <InputLabel>Category</InputLabel>
                                             <Select
-                                                value={event.category || categoryValues[0]} // Fallback to default if no category is set
+                                                value={event.category || categoryValues[0]}
                                                 label="Category"
-                                                onChange={(e) => setEvent({ ...event, category: e.target.value })}>
+                                                onChange={(e) => setEvent({ ...event, category: e.target.value as Category })}>
                                                 {categoryValues.map((category, index) => (
                                                     <MenuItem key={index} value={category}>
                                                         {category}
@@ -251,7 +259,7 @@ const EventEditPage = () => {
                                             Created At: {event.createdAt.toDate().toLocaleString()}
                                         </Typography>
                                         <Typography variant="body1" gutterBottom>
-                                            Updated At: {event.updatedAt.toDate().toLocaleString()}
+                                        Updated At: {event.updatedAt ? event.updatedAt.toDate().toLocaleString() : 'Never Updated'}
                                         </Typography>
                                         <Button type="submit" variant="contained" color="primary" disabled={isLoading} sx={{ mt: 2 }}>
                                             Update Event

@@ -91,16 +91,14 @@ import usePlacesAutocomplete from 'use-places-autocomplete';
 import { TextField, List, ListItem, CircularProgress } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-interface FieldProps {
-  name: string;
-  value: string;
-  onChange: (value: string) => void;
-}
+
 
 interface Props {
-    field:  FieldProps; 
-    error: boolean; 
-    helperText: string | undefined; 
+  value: string;
+  onChange: (value: string) => void;
+  error: boolean;
+  helperText: string | undefined;
+  selectedCity?: string; // Make selectedCity optional
 }
 
 interface Suggestion {
@@ -113,7 +111,7 @@ interface ComponentState {
     isLoading: boolean;
   }
 
-  const PlacesAutocomplete: React.FC<Props & { selectedCity: string }> = ({ field, selectedCity, error, helperText }) => {
+  const PlacesAutocomplete: React.FC<Props & { value: string, onChange: (value: string) => void }> = ({  onChange, error, helperText, selectedCity = 'DefaultCity' })  => {
 
   const [requestOptions, setRequestOptions] = useState({});
 
@@ -170,15 +168,16 @@ interface ComponentState {
     isLoading: ready === false,
   };
 
-  const handleInput = (e: { target: { value: string; }; }) => {
-    setValue(e.target.value);
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setValue(newValue);
+    onChange(newValue);  // Call the passed onChange function
   };
 
-  const handleSelect = ({ description }: Suggestion) => async () => {
+  const handleSelect = ({ description }: Suggestion) => () => {
     setValue(description, false);
     clearSuggestions();
-    field.onChange(description); 
-
+    onChange(description);  // Call the passed onChange function
   };
 
   const filteredSuggestions = data.filter(suggestion => 
@@ -188,7 +187,6 @@ interface ComponentState {
   return (
     <div>
       <TextField
-        {...field}
         value={value}
         onChange={handleInput}
         error={error}

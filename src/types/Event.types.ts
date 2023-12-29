@@ -1,12 +1,12 @@
 import { Timestamp } from 'firebase/firestore'
 
 export type Event = {
-    updatedAt: any;
     id: string;
     address: string;
     ageGroup: string;
     category: Category;
     createdAt: Timestamp;
+    updatedAt: Timestamp;
     eventDateTime: Timestamp;
     // eventDateStart: Timestamp;
     // eventDateEnd: Timestamp;
@@ -23,7 +23,8 @@ export type AppEvent = {
     address: string;
     ageGroup: string;
     category: Category;
-    createdAt: Timestamp
+    createdAt: Timestamp;
+    updatedAt: Timestamp;
     eventDateTime: Timestamp;
     // eventDateStart: Timestamp;
     // eventDateEnd: Timestamp;
