@@ -9,7 +9,7 @@ const AdminEventsListPage = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <Container maxWidth="lg"> {/* Set the maxWidth similar to Navbar */}
+    <Container maxWidth="xl"> {/* Set the maxWidth similar to Navbar */}
       <Typography variant="h4" component="h2" gutterBottom>
         Events Review List
       </Typography>

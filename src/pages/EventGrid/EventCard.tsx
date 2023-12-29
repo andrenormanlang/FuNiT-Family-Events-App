@@ -10,12 +10,14 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 
 interface EventCardProps {
+
     event: Event;
     isSaved: boolean;
     isAdmin: boolean;
+   
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin  }) => {
+const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
     const navigate = useNavigate(); // or const history = useHistory(); in v5
 
     const theme = useTheme();

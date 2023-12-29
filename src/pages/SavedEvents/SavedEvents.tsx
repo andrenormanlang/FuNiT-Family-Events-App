@@ -28,7 +28,8 @@ import {
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EventCard from '../EventGrid/EventCard';
 import { SavedEvent } from '../../types/SavedEvent.types';
-import { useSavedEvents } from '../../contexts/SavedEventsProvider'; // Import the hook
+import { useSavedEvents } from '../../contexts/SavedEventsProvider'; 
+
 
 const SavedEvents = () => {
     const [savedEvents, setSavedEvents] = useState<SavedEvent[]>([]);
@@ -45,7 +46,7 @@ const SavedEvents = () => {
             const q = query(
                 collection(db, 'savedEvents'),
                 where('userId', '==', user.uid),
-                orderBy('eventData.eventDateTime', 'asc') // This line orders the results by the subfield 'eventDateTime' in ascending order.
+                orderBy('eventData.eventDateTime', 'asc') 
             );
             getDocs(q).then((querySnapshot) => {
                 const events = querySnapshot.docs.map(
@@ -135,8 +136,7 @@ const SavedEvents = () => {
                             <Box position="relative">
                                 <EventCard
                                     event={savedEvent.eventData}
-                                    isSaved={true}
-                                />{' '}
+                                    isSaved={true} isAdmin={false} />{' '}
                                 {/* Pass isSaved as true */}
                                 <Tooltip title="Unsave Event" placement="top">
                                     <IconButton

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Timestamp, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { Timestamp, collection, doc, getDoc, getDocs, query, where, writeBatch } from 'firebase/firestore';
 import { storage } from '../../services/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db } from '../../services/firebase';
@@ -117,18 +117,34 @@ const EventEditPage = () => {
 
     const handleEventSubmit = async () => {
         if (!event || !id || !eventDate) return;
-
+    
         setIsLoading(true);
-
+    
         try {
             const updatedEvent = {
                 ...event,
                 eventDateTime: Timestamp.fromDate(eventDate),
                 updatedAt: Timestamp.fromDate(new Date()),
             };
-
-            const docRef = doc(db, 'events', id);
-            await updateDoc(docRef, updatedEvent);
+    
+            // Start a batch
+            const batch = writeBatch(db);
+    
+            // Update the main event
+            const eventRef = doc(db, 'events', id);
+            batch.update(eventRef, updatedEvent);
+    
+            // Find and update all savedEvents that reference this event
+            const q = query(collection(db, 'savedEvents'), where('eventId', '==', id));
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((docSnapshot) => {
+                const savedEventRef = docSnapshot.ref;
+                batch.update(savedEventRef, { eventData: updatedEvent });
+            });
+    
+            // Commit the batch
+            await batch.commit();
+    
             alert('Event updated successfully!');
             navigate('/');
         } catch (error) {

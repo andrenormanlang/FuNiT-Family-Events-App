@@ -19,7 +19,7 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
         {
             field: 'eventDateTime',
             headerName: 'Date',
-            width: 100,
+            width: 150,
             renderCell: (params: GridRenderCellParams) => formatDate(params.value)
         },
         {
@@ -30,6 +30,18 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
         },
         { field: 'category', headerName: 'Category', width: 200 },
         { field: 'ageGroup', headerName: 'Age Group', width: 100 },
+        {
+            field: 'createdAt',
+            headerName: 'Created',
+            width: 150,
+            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
+        },
+        {
+            field: 'updatedAt',
+            headerName: 'Updated',
+            width: 150,
+            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
+        },
         {
           field: 'isApproved',
           headerName: 'Approved?',
