@@ -181,6 +181,7 @@ const Navbar: React.FC = () => {
                                 {signedInUserName}
                             </Typography>
                         </Box>
+                        
                     )}
                     <ListItem>
                         <ListItemButton onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
@@ -213,6 +214,16 @@ const Navbar: React.FC = () => {
                                     <Button color="inherit">Saved Events ({savedEventsCount})</Button>
                                 </ListItemButton>
                             </ListItem>
+                            {signedInUserInfo && signedInUserInfo.isAdmin && (
+                                    
+                                    <ListItem>
+                                    <ListItemButton component={NavLink} to="/events-list" onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
+                                        <Button color="inherit">Events List</Button>
+                                    </ListItemButton>
+                                </ListItem>
+                                    
+                                
+                                )}
                             <ListItem>
                                 <ListItemButton onClick={handleLogout} sx={{ justifyContent: 'center' }}>
                                     <Button color="inherit">Logout</Button>

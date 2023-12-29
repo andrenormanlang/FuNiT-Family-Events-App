@@ -2,19 +2,20 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Event } from '../../types/Event.types';
-import {Box, Button} from '@mui/material';
+import { Box, Button, Tooltip } from '@mui/material';
 import { CardMedia } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../../services/firebase';
+import { Delete, Edit } from '@mui/icons-material';
 
 interface EventCardProps {
-
     event: Event;
     isSaved: boolean;
     isAdmin: boolean;
-   
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
@@ -41,6 +42,14 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
         navigate(`/edit-event/${event.id}`);
     };
 
+    const handleDeleteClick = async (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevents the card click event
+        if (window.confirm('Are you sure you want to delete this event?')) {
+            await deleteDoc(doc(db, 'events', event.id));
+            // Add additional logic if needed to update the UI or state
+        }
+    };
+
     return (
         <Card
             sx={{
@@ -60,25 +69,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                 })
             }}
             onClick={handleCardClick}>
-             {/* Edit Button */}
-             {isAdmin && (
-                <Button
-                    onClick={handleEditClick}
-                    sx={{
-                        position: 'unset',
-                        top: 8,
-                        right: 8,
-                        bgcolor: 'primary.main',
-                        color: 'white',
-                        '&:hover': {
-                            bgcolor: 'primary.dark',
-                        },
-                        
-                    }}>
-                    Edit
-                </Button>
-            
-            )}
+            {/* Edit Button */}
+
             {/* Rest of the card content */}
             <Box position="relative">
                 <CardMedia
@@ -90,6 +82,37 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                         objectFit: 'cover' // Ensure it takes the full width of the card
                     }}
                 />
+                {isAdmin && (
+                    <>
+                        {/* Edit Button */}
+                        <Tooltip title="Edit">
+            <Button 
+                onClick={handleEditClick} 
+                sx={{ 
+                    position: 'absolute', 
+                    top: 8, 
+                    left: 8, 
+                    color: 'yellow'
+                }}
+            >
+                <Edit />
+            </Button>
+        </Tooltip>
+        <Tooltip title="Delete">
+            <Button 
+                onClick={handleDeleteClick} 
+                sx={{ 
+                    position: 'absolute', 
+                    top: 8, 
+                    right: 8, 
+                    color: 'red'
+                }}
+            >
+                <Delete />
+            </Button>
+        </Tooltip>
+                    </>
+                )}
                 <Box position="absolute" bottom={0} left={0} bgcolor="linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5))" color="white">
                     <Box bgcolor="DarkCyan" color="white" p={1}>
                         <Typography variant="body1"> {date && date.toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}</Typography>

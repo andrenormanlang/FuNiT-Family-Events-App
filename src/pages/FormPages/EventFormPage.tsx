@@ -3,7 +3,21 @@ import { Timestamp, serverTimestamp } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Box, TextField, Button, CircularProgress, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
+import {
+    Box,
+    TextField,
+    Button,
+    CircularProgress,
+    MenuItem,
+    Select,
+    FormControl,
+    InputLabel,
+    FormHelperText,
+    Grid,
+    Card,
+    CardContent,
+    Container
+} from '@mui/material';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -135,156 +149,166 @@ const EventForm: React.FC = () => {
     isSubmitting;
     eventsCol;
     return (
-        <Box sx={{ width: { xs: '80%', sm: '60%', md: '40%' }, margin: 'auto' }}>
-            {' '}
-            <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-md">
-                <input type="file" id="image" onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} />
-                <label htmlFor="image">
-                    <Button className="w-full" component="span" variant="contained" color="secondary">
-                        Choose Image
-                    </Button>
-                </label>
-                {imagePreviewUrl && (
-                    <Box sx={{ my: 2 }}>
-                        <img src={imagePreviewUrl} alt="Preview" style={{ maxWidth: '100%', height: 'auto' }} />
-                    </Box>
-                )}
-                <Controller
-                    name="name"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Event Name"
-                            error={!!errors.name}
-                            helperText={errors.name?.message}
-                            fullWidth
-                            sx={{ mt: 2, mb: 2 }}
-                        />
-                    )}
-                />
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <Controller
-                        name="eventDateTime"
-                        control={control}
-                        defaultValue={new Date()}
-                        render={({ field }) => <DesktopDateTimePicker label="Event Date Time" value={field.value} onChange={field.onChange} />}
-                    />
-                </LocalizationProvider>
-                {/* <FormControl fullWidth>
+        <Container sx={{mt:2}}>
+            <Grid container justifyContent="center">
+                <Grid item xs={12} sm={8} md={6}>
+                <Card sx={{ backgroundColor: '#fffde7' }}>
+                        <CardContent>
+                            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'le' }}>
+                                {/* Form content goes here */}
+                                <input type="file" id="image" onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} />
+                                <label htmlFor="image">
+                                    <Button className="w-full" component="span" variant="contained" color="secondary">
+                                        Choose Image
+                                    </Button>
+                                </label>
+                                {imagePreviewUrl && (
+                                    <Box sx={{ my: 2 }}>
+                                        <img src={imagePreviewUrl} alt="Preview" style={{ maxWidth: '100%', height: 'auto' }} />
+                                    </Box>
+                                )}
+                                <Controller
+                                    name="name"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Event Name"
+                                            error={!!errors.name}
+                                            helperText={errors.name?.message}
+                                            fullWidth
+                                            sx={{ mt: 2, mb: 2 }}
+                                        />
+                                    )}
+                                />
+                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                    <Controller
+                                        name="eventDateTime"
+                                        control={control}
+                                        defaultValue={new Date()}
+                                        render={({ field }) => (
+                                            <DesktopDateTimePicker label="Event Date Time" value={field.value} onChange={field.onChange} />
+                                        )}
+                                    />
+                                </LocalizationProvider>
+                                {/* <FormControl fullWidth>
                     <InputLabel id="city-label">City</InputLabel>
                     <Select labelId="city-label" value={selectedCity} label="City" onChange={(e) => setSelectedCity(e.target.value as string)}>
                         <MenuItem value="Copenhagen">Copenhagen</MenuItem>
                         <MenuItem value="Malmö">Malmö</MenuItem>
                     </Select>
                 </FormControl> */}
-                <Controller
-                    name="address"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                        <PlacesAutocomplete
-                            value={field.value}
-                            onChange={field.onChange}
-                            error={!!errors.address}
-                            helperText={errors.address?.message}
-                            selectedCity={''} // You can provide a dynamic value if needed
-                        />
-                    )}
-                />
+                                <Controller
+                                    name="address"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <PlacesAutocomplete
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            error={!!errors.address}
+                                            helperText={errors.address?.message}
+                                            selectedCity={''} // You can provide a dynamic value if needed
+                                        />
+                                    )}
+                                />
 
-                <Controller
-                    name="email"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Email (Optional)"
-                            error={!!errors.email}
-                            helperText={errors.email?.message}
-                            fullWidth
-                            sx={{ mt: 2, mb: 2 }}
-                        />
-                    )}
-                />
-                <Controller
-                    name="website"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Website (Optional)"
-                            error={!!errors.website}
-                            helperText={errors.website?.message}
-                            fullWidth
-                            sx={{ mt: 2, mb: 2 }}
-                        />
-                    )}
-                />
-                <Controller
-                    name="description"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => (
-                        <TextField
-                            {...field}
-                            label="Description"
-                            error={!!errors.description}
-                            helperText={errors.description?.message}
-                            multiline
-                            rows={4}
-                            fullWidth
-                            sx={{ mb: 2, mt: 2 }}
-                        />
-                    )}
-                />
+                                <Controller
+                                    name="email"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Email (Optional)"
+                                            error={!!errors.email}
+                                            helperText={errors.email?.message}
+                                            fullWidth
+                                            sx={{ mt: 2, mb: 2 }}
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    name="website"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Website (Optional)"
+                                            error={!!errors.website}
+                                            helperText={errors.website?.message}
+                                            fullWidth
+                                            sx={{ mt: 2, mb: 2 }}
+                                        />
+                                    )}
+                                />
+                                <Controller
+                                    name="description"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <TextField
+                                            {...field}
+                                            label="Description"
+                                            error={!!errors.description}
+                                            helperText={errors.description?.message}
+                                            multiline
+                                            rows={4}
+                                            fullWidth
+                                            sx={{ mb: 2, mt: 2 }}
+                                        />
+                                    )}
+                                />
 
-                <Controller
-                    name="category"
-                    control={control}
-                    defaultValue={categoryValues[0]} // Default value is the first category
-                    render={({ field }) => (
-                        <FormControl fullWidth error={!!errors.category} sx={{ mb: 2 }}>
-                            <InputLabel id="category-label">Category</InputLabel>
-                            <Select {...field} labelId="category-label" label="Category">
-                                {categoryValues.map((category, index) => (
-                                    <MenuItem key={index} value={category}>
-                                        {category}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                            <FormHelperText>{errors.category?.message}</FormHelperText>
-                        </FormControl>
-                    )}
-                />
+                                <Controller
+                                    name="category"
+                                    control={control}
+                                    defaultValue={categoryValues[0]} // Default value is the first category
+                                    render={({ field }) => (
+                                        <FormControl fullWidth error={!!errors.category} sx={{ mb: 2 }}>
+                                            <InputLabel id="category-label">Category</InputLabel>
+                                            <Select {...field} labelId="category-label" label="Category">
+                                                {categoryValues.map((category, index) => (
+                                                    <MenuItem key={index} value={category}>
+                                                        {category}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                            <FormHelperText>{errors.category?.message}</FormHelperText>
+                                        </FormControl>
+                                    )}
+                                />
 
-                <Controller
-                    name="ageGroup"
-                    control={control}
-                    defaultValue={ageGroups[0]} // Default value is the first age group
-                    render={({ field }) => (
-                        <FormControl fullWidth error={!!errors.ageGroup} sx={{ mb: 2 }}>
-                            <InputLabel id="agegroup-label">Age Group</InputLabel>
-                            <Select {...field} labelId="agegroup-label" label="Age Group">
-                                {ageGroups.map((ageGroup, index) => (
-                                    <MenuItem key={index} value={ageGroup}>
-                                        {ageGroup}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                            <FormHelperText>{errors.ageGroup?.message}</FormHelperText>
-                        </FormControl>
-                    )}
-                />
+                                <Controller
+                                    name="ageGroup"
+                                    control={control}
+                                    defaultValue={ageGroups[0]} // Default value is the first age group
+                                    render={({ field }) => (
+                                        <FormControl fullWidth error={!!errors.ageGroup} sx={{ mb: 2 }}>
+                                            <InputLabel id="agegroup-label">Age Group</InputLabel>
+                                            <Select {...field} labelId="agegroup-label" label="Age Group">
+                                                {ageGroups.map((ageGroup, index) => (
+                                                    <MenuItem key={index} value={ageGroup}>
+                                                        {ageGroup}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                            <FormHelperText>{errors.ageGroup?.message}</FormHelperText>
+                                        </FormControl>
+                                    )}
+                                />
 
-                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} className="w-full" sx={{ mb: 4 }}>
-                    {isSubmitting ? <CircularProgress size={24} /> : 'Submit'}
-                </Button>
-            </form>
-        </Box>
+                                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} className="w-full" sx={{ mb: 4 }}>
+                                    {isSubmitting ? <CircularProgress size={24} /> : 'Submit'}
+                                </Button>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+        </Container>
     );
 };
 

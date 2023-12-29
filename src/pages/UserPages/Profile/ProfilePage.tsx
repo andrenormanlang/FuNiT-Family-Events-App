@@ -146,7 +146,7 @@ const Profile = () => {
     // Inside handleUpdatePhoto
 
     return (
-        <Container>
+        <Container sx={{mt:2}}>
             <Grid container justifyContent="center">
                 <Grid item xs={12} md={8} lg={6}>
                 <Card sx={{ backgroundColor: '#b2eae8' }}>
