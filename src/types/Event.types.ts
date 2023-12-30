@@ -24,7 +24,7 @@ export type AppEvent = {
     address: string;
     ageGroup: string;
     category: Category;
-    createdAt?: Timestamp;
+    createdAt: Timestamp;
     updatedAt: Timestamp;
     eventDateTime: Timestamp;
     // eventDateStart: Timestamp;
