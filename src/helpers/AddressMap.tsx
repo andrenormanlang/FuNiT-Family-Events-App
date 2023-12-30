@@ -8,12 +8,12 @@ interface Center {
   lng: number;
 }
 
-interface AddressMapProps {
+interface Props {
   center: Center;
-  icon?: string; // The icon URL is optional
+  icon?: string; 
 }
 
-const AddressMap = ({ center }: AddressMapProps) => {
+const AddressMap = ({ center }: Props) => {
   const { isLoaded } = useLoadScript({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GEOCODE_API_KEY || '', 
