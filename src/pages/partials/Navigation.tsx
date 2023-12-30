@@ -30,8 +30,10 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
         flexDirection: 'column',
         alignItems: 'center', // Center the content
         paddingTop: theme.spacing(2),
-        backgroundColor: theme.palette.warning.main // Use the default background color from theme
-    }
+        backgroundColor: theme.palette.warning.main, // Use the default background color from theme
+        
+    },
+    
 }));
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     position: 'sticky', // Changed from 'static' to 'sticky'
@@ -42,13 +44,16 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
     }
 }));
 
+
+
 const Navbar: React.FC = () => {
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [drawerOpen, setDrawerOpen] = useState(false);
     const navigate = useNavigate();
     const { signedInUserInfo, signedInUser, signOutUser, signedInUserName, signedInUserPhotoUrl } = useAuth();
     const { savedEventsCount } = useSavedEvents();
+
 
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);

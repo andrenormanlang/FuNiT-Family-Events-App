@@ -107,7 +107,7 @@ const SavedEvents = () => {
     };
 
     return (
-        <Box display="flex" justifyContent="center" marginTop={2}>
+        <Box display="flex" justifyContent="center" alignItems="center" marginTop={2}>
             {isLoading ? (
                 <Grid container justifyContent="center" alignItems="center" >
                 <Grid item>
@@ -122,7 +122,7 @@ const SavedEvents = () => {
                 <Grid
                     container
                     spacing={2}
-                    justifyContent="space-between"
+                    justifyContent="center"
                     style={{ maxWidth: '1000px' }}>
                     {savedEvents.map((savedEvent) => (
                         <Grid
