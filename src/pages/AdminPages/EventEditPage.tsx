@@ -21,7 +21,8 @@ import {
     Select,
     MenuItem,
     FormControlLabel,
-    Switch
+    Switch,
+    Container
 } from '@mui/material';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -117,23 +118,23 @@ const EventEditPage = () => {
 
     const handleEventSubmit = async () => {
         if (!event || !id || !eventDate) return;
-    
+
         setIsLoading(true);
-    
+
         try {
             const updatedEvent = {
                 ...event,
                 eventDateTime: Timestamp.fromDate(eventDate),
-                updatedAt: Timestamp.fromDate(new Date()),
+                updatedAt: Timestamp.fromDate(new Date())
             };
-    
+
             // Start a batch
             const batch = writeBatch(db);
-    
+
             // Update the main event
             const eventRef = doc(db, 'events', id);
             batch.update(eventRef, updatedEvent);
-    
+
             // Find and update all savedEvents that reference this event
             const q = query(collection(db, 'savedEvents'), where('eventId', '==', id));
             const querySnapshot = await getDocs(q);
@@ -141,10 +142,10 @@ const EventEditPage = () => {
                 const savedEventRef = docSnapshot.ref;
                 batch.update(savedEventRef, { eventData: updatedEvent });
             });
-    
+
             // Commit the batch
             await batch.commit();
-    
+
             alert('Event updated successfully!');
             navigate('/');
         } catch (error) {
@@ -171,18 +172,17 @@ const EventEditPage = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <Box sx={{ width: { xs: '80%', sm: '60%', md: '70%' }, margin: 'auto', p: 3 }}>
-            
+            <Container sx={{mt:2}}>
                 <Grid container spacing={2} justifyContent="center">
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={12} md={8}>
                         <Card>
                             <CardContent>
                                 <Typography variant="h4" gutterBottom>
                                     Edit Event
                                 </Typography>
                                 <Button onClick={handleGoBack} color="secondary" variant="contained" sx={{ mb: 2 }}>
-        Go Back
-    </Button>
+                                    Go Back
+                                </Button>
                                 {event && (
                                     <form
                                         onSubmit={(e) => {
@@ -224,11 +224,11 @@ const EventEditPage = () => {
                                             Current Address: {event.address}
                                         </Typography>
                                         <PlacesAutocomplete
-                                            value={address} 
-                                            onChange={handleAddressChange} 
+                                            value={address}
+                                            onChange={handleAddressChange}
                                             error={!!error}
                                             helperText={error}
-                                            selectedCity={''} 
+                                            selectedCity={''}
                                         />
                                         <FormControl fullWidth margin="normal">
                                             <InputLabel>Age Group</InputLabel>
@@ -283,7 +283,7 @@ const EventEditPage = () => {
                                             Created At: {event.createdAt.toDate().toLocaleString()}
                                         </Typography>
                                         <Typography variant="body1" gutterBottom>
-                                        Updated At: {event.updatedAt ? event.updatedAt.toDate().toLocaleString() : 'Never Updated'}
+                                            Updated At: {event.updatedAt ? event.updatedAt.toDate().toLocaleString() : 'Never Updated'}
                                         </Typography>
                                         <Button type="submit" variant="contained" color="primary" disabled={isLoading} sx={{ mt: 2 }}>
                                             Update Event
@@ -294,7 +294,7 @@ const EventEditPage = () => {
                         </Card>
                     </Grid>
                 </Grid>
-            </Box>
+            </Container>
         </LocalizationProvider>
     );
 };

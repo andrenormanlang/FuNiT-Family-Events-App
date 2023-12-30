@@ -28,6 +28,7 @@ import { Libraries, useLoadScript } from '@react-google-maps/api';
 import PlacesAutocomplete from '../../helpers/PlacesAutoComplete';
 import { Event } from '../../types/Event.types';
 import useAuth from '../../hooks/useAuth';
+import { RemoveCircleOutline } from '@mui/icons-material';
 
 const libraries: Libraries = ['places'];
 
@@ -145,16 +146,27 @@ const EventForm: React.FC = () => {
         }
     };
 
+    const handleDiscardImage = () => {
+        setSelectedImage(null);
+        setImagePreviewUrl(null);
+        // Optionally, if you want to reset the file input as well
+        const fileInput = document.getElementById('image') as HTMLInputElement;
+        if (fileInput) fileInput.value = '';
+    };
+
     errors;
     isSubmitting;
     eventsCol;
     return (
-        <Container sx={{mt:2}}>
+        <Container sx={{ mt: 2 }}>
             <Grid container justifyContent="center">
-                <Grid item xs={12} sm={8} md={6}>
-                <Card sx={{ backgroundColor: '#fffde7' }}>
+                <Grid item xs={12} sm={12} md={8}>
+                    <Card sx={{ backgroundColor: '#fffde7' }}>
                         <CardContent>
-                            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'le' }}>
+                            <Box
+                                component="form"
+                                onSubmit={handleSubmit(onSubmit)}
+                                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'le' }}>
                                 {/* Form content goes here */}
                                 <input type="file" id="image" onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} />
                                 <label htmlFor="image">
@@ -163,10 +175,14 @@ const EventForm: React.FC = () => {
                                     </Button>
                                 </label>
                                 {imagePreviewUrl && (
-                                    <Box sx={{ my: 2 }}>
+                                    <Box sx={{ my: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                                         <img src={imagePreviewUrl} alt="Preview" style={{ maxWidth: '100%', height: 'auto' }} />
+                                        <Button variant="contained"  color="error" onClick={handleDiscardImage} sx={{ mt: 2 }}>
+                                            <RemoveCircleOutline/>
+                                        </Button>
                                     </Box>
                                 )}
+                                 
                                 <Controller
                                     name="name"
                                     control={control}
