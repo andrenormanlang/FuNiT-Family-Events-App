@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase/firestore'
+import { Timestamp, GeoPoint  } from 'firebase/firestore'
 
 export type Event = {
     id: string;
@@ -14,6 +14,7 @@ export type Event = {
     email?: string;
     isApproved: boolean;
     imageUrl: string;
+    location?: GeoPoint;
     name: string;
     website?:string;
 }
@@ -23,7 +24,7 @@ export type AppEvent = {
     address: string;
     ageGroup: string;
     category: Category;
-    createdAt: Timestamp;
+    createdAt?: Timestamp;
     updatedAt: Timestamp;
     eventDateTime: Timestamp;
     // eventDateStart: Timestamp;
@@ -32,10 +33,11 @@ export type AppEvent = {
     email?: string;
     isApproved: boolean;
     imageUrl: string;
+    location?: GeoPoint;
     name: string;
     website?:string;
 }
 
-export type Category = 'Outdoor Adventures' | 'Educational Activities' | 'Health and Wellness' | 'Art, Film & Books' | 'Cooking' | 'Community Festivals' | 'DIY' | 'Games' | 'Music' | 'Other'
+export type Category = "Art, Film & Books" | "Community Festivals" | "Cooking" | "DIY" | "Educational Activities" | "Games" | "Health and Wellness" | "Music" | "Theatre & Dance" | "Other" | "Outdoor Activities";
 
 export type SelectCategory = Category | 'Category'

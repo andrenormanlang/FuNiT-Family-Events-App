@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Timestamp, serverTimestamp } from 'firebase/firestore';
+import { Timestamp, GeoPoint } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -22,7 +22,7 @@ import { DesktopDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { eventsCol, storage } from '../../services/firebase';
+import  { eventsCol, storage } from '../../services/firebase';
 import { addDoc } from 'firebase/firestore';
 import { Libraries, useLoadScript } from '@react-google-maps/api';
 import PlacesAutocomplete from '../../helpers/PlacesAutoComplete';
@@ -72,7 +72,8 @@ const eventSchema = z.object({
     ageGroup: z.enum(ageGroups),
     category: z.enum(categoryValues),
     email: z.union([z.string().email(), z.literal('')]).optional(),
-    website: z.union([z.string().url(), z.literal('')]).optional()
+    website: z.union([z.string().url(), z.literal('')]).optional(),
+
 });
 
 type EventData = z.infer<typeof eventSchema>;
@@ -105,36 +106,36 @@ const EventForm: React.FC = () => {
     if (!isLoaded) return <div>Loading...</div>;
 
     const onSubmit = async (data: EventData) => {
-        selectedImage;
-        data;
         setIsSubmitting(true);
         let imageUrl = '';
-        if (selectedImage) {
-            const imageRef = ref(storage, `events/${selectedImage.name}`);
-            const uploadResult = await uploadBytes(imageRef, selectedImage);
-            imageUrl = await getDownloadURL(uploadResult.ref);
-        }
-
-        const eventDateTime = data.eventDateTime ? new Date(data.eventDateTime) : new Date();
-
-        const eventData = {
-            ...data,
-            imageUrl,
-            eventDateTime: Timestamp.fromDate(eventDateTime),
-            isApproved: signedInUserInfo && signedInUserInfo.isAdmin,
-            createdAt: serverTimestamp()
-        };
+        let location;
 
         try {
-            await addDoc(eventsCol, eventData as Event);
-            setValue('name', ''); // Reset the name field value
-            setValue('description', ''); // Reset the description field value
-            setValue('eventDateTime', new Date()); // Reset the eventDateTime field value
-            setValue('address', ''); // Reset the address field value
-            setValue('ageGroup', ageGroups[0]); // Reset the ageGroup field value
-            setValue('category', categoryValues[0]); // Reset the category field value
-            reset(); // Reset form fields after successful submission
-            setSelectedImage(null); // Reset the image selection
+            if (selectedImage) {
+                const imageRef = ref(storage, `events/${selectedImage.name}`);
+                const uploadResult = await uploadBytes(imageRef, selectedImage);
+                imageUrl = await getDownloadURL(uploadResult.ref);
+            }
+
+            if (data.address) {
+                const geocodeResults = await geocodeByAddress(data.address);
+                const { lat, lng } = await getLatLng(geocodeResults[0]);
+                location = new GeoPoint(lat, lng);
+            }
+
+            const eventDateTime = data.eventDateTime ? new Date(data.eventDateTime) : new Date();
+            const eventData: Partial<Event> = {
+                ...data,
+                imageUrl,
+                eventDateTime: Timestamp.fromDate(eventDateTime),
+                isApproved: !!signedInUserInfo && !!signedInUserInfo.isAdmin,
+                createdAt: Timestamp.now(),
+                location
+            };
+
+            await addDoc(eventsCol, eventData);
+
+            resetForm();
             alert('Event submitted successfully!');
         } catch (error) {
             console.error('Error submitting event:', error);
@@ -142,8 +143,18 @@ const EventForm: React.FC = () => {
         } finally {
             setIsSubmitting(false);
         }
+    };
 
-        data;
+    const resetForm = () => {
+        reset();
+        setSelectedImage(null);
+        setImagePreviewUrl(null);
+        setValue('name', '');
+        setValue('description', '');
+        setValue('eventDateTime', new Date());
+        setValue('address', '');
+        setValue('ageGroup', ageGroups[0]);
+        setValue('category', categoryValues[0]);
     };
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
