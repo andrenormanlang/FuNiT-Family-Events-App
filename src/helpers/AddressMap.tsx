@@ -1,33 +1,46 @@
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+import { CircularProgress } from '@mui/material';
+import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api';
+import marker from '../assets/images/mapmarker.svg';
 
 
 interface Center {
-    lat: number;
-    lng: number;
+  lat: number;
+  lng: number;
 }
 
-const AddressMap = ({ center }: { center: Center }) => {
-    const { isLoaded, loadError } = useLoadScript({
-        googleMapsApiKey: import.meta.env.VITE_GEOCODE_API_KEY,
-    });
+interface AddressMapProps {
+  center: Center;
+  icon?: string; // The icon URL is optional
+}
 
-    const containerStyle = {
-        width: '100%',
-        height: '400px',
-    };
+const AddressMap = ({ center }: AddressMapProps) => {
+  const { isLoaded } = useLoadScript({
+    id: 'google-map-script',
+    googleMapsApiKey: import.meta.env.VITE_GEOCODE_API_KEY || '', 
+  });
 
-    if (loadError) return <div>Error loading maps</div>;
-    if (!isLoaded) return <div>Loading maps...</div>;
+  const containerStyle = {
+    width: '100%',
+    height: '400px',
+  };
 
-    return (
-        <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={center}
-            zoom={15}
-        >
-            {center && <Marker position={center} />}
-        </GoogleMap>
-    );
+  if (!isLoaded) return <CircularProgress />;
+
+  return (
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={15}
+    >
+      <MarkerF
+        position={center}
+        icon={{
+            url: marker, 
+            scaledSize: new window.google.maps.Size(32, 32), 
+        }} 
+      />
+    </GoogleMap>
+  );
 };
 
 export default AddressMap;

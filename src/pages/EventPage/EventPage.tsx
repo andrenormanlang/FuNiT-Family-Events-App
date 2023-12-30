@@ -10,6 +10,8 @@ import useAuth from '../../hooks/useAuth';
 import { auth } from '../../services/firebase';
 import { useSavedEvents } from '../../contexts/SavedEventsProvider';
 import { LocationOn } from '@mui/icons-material';
+import AddressMap from '../../helpers/AddressMap';
+
 
 const formatDateTime = (date: Date): string => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -52,6 +54,7 @@ const EventPage = () => {
     const { signedInUser, signedInUserInfo } = useAuth();
     const [isSaved, setIsSaved] = useState(false);
     const { updateSavedEventsCount } = useSavedEvents();
+    const [mapLocation, setMapLocation] = useState<{ lat: number; lng: number } | null>(null);
 
     if (!id) {
         ('No id found in URL parameters.');
@@ -65,9 +68,16 @@ const EventPage = () => {
                     const docRef = doc(db, 'events', id);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
-                        const eventData = { id: docSnap.id, ...docSnap.data() } as Event;
-                        if (eventData.isApproved || (signedInUser && signedInUserInfo?.isAdmin)) {
-                            setEvent(eventData);
+                        const fetchedEventData = docSnap.data() as Event;
+                        if (fetchedEventData.isApproved || (signedInUser && signedInUserInfo?.isAdmin)) {
+                            setEvent(fetchedEventData);
+                            // If the event has a location, set the mapLocation state
+                            if (fetchedEventData.location) {
+                                setMapLocation({
+                                    lat: fetchedEventData.location.latitude,
+                                    lng: fetchedEventData.location.longitude
+                                });
+                            }
                         } else {
                             navigate('/404');
                         }
@@ -238,12 +248,17 @@ const EventPage = () => {
                                     onClick={handleLocationClick}>
                                     <LocationOn sx={{ mr: 1 }} />
                                     <Typography
-                                        variant="body2"
+                                        variant="body1"
                                         style={{ cursor: 'pointer', textDecoration: 'underline' }}
                                         onClick={handleLocationClick}>
                                         {event.address}
                                     </Typography>
                                 </Typography>
+                                {mapLocation && (
+                                    <Grid item xs={12}>
+                                        <AddressMap center={mapLocation} />
+                                    </Grid>
+                                )}
 
                                 <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                                     Email
