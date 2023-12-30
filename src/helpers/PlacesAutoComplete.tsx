@@ -134,26 +134,24 @@ interface ComponentState {
     //   },
     // };
 
-    useEffect(() => {
-      const copenhagenBounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(55.6154, 12.5242), // Southwest corner of Copenhagen
-        new google.maps.LatLng(55.7271, 12.6738)  // Northeast corner of Copenhagen
-      );
-  
-      const malmoBounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(55.5655, 12.9260), // Southwest corner of Malmö
-        new google.maps.LatLng(55.6256, 13.0763)  // Northeast corner of Malmö
-      );
-  
-      setRequestOptions({
-        
-        requestOptions: {
-          bounds: selectedCity === 'Copenhagen' ? copenhagenBounds : malmoBounds,
-          strictBounds: true, // Add this line
-          types: ['geocode',  'establishment'], // Restricting to geocode type for addresses
-        },
-      });
-    }, [selectedCity]);
+      useEffect(() => {
+        // Define the locationRestriction for the autocomplete
+        const locationRestriction = {
+          north: 55.7271,
+          south: 55.5655,
+          east: 13.0763,
+          west: 12.5242,
+        };
+      
+        // Update requestOptions to use locationRestriction instead of bounds
+        setRequestOptions({
+          requestOptions: {
+            locationRestriction,
+            strictBounds: true, // Keep the strictBounds as you have it
+            types: ['geocode', 'establishment'], // Continue to restrict to geocode type for addresses
+          },
+        });
+      }, [selectedCity]);
 
   const {
     ready,

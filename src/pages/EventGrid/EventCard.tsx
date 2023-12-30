@@ -123,14 +123,14 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                 </Box>
             </Box>
             <CardContent>
-                <Typography fontSize={20} component="div" gutterBottom>
+                <Typography variant='h1' fontSize={25} component="div" gutterBottom>
                     {event.name}
                 </Typography>
                 {/* <Typography variant="subtitle2" color="textSecondary" paragraph>
                     {event.description}
                 </Typography> */}
                 <Box marginBottom={1}>
-                    <Typography fontSize={15} fontWeight={600} color="primary">
+                    <Typography variant='h6' fontSize={15} color="primary">
                         {event.category}
                     </Typography>
                 </Box>

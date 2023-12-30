@@ -9,6 +9,7 @@ import useAuth from '../../hooks/useAuth';
 // import { SavedEvent } from '../../types/SavedEvent.types';
 import { auth } from '../../services/firebase';
 import { useSavedEvents } from '../../contexts/SavedEventsProvider';
+import { LocationOn } from '@mui/icons-material';
 
 const formatDateTime = (date: Date): string => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -68,10 +69,10 @@ const EventPage = () => {
                         if (eventData.isApproved || (signedInUser && signedInUserInfo?.isAdmin)) {
                             setEvent(eventData);
                         } else {
-                            navigate('/404'); 
-                        }                  
+                            navigate('/404');
+                        }
                     } else {
-                        navigate('/404'); 
+                        navigate('/404');
                     }
                 } catch (err) {
                     setError('An error occurred while fetching the event.');
@@ -83,7 +84,6 @@ const EventPage = () => {
         };
 
         const checkIfEventIsSaved = async () => {
-           
             const currentUser = auth.currentUser;
             if (currentUser && id) {
                 const savedEventRef = doc(db, 'savedEvents', `${currentUser.uid}_${id}`);
@@ -91,7 +91,6 @@ const EventPage = () => {
                 setIsSaved(docSnap.exists());
             }
         };
-    
 
         fetchEvent();
         checkIfEventIsSaved();
@@ -229,13 +228,23 @@ const EventPage = () => {
                                     Date & Time
                                 </Typography>
                                 <Typography variant="body1">{formattedDateTime}</Typography>
-
                                 <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                                     Location
                                 </Typography>
-                                <Typography variant="body1" style={{ cursor: 'pointer', textDecoration: 'underline' }} onClick={handleLocationClick}>
-                                    {event.address}
+                                <Typography
+                                    variant="h6"
+                                    gutterBottom
+                                    sx={{ mt: 2, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+                                    onClick={handleLocationClick}>
+                                    <LocationOn sx={{ mr: 1 }} />
+                                    <Typography
+                                        variant="body2"
+                                        style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                        onClick={handleLocationClick}>
+                                        {event.address}
+                                    </Typography>
                                 </Typography>
+
                                 <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                                     Email
                                 </Typography>
@@ -264,5 +273,3 @@ const EventPage = () => {
 };
 
 export default EventPage;
-
-

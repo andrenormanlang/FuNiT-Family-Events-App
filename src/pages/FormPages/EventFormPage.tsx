@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Timestamp, serverTimestamp } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,9 +26,11 @@ import { eventsCol, storage } from '../../services/firebase';
 import { addDoc } from 'firebase/firestore';
 import { Libraries, useLoadScript } from '@react-google-maps/api';
 import PlacesAutocomplete from '../../helpers/PlacesAutoComplete';
+import  AddressMap  from '../../helpers/AddressMap';
 import { Event } from '../../types/Event.types';
 import useAuth from '../../hooks/useAuth';
 import { RemoveCircleOutline } from '@mui/icons-material';
+import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
 
 const libraries: Libraries = ['places'];
 
@@ -54,6 +56,11 @@ const categoryValues = [
     'Theatre & Dance',
     'Other'
 ] as const;
+
+interface MapCenter {
+    lat: number;
+    lng: number;
+}
 
 // Zod schema for event data validation
 const eventSchema = z.object({
@@ -92,6 +99,8 @@ const EventForm: React.FC = () => {
     });
 
     const { signedInUserInfo } = useAuth();
+
+    const [mapCenter, setMapCenter] = useState<MapCenter | null>(null);
 
     if (!isLoaded) return <div>Loading...</div>;
 
@@ -154,6 +163,16 @@ const EventForm: React.FC = () => {
         if (fileInput) fileInput.value = '';
     };
 
+    const handleAddressSelect = async (address: string) => {
+        try {
+            const results = await geocodeByAddress(address);
+            const { lat, lng } = await getLatLng(results[0]);
+            setMapCenter({ lat, lng });
+        } catch (error) {
+            console.error('Error getting location:', error);
+        }
+    };
+
     errors;
     isSubmitting;
     eventsCol;
@@ -177,12 +196,12 @@ const EventForm: React.FC = () => {
                                 {imagePreviewUrl && (
                                     <Box sx={{ my: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                                         <img src={imagePreviewUrl} alt="Preview" style={{ maxWidth: '100%', height: 'auto' }} />
-                                        <Button variant="contained"  color="error" onClick={handleDiscardImage} sx={{ mt: 2 }}>
-                                            <RemoveCircleOutline/>
+                                        <Button variant="contained" color="error" onClick={handleDiscardImage} sx={{ mt: 2 }}>
+                                            <RemoveCircleOutline />
                                         </Button>
                                     </Box>
                                 )}
-                                 
+
                                 <Controller
                                     name="name"
                                     control={control}
@@ -215,20 +234,28 @@ const EventForm: React.FC = () => {
                         <MenuItem value="Malmö">Malmö</MenuItem>
                     </Select>
                 </FormControl> */}
-                                <Controller
-                                    name="address"
-                                    control={control}
-                                    defaultValue=""
-                                    render={({ field }) => (
-                                        <PlacesAutocomplete
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            error={!!errors.address}
-                                            helperText={errors.address?.message}
-                                            selectedCity={''} // You can provide a dynamic value if needed
-                                        />
-                                    )}
-                                />
+                                 <Controller
+                  name="address"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <>
+                      <PlacesAutocomplete
+                        value={field.value}
+                        onChange={(value) => {
+                          field.onChange(value); // Notify react-hook-form of the change
+                          handleAddressSelect(value); // Update the map location
+                        }}
+                        error={!!errors.address}
+                        helperText={errors.address?.message}
+                        selectedCity={''} // You can provide a dynamic value if needed
+                      />
+                      {mapCenter && (
+                        <AddressMap center={mapCenter} /> // Display the map here
+                      )}
+                    </>
+                  )}
+                />
 
                                 <Controller
                                     name="email"
