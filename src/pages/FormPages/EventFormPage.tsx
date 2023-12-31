@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Timestamp, GeoPoint } from 'firebase/firestore';
+import { Timestamp, GeoPoint, doc, collection } from 'firebase/firestore';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -22,7 +22,7 @@ import { DesktopDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import  { eventsCol, storage } from '../../services/firebase';
+import  { db, eventsCol, storage } from '../../services/firebase';
 import { addDoc } from 'firebase/firestore';
 import { Libraries, useLoadScript } from '@react-google-maps/api';
 import PlacesAutocomplete from '../../helpers/PlacesAutoComplete';
@@ -31,6 +31,7 @@ import { Event } from '../../types/Event.types';
 import useAuth from '../../hooks/useAuth';
 import { RemoveCircleOutline } from '@mui/icons-material';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
+
 
 const libraries: Libraries = ['places'];
 
@@ -100,6 +101,7 @@ const EventForm: React.FC = () => {
     });
 
     const { signedInUserInfo } = useAuth();
+   
 
     const [mapCenter, setMapCenter] = useState<MapCenter | null>(null);
 
@@ -124,8 +126,11 @@ const EventForm: React.FC = () => {
             }
 
             const eventDateTime = data.eventDateTime ? new Date(data.eventDateTime) : new Date();
+            const docRef = doc(collection(db, 'events'));
+
             const eventData: Partial<Event> = {
                 ...data,
+                id: docRef.id,
                 imageUrl,
                 eventDateTime: Timestamp.fromDate(eventDateTime),
                 isApproved: !!signedInUserInfo && !!signedInUserInfo.isAdmin,

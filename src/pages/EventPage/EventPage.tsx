@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { deleteDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Event } from '../../types/Event.types';
 import { Box, Grid, Card, CardContent, CardMedia, Typography, CircularProgress, Alert, Button } from '@mui/material';
@@ -94,11 +94,12 @@ const EventPage = () => {
         };
 
         const checkIfEventIsSaved = async () => {
-            const currentUser = auth.currentUser;
-            if (currentUser && id) {
-                const savedEventRef = doc(db, 'savedEvents', `${currentUser.uid}_${id}`);
-                const docSnap = await getDoc(savedEventRef);
-                setIsSaved(docSnap.exists());
+            const user = auth.currentUser;
+            if (user && id) {
+                // Adjusted query to check for current user and specific event
+                const q = query(collection(db, 'savedEvents'), where('userId', '==', user.uid), where('eventId', '==', id));
+                const querySnapshot = await getDocs(q);
+                setIsSaved(!querySnapshot.empty);
             }
         };
 
@@ -131,43 +132,34 @@ const EventPage = () => {
     }
 
     const handleSaveClick = async () => {
-        ('Save Event button clicked');
-
-        // Get the current user from Firebase Auth
         const user = auth.currentUser;
-
-        // Check if a user is signed in and an event is selected
-        if (user && event && event.id) {
-            // Generate a unique ID for the saved event
-            const savedEventRef = doc(db, 'savedEvents', `${user.uid}_${event.id}`);
-
-            // Check if the event has already been saved by this user
-            const docSnap = await getDoc(savedEventRef);
-
-            if (docSnap.exists()) {
-                // If the event is already saved, remove it
-                await deleteDoc(savedEventRef);
-                ('Event unsaved successfully');
+        console.log(user);
+        console.log(event);
+        if (user && event) {
+            // Query Firestore to see if the current user has already saved this event
+            const q = query(collection(db, 'savedEvents'), where('userId', '==', user.uid), where('eventId', '==', event.id));
+            const querySnapshot = await getDocs(q);
+            console.log(event.id)
+            if (!querySnapshot.empty) {
+                // If the event is already saved by this user, then unsaved it
+                querySnapshot.forEach(async (document) => {
+                    await deleteDoc(document.ref);
+                });
+                setIsSaved(false);
             } else {
-                // If the event hasn't been saved by this user, save it
-                const newSavedEvent = {
+                // If the event is not saved by this user, then save it
+                await addDoc(collection(db, 'savedEvents'), {
                     userId: user.uid,
                     eventId: event.id,
-                    eventData: eventData(event)
-                };
-                await setDoc(savedEventRef, newSavedEvent);
-                ('Event saved successfully');
+                    eventData: eventData(event),
+                });
+                setIsSaved(true);
             }
-
-            // Toggle the isSaved state
-            setIsSaved(!isSaved);
-
-            // Update the saved events count in the context
+    
             updateSavedEventsCount();
-        } else {
-            ('User not signed in or event data missing');
         }
     };
+    
 
     let formattedDateTime = '';
     if (event && event.eventDateTime) {

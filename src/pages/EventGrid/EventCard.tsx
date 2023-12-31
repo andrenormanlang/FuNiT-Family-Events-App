@@ -55,7 +55,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: 420,
+                height: 380,               
                 backgroundColor: theme.palette.background.default,
                 border: isSaved ? '5px solid green' : 'none', //
                 typography: theme.typography,

@@ -22,6 +22,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 import { useSavedEvents } from '../../contexts/SavedEventsProvider';
 
+
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
     '& .MuiDrawer-paper': {
         boxSizing: 'border-box',
@@ -54,6 +55,9 @@ const Navbar: React.FC = () => {
     const { signedInUserInfo, signedInUser, signOutUser, signedInUserName, signedInUserPhotoUrl } = useAuth();
     const { savedEventsCount } = useSavedEvents();
 
+    const navigateHome = () => {
+        navigate('/');
+    };
 
     const handleDrawerToggle = () => {
         setDrawerOpen(!drawerOpen);
@@ -82,12 +86,12 @@ const Navbar: React.FC = () => {
                             textDecoration: 'none',
                             flexGrow: 1
                         }}>
-                        <Typography variant="h6" component="div">
+                        <Typography variant="h6" component="div" onClick={navigateHome} style={{ cursor: 'pointer' }}>
                             FunniT
                         </Typography>
                     </NavLink>
                     <Box display={isMobile ? 'none' : 'block'}>
-                        <Button color="inherit" component={NavLink} to="/">
+                        <Button color="inherit" onClick={navigateHome} style={{ cursor: 'pointer' }}>
                             Home
                         </Button>
                         <Button color="inherit">About</Button>
