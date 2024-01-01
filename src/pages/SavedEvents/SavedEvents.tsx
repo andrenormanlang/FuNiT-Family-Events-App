@@ -121,9 +121,9 @@ const SavedEvents = () => {
                 </Typography>
             ) : (
                 <>
-                    <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1000px' }}>
+                    <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1200px' }}>
                         {savedEventsForPage.map((savedEvent) => (
-                            <Grid item key={savedEvent.id} xs={8} sm={7} md={4} lg={4} xl={4}>
+                            <Grid item key={savedEvent.id} xs={11} sm={5.5} md={5.5} lg={4} xl={4}>
                                 <Box position="relative">
                                     <EventCard event={savedEvent.eventData} isSaved={true} isAdmin={false} />
                                     <Tooltip title="Unsave Event" placement="top">

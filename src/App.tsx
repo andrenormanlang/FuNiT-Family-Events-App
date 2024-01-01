@@ -17,6 +17,7 @@ import AdminEventsListPage from './pages/AdminPages/AdminReviewList';
 import AdminOnly from './components/Auth/AdminOnly';
 import SendPassword from './pages/UserPages/SendPassword';
 import EventEditPage from './pages/AdminPages/EventEditPage';
+import AdminUsersListPage from './pages/AdminPages/AdminUsersList';
 
 function App() {
     return (
@@ -49,6 +50,14 @@ function App() {
                             element={
                                 <AdminOnly>
                                     <AdminEventsListPage />
+                                </AdminOnly>
+                            }
+                        />
+                        <Route
+                            path="/users-list"
+                            element={
+                                <AdminOnly>
+                                    <AdminUsersListPage />
                                 </AdminOnly>
                             }
                         />
