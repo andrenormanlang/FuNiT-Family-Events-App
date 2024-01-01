@@ -23,7 +23,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import  { db, eventsCol, storage } from '../../services/firebase';
-import { addDoc } from 'firebase/firestore';
+import { setDoc } from 'firebase/firestore';
 import { Libraries, useLoadScript } from '@react-google-maps/api';
 import PlacesAutocomplete from '../../helpers/PlacesAutoComplete';
 import  AddressMap  from '../../helpers/AddressMap';
@@ -138,7 +138,7 @@ const EventForm: React.FC = () => {
                 location
             };
 
-            await addDoc(eventsCol, eventData);
+            await setDoc(docRef, eventData);
 
             resetForm();
             alert('Event submitted successfully!');

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import {  addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Event } from '../../types/Event.types';
 import { Box, Grid, Card, CardContent, CardMedia, Typography, CircularProgress, Alert, Button } from '@mui/material';
@@ -133,29 +133,28 @@ const EventPage = () => {
 
     const handleSaveClick = async () => {
         const user = auth.currentUser;
-        console.log(user);
-        console.log(event);
         if (user && event) {
             // Query Firestore to see if the current user has already saved this event
             const q = query(collection(db, 'savedEvents'), where('userId', '==', user.uid), where('eventId', '==', event.id));
             const querySnapshot = await getDocs(q);
-            console.log(event.id)
+            
+            // Toggle save/unsave based on whether the event is already saved
             if (!querySnapshot.empty) {
-                // If the event is already saved by this user, then unsaved it
-                querySnapshot.forEach(async (document) => {
-                    await deleteDoc(document.ref);
-                });
-                setIsSaved(false);
+                // Event is already saved, proceed to unsave it
+                const savedEventDoc = querySnapshot.docs[0];
+                await deleteDoc(savedEventDoc.ref);
+                setIsSaved(false); // Update the state to reflect that the event is not saved anymore
             } else {
-                // If the event is not saved by this user, then save it
+                // Event is not saved, proceed to save it
                 await addDoc(collection(db, 'savedEvents'), {
                     userId: user.uid,
                     eventId: event.id,
-                    eventData: eventData(event),
+                    eventData: eventData(event), // Use the eventData function to format the event data
                 });
-                setIsSaved(true);
+                setIsSaved(true); // Update the state to reflect that the event is saved
             }
     
+            // Update the saved events count for the user
             updateSavedEventsCount();
         }
     };

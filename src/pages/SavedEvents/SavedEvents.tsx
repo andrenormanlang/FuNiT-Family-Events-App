@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, deleteDoc, doc, onSnapshot, orderBy } from 'firebase/firestore';
+import { collection, query, where, deleteDoc, doc, onSnapshot, orderBy, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '../../services/firebase';
 import {
@@ -22,6 +22,7 @@ import { SavedEvent } from '../../types/SavedEvent.types';
 import { useSavedEvents } from '../../contexts/SavedEventsProvider';
 import Pagination from '../../components/MUI/Pagination';
 import { useSearchParams } from 'react-router-dom';
+import { useSnackbar } from '../../contexts/SnackBarProvider';
 
 const SavedEvents = () => {
     const [savedEvents, setSavedEvents] = useState<SavedEvent[]>([]);
@@ -31,46 +32,59 @@ const SavedEvents = () => {
     const { updateSavedEventsCount } = useSavedEvents();
     const [searchParams] = useSearchParams();
     const itemsPerPage = 6; // Number of items per page
+    const { showMessage } = useSnackbar();
 
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
     useEffect(() => {
         if (user) {
-            const q = query(collection(db, 'savedEvents'), where('userId', '==', user.uid), orderBy('eventData.eventDateTime', 'asc'));
-            getDocs(q).then((querySnapshot) => {
-                const events = querySnapshot.docs.map(
-                    (doc) =>
-                        ({
-                            id: doc.id,
-                            ...doc.data()
-                        }) as SavedEvent
-                );
-                setSavedEvents(events);
-                setIsLoading(false);
-            });
-            const unsubscribe = onSnapshot(
-                q,
-                (querySnapshot) => {
-                    const events = querySnapshot.docs.map(
-                        (doc) =>
-                            ({
-                                id: doc.id,
-                                ...doc.data()
-                            }) as SavedEvent
-                    );
-                    setSavedEvents(events);
-                },
-                (error) => {
-                    console.error('Error getting saved events: ', error);
-                    setIsLoading(false);
-                }
-            );
-
-            // Unsubscribe from the listener when the component unmounts
-            return () => unsubscribe();
+          const q = query(
+            collection(db, 'savedEvents'), 
+            where('userId', '==', user.uid),
+            orderBy('eventData.eventDateTime', 'asc')
+          );
+      
+          const unsubscribe = onSnapshot(q, async (querySnapshot) => {
+            setIsLoading(true);
+            try {
+              const updates = querySnapshot.docs.map((docSnapshot) => {
+                const savedEventData = docSnapshot.data();
+                const eventRef = doc(db, 'events', savedEventData.eventId);
+      
+                return getDoc(eventRef).then((eventSnap) => {
+                  if (eventSnap.exists()) {
+                    return {
+                      id: docSnapshot.id,
+                      userId: savedEventData.userId,
+                      eventId: savedEventData.eventId,
+                      eventData: {
+                        ...eventSnap.data(), // Ensure all properties of Event are included
+                        id: eventSnap.id // Include the event's ID if needed
+                      }
+                    } as SavedEvent;
+                  } else {
+                    return null;
+                  }
+                });
+              });
+      
+              const resolvedUpdates = (await Promise.all(updates)).filter(Boolean) as SavedEvent[];
+              setSavedEvents(resolvedUpdates);
+            } catch (error) {
+              console.error('Error getting saved events: ', error);
+              showMessage(typeof error === "string" ? error : (error as Error).message || "An error occurred");
+            }
+            setIsLoading(false);
+          }, (error) => {
+            console.error('Error with real-time updates: ', error);
+            showMessage(typeof error === "string" ? error : (error as Error).message || "An error occurred");
+            setIsLoading(false);
+          });
+      
+          return () => unsubscribe();
         }
-    }, [user]);
+      }, [user, showMessage]);
 
     const handleDialogOpen = (eventId: string) => {
         setOpenDialog(true);

@@ -139,8 +139,7 @@ const EventEditPage = () => {
             const q = query(collection(db, 'savedEvents'), where('eventId', '==', id));
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((docSnapshot) => {
-                const savedEventRef = docSnapshot.ref;
-                batch.update(savedEventRef, { eventData: updatedEvent });
+                batch.set(docSnapshot.ref, { eventData: updatedEvent }, { merge: true });
             });
 
             // Commit the batch
@@ -172,7 +171,7 @@ const EventEditPage = () => {
 
     return (
         <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <Container sx={{mt:2}}>
+            <Container sx={{ mt: 2 }}>
                 <Grid container spacing={2} justifyContent="center">
                     <Grid item xs={12} sm={12} md={8}>
                         <Card>
