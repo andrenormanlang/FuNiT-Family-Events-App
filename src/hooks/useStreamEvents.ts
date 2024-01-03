@@ -40,10 +40,6 @@ const useStreamEvents = ({ categoryFilter = '', ageGroupFilter = '',  selectedMo
             q = query(q, where('eventDateTime', '>=', startOfMonth), where('eventDateTime', '<=', endOfMonth));
         }
 
-        
-
-
-
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const allEvents = snapshot.docs.map(doc => ({ ...(doc.data() as AppEvent), id: doc.id }));
             // Filter events on the client side

@@ -185,21 +185,35 @@ const EventGrid = () => {
 
               {/* Category Filter */}
               <Grid item xs={12} sm={6} md={3}>
-                      <FormControl fullWidth>
-                          <InputLabel>Category</InputLabel>
-                          <Select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-                              <MenuItem value="">All Categories</MenuItem>
-                              {categoryValues.map((category, index) => (
-                                  <MenuItem key={index} value={category}>{category}</MenuItem>
-                              ))}
-                          </Select>
-                      </FormControl>
+              <FormControl fullWidth>
+    <InputLabel id="category-label">Category</InputLabel>
+    <Select
+      labelId="category-label"
+      id="category-select"
+      value={categoryFilter}
+      onChange={(e) => setCategoryFilter(e.target.value)}
+      label="Category" // This should match the InputLabel
+    >
+      <MenuItem value="">
+        <em>All Categories</em>
+      </MenuItem>
+      {categoryValues.map((category, index) => (
+        <MenuItem key={index} value={category}>{category}</MenuItem>
+      ))}
+    </Select>
+  </FormControl>
               </Grid>
               {/* Age Group Filter */}
               <Grid item xs={12} sm={6} md={3}>
                       <FormControl fullWidth>
-                          <InputLabel>Age Group</InputLabel>
-                          <Select value={ageGroupFilter} onChange={(e) => setAgeGroupFilter(e.target.value)}>
+                        <InputLabel>Age Group</InputLabel>
+                      <Select
+      labelId="category-label"
+      id="category-select"
+      value={ageGroupFilter}
+      onChange={(e) => setAgeGroupFilter(e.target.value)}
+      label="Age Group" // This should match the InputLabel
+    >
                               <MenuItem value="">All Ages</MenuItem>
                               {ageGroups.map((ageGroup, index) => (
                                   <MenuItem key={index} value={ageGroup}>{ageGroup}</MenuItem>
@@ -213,12 +227,20 @@ const EventGrid = () => {
               <Grid item xs={12} sm={6} md={3}>
                       <FormControl fullWidth>
                           <InputLabel>Month</InputLabel>
-                          <Select value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)}>
-                              <MenuItem value="">All Months</MenuItem>
-                              {uniqueMonths.map((month, index) => (
-                                  <MenuItem key={index} value={month}>{month}</MenuItem>
-                              ))}
-                          </Select>
+                          <Select
+      labelId="month-label"
+      id="month-select"
+      value={selectedMonth}
+      onChange={(e) => setSelectedMonth(e.target.value)}
+      label="Category" // This should match the InputLabel
+    >
+       <MenuItem value="">All Months</MenuItem>
+      {uniqueMonths.map((month, index) => (
+          <MenuItem key={index} value={month}>{month}</MenuItem>
+      ))}
+    </Select>
+                          
+     
                       </FormControl>
               </Grid>
 
@@ -226,7 +248,13 @@ const EventGrid = () => {
               <Grid item xs={12} sm={6} md={3}>
                       <FormControl fullWidth>
                           <InputLabel>City</InputLabel>
-                          <Select value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
+                          <Select
+      labelId="city-label"
+      id="city-select"
+      value={cityFilter}
+      onChange={(e) => setCityFilter(e.target.value)}
+      label="City" // This should match the InputLabel
+    >
                               <MenuItem value="">Both Cities</MenuItem>
                               <MenuItem value="Copenhagen">Copenhagen</MenuItem>
                               <MenuItem value="Malmö">Malmö</MenuItem>
