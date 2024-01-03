@@ -117,7 +117,7 @@ const EventGrid = () => {
     const [savedEventIds, setSavedEventIds] = useState<string[]>([]);
     const auth = getAuth();
     const theme = useTheme();
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const itemsPerPage = 6; // Number of items per page
     const [categoryFilter, setCategoryFilter] = useState('');
     const [ageGroupFilter, setAgeGroupFilter] = useState('');
@@ -131,6 +131,7 @@ const EventGrid = () => {
         cityFilter,
         selectedMonth
     });
+    const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
 
     useEffect(() => {
         const fetchSavedEvents = async (userId: string) => {
@@ -173,98 +174,135 @@ const EventGrid = () => {
         // Reset other filter states as needed
     };
 
-    const page = Number(searchParams.get('page')) || 1;
+    useEffect(() => {
+        const category = searchParams.get('category') || '';
+        const ageGroup = searchParams.get('ageGroup') || '';
+        const city = searchParams.get('city') || '';
+        const month = searchParams.get('month') || '';
+
+        setCategoryFilter(category);
+        setAgeGroupFilter(ageGroup);
+        setCityFilter(city);
+        setSelectedMonth(month);
+
+        // You may also want to initiate a fetch based on these params
+        // fetchEvents({ category, ageGroup, city, month });
+    }, []);
+
+    useEffect(() => {
+        const newSearchParams = new URLSearchParams();
+
+        if (categoryFilter) newSearchParams.set('category', categoryFilter);
+        if (ageGroupFilter) newSearchParams.set('ageGroup', ageGroupFilter);
+        if (cityFilter) newSearchParams.set('city', cityFilter);
+        if (selectedMonth) newSearchParams.set('month', selectedMonth);
+
+        if (page !== 1) newSearchParams.set('page', page.toString());
+
+        setSearchParams(newSearchParams);
+    }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, setSearchParams, page]);
+
+    useEffect(() => {
+        const newSearchParams = new URLSearchParams(searchParams);
+
+        newSearchParams.set('page', page.toString());
+        setSearchParams(newSearchParams);
+    }, [page, setSearchParams]);
+
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage); // Update the page state
+    };
+
     const eventsForPage = filteredEvents.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
     return (
-      <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
-          {/* Filter UI */}
-          <Box sx={{ mb: 4, width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', p: 2 }}>
-          <Grid container spacing={2} justifyContent="center">
+        <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
+            {/* Filter UI */}
+            <Box sx={{ mb: 4, width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', p: 2 }}>
+                <Grid container spacing={2} justifyContent="center">
+                    {/* Category Filter */}
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth>
+                            <InputLabel id="category-label">Category</InputLabel>
+                            <Select
+                                labelId="category-label"
+                                id="category-select"
+                                value={categoryFilter}
+                                onChange={(e) => setCategoryFilter(e.target.value)}
+                                label="Category" // This should match the InputLabel
+                            >
+                                <MenuItem value="">
+                                    <em>All Categories</em>
+                                </MenuItem>
+                                {categoryValues.map((category, index) => (
+                                    <MenuItem key={index} value={category}>
+                                        {category}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    {/* Age Group Filter */}
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth>
+                            <InputLabel>Age Group</InputLabel>
+                            <Select
+                                labelId="category-label"
+                                id="category-select"
+                                value={ageGroupFilter}
+                                onChange={(e) => setAgeGroupFilter(e.target.value)}
+                                label="Age Group" // This should match the InputLabel
+                            >
+                                <MenuItem value="">All Ages</MenuItem>
+                                {ageGroups.map((ageGroup, index) => (
+                                    <MenuItem key={index} value={ageGroup}>
+                                        {ageGroup}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
 
+                    {/* Date Filter */}
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth>
+                            <InputLabel>Month</InputLabel>
+                            <Select
+                                labelId="month-label"
+                                id="month-select"
+                                value={selectedMonth}
+                                onChange={(e) => setSelectedMonth(e.target.value)}
+                                label="Category" // This should match the InputLabel
+                            >
+                                <MenuItem value="">All Months</MenuItem>
+                                {uniqueMonths.map((month, index) => (
+                                    <MenuItem key={index} value={month}>
+                                        {month}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
 
-              {/* Category Filter */}
-              <Grid item xs={12} sm={6} md={3}>
-              <FormControl fullWidth>
-    <InputLabel id="category-label">Category</InputLabel>
-    <Select
-      labelId="category-label"
-      id="category-select"
-      value={categoryFilter}
-      onChange={(e) => setCategoryFilter(e.target.value)}
-      label="Category" // This should match the InputLabel
-    >
-      <MenuItem value="">
-        <em>All Categories</em>
-      </MenuItem>
-      {categoryValues.map((category, index) => (
-        <MenuItem key={index} value={category}>{category}</MenuItem>
-      ))}
-    </Select>
-  </FormControl>
-              </Grid>
-              {/* Age Group Filter */}
-              <Grid item xs={12} sm={6} md={3}>
-                      <FormControl fullWidth>
-                        <InputLabel>Age Group</InputLabel>
-                      <Select
-      labelId="category-label"
-      id="category-select"
-      value={ageGroupFilter}
-      onChange={(e) => setAgeGroupFilter(e.target.value)}
-      label="Age Group" // This should match the InputLabel
-    >
-                              <MenuItem value="">All Ages</MenuItem>
-                              {ageGroups.map((ageGroup, index) => (
-                                  <MenuItem key={index} value={ageGroup}>{ageGroup}</MenuItem>
-                              ))}
-                          </Select>
-                      </FormControl>
-              </Grid>
-              
+                    {/* City Filter */}
+                    <Grid item xs={12} sm={6} md={3}>
+                        <FormControl fullWidth>
+                            <InputLabel>City</InputLabel>
+                            <Select
+                                labelId="city-label"
+                                id="city-select"
+                                value={cityFilter}
+                                onChange={(e) => setCityFilter(e.target.value)}
+                                label="City" // This should match the InputLabel
+                            >
+                                <MenuItem value="">Both Cities</MenuItem>
+                                <MenuItem value="Copenhagen">Copenhagen</MenuItem>
+                                <MenuItem value="Malmö">Malmö</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
 
-              {/* Date Filter */}
-              <Grid item xs={12} sm={6} md={3}>
-                      <FormControl fullWidth>
-                          <InputLabel>Month</InputLabel>
-                          <Select
-      labelId="month-label"
-      id="month-select"
-      value={selectedMonth}
-      onChange={(e) => setSelectedMonth(e.target.value)}
-      label="Category" // This should match the InputLabel
-    >
-       <MenuItem value="">All Months</MenuItem>
-      {uniqueMonths.map((month, index) => (
-          <MenuItem key={index} value={month}>{month}</MenuItem>
-      ))}
-    </Select>
-                          
-     
-                      </FormControl>
-              </Grid>
-
-              {/* City Filter */}
-              <Grid item xs={12} sm={6} md={3}>
-                      <FormControl fullWidth>
-                          <InputLabel>City</InputLabel>
-                          <Select
-      labelId="city-label"
-      id="city-select"
-      value={cityFilter}
-      onChange={(e) => setCityFilter(e.target.value)}
-      label="City" // This should match the InputLabel
-    >
-                              <MenuItem value="">Both Cities</MenuItem>
-                              <MenuItem value="Copenhagen">Copenhagen</MenuItem>
-                              <MenuItem value="Malmö">Malmö</MenuItem>
-                          </Select>
-                      </FormControl>
-              </Grid>
-
-
-
-              {/* <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    {/* <FormControl sx={{ m: 1, minWidth: 120 }}>
                   <InputLabel>City</InputLabel>
                   <Select value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
                       <MenuItem value="">All Cities</MenuItem>
@@ -272,42 +310,43 @@ const EventGrid = () => {
                       <MenuItem value="Malmö">Malmö</MenuItem>
                   </Select>
               </FormControl> */}
-          </Grid>
-          </Box>
+                </Grid>
+            </Box>
 
-          {/* Active Filters Display */}
-          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
-              {categoryFilter && <Chip label={`Category: ${categoryFilter}`} onDelete={() => setCategoryFilter('')} color="primary" />}
-              {ageGroupFilter && <Chip label={`Age Group: ${ageGroupFilter}`} onDelete={() => setAgeGroupFilter('')} color="primary" />}
-              {cityFilter && <Chip label={`City: ${cityFilter}`} onDelete={() => setCityFilter('')} color="primary" />}
-              {selectedMonth && <Chip label={`Month: ${selectedMonth}`} onDelete={() => setSelectedMonth('')} color="primary" />}
-              <Button onClick={resetFilters} variant="contained" color="secondary" sx={{ ml: 1 }}>Reset Filters</Button>
-          </Box>
+            {/* Active Filters Display */}
+            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
+                {categoryFilter && <Chip label={`Category: ${categoryFilter}`} onDelete={() => setCategoryFilter('')} color="primary" />}
+                {ageGroupFilter && <Chip label={`Age Group: ${ageGroupFilter}`} onDelete={() => setAgeGroupFilter('')} color="primary" />}
+                {cityFilter && <Chip label={`City: ${cityFilter}`} onDelete={() => setCityFilter('')} color="primary" />}
+                {selectedMonth && <Chip label={`Month: ${selectedMonth}`} onDelete={() => setSelectedMonth('')} color="primary" />}
+                <Button onClick={resetFilters} variant="contained" color="secondary" sx={{ ml: 1 }}>
+                    Reset Filters
+                </Button>
+            </Box>
 
-          {/* Event Grid */}
-          <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1200px' }}>
-              {isLoading ? (
-                  <Typography>Loading...</Typography>
-              ) : error ? (
-                  <Typography>Error: {error}</Typography>
-              ) : eventsForPage.length > 0 ? (
-                  eventsForPage.map((event) => (
-                      <Grid item key={event.id} xs={11} sm={5.5} md={5.5} lg={4} xl={4}>
-                          <EventCard event={event} isSaved={savedEventIds.includes(event.id)} isAdmin={signedInUserInfo?.isAdmin || false} />
-                      </Grid>
-                  ))
-              ) : (
-                  <Typography>No events match your filters.</Typography>
-              )}
-          </Grid>
+            {/* Event Grid */}
+            <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1200px' }}>
+                {isLoading ? (
+                    <Typography>Loading...</Typography>
+                ) : error ? (
+                    <Typography>Error: {error}</Typography>
+                ) : eventsForPage.length > 0 ? (
+                    eventsForPage.map((event) => (
+                        <Grid item key={event.id} xs={11} sm={5.5} md={5.5} lg={4} xl={4}>
+                            <EventCard event={event} isSaved={savedEventIds.includes(event.id)} isAdmin={signedInUserInfo?.isAdmin || false} />
+                        </Grid>
+                    ))
+                ) : (
+                    <Typography>No events match your filters.</Typography>
+                )}
+            </Grid>
 
-          {/* Pagination */}
-          <Box display="flex" justifyContent="center" marginTop={2} marginBottom={2}>
-              <Pagination count={Math.ceil(filteredEvents.length / itemsPerPage)} />
-          </Box>
-      </Box>
-  );
+            {/* Pagination */}
+            <Box display="flex" justifyContent="center" marginTop={2} marginBottom={2}>
+                <Pagination count={Math.ceil(filteredEvents.length / itemsPerPage)} onPageChange={handlePageChange} />
+            </Box>
+        </Box>
+    );
 };
 
 export default EventGrid;
-

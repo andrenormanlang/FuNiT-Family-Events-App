@@ -6,7 +6,12 @@ import useAuth from './useAuth';
 
 
 
-const useStreamEvents = ({ categoryFilter = '', ageGroupFilter = '',  selectedMonth = '', cityFilter = '' }) => {
+const useStreamEvents = ({
+    categoryFilter = '',
+    ageGroupFilter = '',
+    selectedMonth = '',
+    cityFilter = ''
+} = {}) => {
     const [events, setEvents] = useState<AppEvent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
