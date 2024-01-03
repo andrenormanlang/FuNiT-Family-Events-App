@@ -83,7 +83,7 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
     ];
 
     return (
-        <div style={{ height: '100%', width: '100%' }}>
+        <div style={{ height: '70vh', width: '100%' }}>
             <DataGrid
                 rows={users}
                 columns={columns}
