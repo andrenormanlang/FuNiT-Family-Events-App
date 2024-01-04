@@ -95,7 +95,6 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
                     }
                 }}
                 pageSizeOptions={[25, 50]}
-                
             />
         </div>
     );

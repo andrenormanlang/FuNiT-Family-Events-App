@@ -14,17 +14,17 @@ const AdminOnly: React.FC<IProps> = ({ children, redirectTo = '/' }) => {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="">
                 <Box textAlign="center">
-                <Box 
-  display="flex"
-  justifyContent="center"
-  alignItems="center"
-  position="fixed"  // Use fixed positioning
-  top="40%"        // Adjust this to move the CircularProgress up
-  left="50%"       // Center horizontally
-  style={{ transform: 'translate(-50%, -40%)' }} // Adjust the transform to align correctly
->
-  <CircularProgress color="secondary" size={100} />
-</Box>
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        position="fixed" // Use fixed positioning
+                        top="40%" // Adjust this to move the CircularProgress up
+                        left="50%" // Center horizontally
+                        style={{ transform: 'translate(-50%, -40%)' }} // Adjust the transform to align correctly
+                    >
+                        <CircularProgress color="secondary" size={100} />
+                    </Box>
                     <Typography variant="h2" marginTop={2}>
                         Checking authorization...
                     </Typography>

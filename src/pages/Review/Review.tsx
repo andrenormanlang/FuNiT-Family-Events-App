@@ -2,7 +2,7 @@
 // import { TextField, Button, Rating } from '@mui/material';
 // import { db } from '../../services/firebase';
 // import { Timestamp, addDoc, collection } from 'firebase/firestore';
-// import { Review as ReviewType } from '../../types/Review.types'; 
+// import { Review as ReviewType } from '../../types/Review.types';
 // const Review = ({ eventId, userId }) => {
 //     const [reviewText, setReviewText] = useState('');
 //     const [rating, setRating] = useState(0);

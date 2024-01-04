@@ -162,16 +162,17 @@ const EventEditPage = () => {
         navigate('/'); // Navigates to the homepage
     };
 
-    if (isLoading) return (
-                <Box 
-                    display="flex" 
-                    justifyContent="center" 
-                    alignItems="center" 
-                    minHeight="100vh" // This makes the Box take the full viewport height
-                >
-                    <CircularProgress color="secondary" size={80} /> {/* Increase the size here */}
-                </Box>
-            );
+    if (isLoading)
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="100vh" // This makes the Box take the full viewport height
+            >
+                <CircularProgress color="secondary" size={80} /> {/* Increase the size here */}
+            </Box>
+        );
     if (error) return <Alert severity="error">{error}</Alert>;
     if (!event) return <div>Loading event data...</div>; // Show loading state until event data is available
     if (!isLoaded) {
@@ -196,7 +197,8 @@ const EventEditPage = () => {
                                         onSubmit={(e) => {
                                             e.preventDefault();
                                             handleEventSubmit();
-                                        }}>
+                                        }}
+                                    >
                                         <TextField
                                             label="Name"
                                             value={event.name}
@@ -243,7 +245,8 @@ const EventEditPage = () => {
                                             <Select
                                                 value={event.ageGroup}
                                                 label="Age Group"
-                                                onChange={(e) => setEvent({ ...event, ageGroup: e.target.value as (typeof ageGroups)[number] })}>
+                                                onChange={(e) => setEvent({ ...event, ageGroup: e.target.value as (typeof ageGroups)[number] })}
+                                            >
                                                 {ageGroups.map((ageGroup, index) => (
                                                     <MenuItem key={index} value={ageGroup}>
                                                         {ageGroup}
@@ -256,7 +259,8 @@ const EventEditPage = () => {
                                             <Select
                                                 value={event.category || categoryValues[0]}
                                                 label="Category"
-                                                onChange={(e) => setEvent({ ...event, category: e.target.value as Category })}>
+                                                onChange={(e) => setEvent({ ...event, category: e.target.value as Category })}
+                                            >
                                                 {categoryValues.map((category, index) => (
                                                     <MenuItem key={index} value={category}>
                                                         {category}

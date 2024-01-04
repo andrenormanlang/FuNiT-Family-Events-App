@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import {  addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Event } from '../../types/Event.types';
 import { Box, Grid, Card, CardContent, CardMedia, Typography, CircularProgress, Alert, Button } from '@mui/material';
@@ -10,7 +10,6 @@ import useAuth from '../../hooks/useAuth';
 import { auth } from '../../services/firebase';
 import { LocationOn } from '@mui/icons-material';
 import AddressMap from '../../helpers/AddressMap';
-
 
 const formatDateTime = (date: Date): string => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -135,7 +134,7 @@ const EventPage = () => {
             // Query Firestore to see if the current user has already saved this event
             const q = query(collection(db, 'savedEvents'), where('userId', '==', user.uid), where('eventId', '==', event.id));
             const querySnapshot = await getDocs(q);
-            
+
             // Toggle save/unsave based on whether the event is already saved
             if (!querySnapshot.empty) {
                 // Event is already saved, proceed to unsave it
@@ -147,15 +146,14 @@ const EventPage = () => {
                 await addDoc(collection(db, 'savedEvents'), {
                     userId: user.uid,
                     eventId: event.id,
-                    eventData: eventData(event), // Use the eventData function to format the event data
+                    eventData: eventData(event) // Use the eventData function to format the event data
                 });
                 setIsSaved(true); // Update the state to reflect that the event is saved
             }
-    
+
             // Update the saved events count for the user
         }
     };
-    
 
     let formattedDateTime = '';
     if (event && event.eventDateTime) {
@@ -233,12 +231,14 @@ const EventPage = () => {
                                     variant="h6"
                                     gutterBottom
                                     sx={{ mt: 2, display: 'flex', alignItems: 'center', cursor: 'pointer' }}
-                                    onClick={handleLocationClick}>
+                                    onClick={handleLocationClick}
+                                >
                                     <LocationOn sx={{ mr: 1 }} />
                                     <Typography
                                         variant="body1"
                                         style={{ cursor: 'pointer', textDecoration: 'underline' }}
-                                        onClick={handleLocationClick}>
+                                        onClick={handleLocationClick}
+                                    >
                                         {event.address}
                                     </Typography>
                                 </Typography>

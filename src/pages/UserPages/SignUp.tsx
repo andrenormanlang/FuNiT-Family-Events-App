@@ -8,15 +8,17 @@ import { FirebaseError } from 'firebase/app';
 import useAuth from '../../hooks/useAuth';
 
 // Zod schema for form validation
-const signUpSchema = z.object({
-  displayName: z.string().min(1, "Name missing"),
-  email: z.string().email("Invalid email format").min(1, "Email missing"),
-  password: z.string().min(6, "Enter at least 6 characters"),
-  passwordConfirm: z.string(),
-}).refine(data => data.password === data.passwordConfirm, {
-  message: "Passwords don't match",
-  path: ["passwordConfirm"],
-});
+const signUpSchema = z
+    .object({
+        displayName: z.string().min(1, 'Name missing'),
+        email: z.string().email('Invalid email format').min(1, 'Email missing'),
+        password: z.string().min(6, 'Enter at least 6 characters'),
+        passwordConfirm: z.string()
+    })
+    .refine((data) => data.password === data.passwordConfirm, {
+        message: "Passwords don't match",
+        path: ['passwordConfirm']
+    });
 
 type FormData = {
     displayName: string;
@@ -32,9 +34,13 @@ const SignUp = () => {
     const { signUpUser } = useAuth();
     const navigate = useNavigate();
 
-    const { handleSubmit, register, formState: { errors } } = useForm<FormData>({
-		resolver: zodResolver(signUpSchema),
-	});
+    const {
+        handleSubmit,
+        register,
+        formState: { errors }
+    } = useForm<FormData>({
+        resolver: zodResolver(signUpSchema)
+    });
 
     const onSignUp = async (data: FormData) => {
         setIsError(false);
@@ -48,7 +54,7 @@ const SignUp = () => {
             if (error instanceof FirebaseError) {
                 setErrorMessage(error.message);
             } else {
-                setErrorMessage("Something went wrong when trying to sign up");
+                setErrorMessage('Something went wrong when trying to sign up');
             }
             setIsError(true);
             setIsSubmitting(false);
@@ -61,9 +67,15 @@ const SignUp = () => {
                 <Grid item xs={12} md={6} lg={4}>
                     <Card>
                         <CardContent>
-                            <Typography variant="h5" className="mb-3">Sign Up</Typography>
+                            <Typography variant="h5" className="mb-3">
+                                Sign Up
+                            </Typography>
 
-                            {isError && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">{errorMessage}</div>}
+                            {isError && (
+                                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                                    {errorMessage}
+                                </div>
+                            )}
 
                             <form onSubmit={handleSubmit(onSignUp)}>
                                 <TextField
@@ -118,7 +130,7 @@ const SignUp = () => {
                                     fullWidth
                                     className="mt-4"
                                 >
-                                    {isSubmitting ? "Signing Up..." : "Sign Up"}
+                                    {isSubmitting ? 'Signing Up...' : 'Sign Up'}
                                 </Button>
                             </form>
                         </CardContent>
@@ -127,7 +139,7 @@ const SignUp = () => {
                     <div className="text-center mt-3">
                         <span className="text-sm">
                             Already have an account? <br />
-                            <Link to='/login' className="text-blue-500 hover:text-blue-700">
+                            <Link to="/login" className="text-blue-500 hover:text-blue-700">
                                 Login
                             </Link>
                         </span>
@@ -136,6 +148,6 @@ const SignUp = () => {
             </Grid>
         </Container>
     );
-}
+};
 
 export default SignUp;

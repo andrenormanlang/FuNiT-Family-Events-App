@@ -22,15 +22,15 @@ const getCategoryColor = (category: Category): string => {
     const categoryColors: { [key in Category]: string } = {
         'Art, Film & Books': 'red',
         'Community Festivals': 'blue',
-        'Cooking': 'green',
-        'DIY': 'orange',
+        Cooking: 'green',
+        DIY: 'orange',
         'Educational Activities': 'purple',
-        'Games': 'pink',
+        Games: 'pink',
         'Health and Wellness': 'darkblue',
-        'Music': 'brown',
+        Music: 'brown',
         'Outdoor Activities': 'teal',
         'Theatre & Dance': 'maroon',
-        'Other': 'black'
+        Other: 'black'
     };
     return categoryColors[category] || 'grey'; // default to grey if category not found
 };
@@ -72,8 +72,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                 // This will make the card height adjust based on the content
-        minHeight: 370,              
+                // This will make the card height adjust based on the content
+                minHeight: 370,
                 backgroundColor: theme.palette.background.default,
                 border: isSaved ? '5px solid green' : 'none', //
                 typography: theme.typography,
@@ -86,7 +86,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                     boxShadow: '0 8px 16px 0 rgba(0, 0, 0, 0.4)'
                 })
             }}
-            onClick={handleCardClick}>
+            onClick={handleCardClick}
+        >
             {/* Edit Button */}
 
             {/* Rest of the card content */}
@@ -102,51 +103,50 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                 />
                 {/* Positioning the category label */}
 
-
-    <Chip 
-        label={event.category} 
-        sx={{ 
-            position: 'absolute', 
-            bottom: 2, 
-            right: 8, 
-            backgroundColor: getCategoryColor(event.category), 
-            color: 'white',
-            fontFamily: theme.typography.h6.fontFamily,
-            fontSize: theme.typography.h6.fontSize,
-            fontWeight: theme.typography.h6.fontWeight,
-            lineHeight: theme.typography.h6.lineHeight 
-        }} 
-    />
+                <Chip
+                    label={event.category}
+                    sx={{
+                        position: 'absolute',
+                        bottom: 2,
+                        right: 8,
+                        backgroundColor: getCategoryColor(event.category),
+                        color: 'white',
+                        fontFamily: theme.typography.h6.fontFamily,
+                        fontSize: theme.typography.h6.fontSize,
+                        fontWeight: theme.typography.h6.fontWeight,
+                        lineHeight: theme.typography.h6.lineHeight
+                    }}
+                />
 
                 {isAdmin && (
                     <>
                         {/* Edit Button */}
                         <Tooltip title="Edit">
-            <Button 
-                onClick={handleEditClick} 
-                sx={{ 
-                    position: 'absolute', 
-                    top: 8, 
-                    left: 8, 
-                    color: 'yellow'
-                }}
-            >
-                <Edit />
-            </Button>
-        </Tooltip>
-        <Tooltip title="Delete">
-            <Button 
-                onClick={handleDeleteClick} 
-                sx={{ 
-                    position: 'absolute', 
-                    top: 8, 
-                    right: 8, 
-                    color: 'red'
-                }}
-            >
-                <Delete />
-            </Button>
-        </Tooltip>
+                            <Button
+                                onClick={handleEditClick}
+                                sx={{
+                                    position: 'absolute',
+                                    top: 8,
+                                    left: 8,
+                                    color: 'yellow'
+                                }}
+                            >
+                                <Edit />
+                            </Button>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                            <Button
+                                onClick={handleDeleteClick}
+                                sx={{
+                                    position: 'absolute',
+                                    top: 8,
+                                    right: 8,
+                                    color: 'red'
+                                }}
+                            >
+                                <Delete />
+                            </Button>
+                        </Tooltip>
                     </>
                 )}
                 <Box position="absolute" bottom={0} left={0} bgcolor="linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5))" color="white">
@@ -159,10 +159,10 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                 </Box>
             </Box>
             <CardContent>
-                <Typography variant='h1' fontSize={25} component="div" gutterBottom>
+                <Typography variant="h1" fontSize={25} component="div" gutterBottom>
                     {event.name}
                 </Typography>
-                
+
                 <Typography fontSize={13} fontWeight={600} color="textSecondary">
                     {event.address}
                 </Typography>

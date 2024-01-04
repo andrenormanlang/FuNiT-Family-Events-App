@@ -4,18 +4,11 @@ import { db } from '../services/firebase';
 import { AppEvent } from '../types/Event.types';
 import useAuth from './useAuth';
 
-const useStreamEvents = ({
-    categoryFilter = '',
-    ageGroupFilter = '',
-    selectedMonth = '',
-    cityFilter = '',
-    page = 1
-} = {}) => {
+const useStreamEvents = ({ categoryFilter = '', ageGroupFilter = '', selectedMonth = '', cityFilter = '', page = 1 } = {}) => {
     const [events, setEvents] = useState<AppEvent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const { signedInUserInfo } = useAuth();
-
 
     useEffect(() => {
         let q = query(collection(db, 'events'));
@@ -44,16 +37,20 @@ const useStreamEvents = ({
             q = query(q, where('eventDateTime', '>=', startOfMonth), where('eventDateTime', '<=', endOfMonth));
         }
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const allEvents = snapshot.docs.map(doc => ({ ...(doc.data() as AppEvent), id: doc.id }));
-            // Filter events on the client side
-            const filteredEvents = allEvents.filter(event => event.address.includes(cityFilter));
-            setEvents(filteredEvents);
-            setIsLoading(false);
-        }, (err) => {
-            setError(err.message);
-            setIsLoading(false);
-        });
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot) => {
+                const allEvents = snapshot.docs.map((doc) => ({ ...(doc.data() as AppEvent), id: doc.id }));
+                // Filter events on the client side
+                const filteredEvents = allEvents.filter((event) => event.address.includes(cityFilter));
+                setEvents(filteredEvents);
+                setIsLoading(false);
+            },
+            (err) => {
+                setError(err.message);
+                setIsLoading(false);
+            }
+        );
         return () => {
             if (unsubscribe) {
                 unsubscribe();

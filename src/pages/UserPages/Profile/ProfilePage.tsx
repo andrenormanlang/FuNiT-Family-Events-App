@@ -78,11 +78,15 @@ const Profile = () => {
 
                 const uploadTask = uploadBytesResumable(fileRef, photo);
 
-                uploadTask.on('state_changed',snapshot => {
+                uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
                         setUploadProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 1000) / 10);
-                    },(error) => {
+                    },
+                    (error) => {
                         showMessage(error.message);
-                    },async () => {
+                    },
+                    async () => {
                         setUploadProgress(null);
                         resetField('photoFile');
 
@@ -90,66 +94,67 @@ const Profile = () => {
                         await setPhotoUrl(photoUrl);
                         await reloadUser();
                         if (photoRef.current) photoRef.current = null;
-                    });
-                }
-
-                if (data.email && data.email !== signedInUserEmail) {
-                    await setEmail(data.email);
-                    showMessage('Email updated successfully');
-                }
-
-                if (data.password) {
-                    try {
-                        await setPassword(data.password);
-
-                        const docRef = doc(usersCol, signedInUser.uid);
-                        updateDoc(docRef, {
-                            updatedAt: serverTimestamp()
-                        });
-
-                        showMessage('Password updated successfully');
-                    } catch (error) {
-                        showMessage('Please sign out and in again before changing password');
                     }
-
-                    setValue('password', '');
-                    setValue('passwordConfirm', '');
-                }
-
-                await reloadUser();
-
-                setIsSubmitting(false);
-            } catch (error) {
-                if (error instanceof FirebaseError) {
-                    // Check for the specific error code
-                    if (error.code === 'auth/credential-too-old-login-again') {
-                        // Display a specific message for this error
-                        showMessage('Your session is too old. Please log out and log back in to update your profile.');
-                    } else {
-                        // Handle other Firebase errors
-                        showMessage(error.message);
-                    }
-                } else {
-                    // Handle non-Firebase errors
-                    showMessage('Something went wrong when trying to update profile');
-                }
-                setIsSubmitting(false);
+                );
             }
+
+            if (data.email && data.email !== signedInUserEmail) {
+                await setEmail(data.email);
+                showMessage('Email updated successfully');
+            }
+
+            if (data.password) {
+                try {
+                    await setPassword(data.password);
+
+                    const docRef = doc(usersCol, signedInUser.uid);
+                    updateDoc(docRef, {
+                        updatedAt: serverTimestamp()
+                    });
+
+                    showMessage('Password updated successfully');
+                } catch (error) {
+                    showMessage('Please sign out and in again before changing password');
+                }
+
+                setValue('password', '');
+                setValue('passwordConfirm', '');
+            }
+
+            await reloadUser();
+
+            setIsSubmitting(false);
+        } catch (error) {
+            if (error instanceof FirebaseError) {
+                // Check for the specific error code
+                if (error.code === 'auth/credential-too-old-login-again') {
+                    // Display a specific message for this error
+                    showMessage('Your session is too old. Please log out and log back in to update your profile.');
+                } else {
+                    // Handle other Firebase errors
+                    showMessage(error.message);
+                }
+            } else {
+                // Handle non-Firebase errors
+                showMessage('Something went wrong when trying to update profile');
+            }
+            setIsSubmitting(false);
+        }
     };
 
     const handleUpdatePhoto = async (photoUrl: string) => {
-            await setPhotoUrl(photoUrl);
-            await reloadUser();
-            showMessage('Profile photo updated successfully');
+        await setPhotoUrl(photoUrl);
+        await reloadUser();
+        showMessage('Profile photo updated successfully');
     };
 
     // Inside handleUpdatePhoto
 
     return (
-        <Container sx={{mt:2}}>
+        <Container sx={{ mt: 2 }}>
             <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={12} md={8} lg={6}>
-                <Card sx={{ backgroundColor: '#b2eae8' }}>
+                    <Card sx={{ backgroundColor: '#b2eae8' }}>
                         <CardContent>
                             <Typography variant="h6" gutterBottom>
                                 Update Profile
@@ -185,7 +190,8 @@ const Profile = () => {
                                         size="small"
                                         variant="contained"
                                         color="secondary"
-                                        sx={{ mx: 2 }}>
+                                        sx={{ mx: 2 }}
+                                    >
                                         <Delete />
                                     </Button>
                                     <Button
@@ -193,7 +199,8 @@ const Profile = () => {
                                         onClick={() => handleUpdatePhoto('https://picsum.photos/200')}
                                         size="small"
                                         variant="contained"
-                                        color="secondary">
+                                        color="secondary"
+                                    >
                                         <Shuffle />
                                     </Button>
                                 </Box>
@@ -204,7 +211,8 @@ const Profile = () => {
                                         padding: '10px',
                                         borderRadius: '4px',
                                         mt: 2
-                                    }}>
+                                    }}
+                                >
                                     <FormControl>
                                         <input
                                             accept="image/jpeg, image/png, image/webp, image/gif"
@@ -224,13 +232,14 @@ const Profile = () => {
                                                 sx={{
                                                     backgroundColor: '#e0e0e0',
                                                     marginRight: '10px'
-                                                }}>
+                                                }}
+                                            >
                                                 <CameraAlt />
                                             </IconButton>
                                         </label>
                                         {uploadProgress !== null ? (
                                             <>
-                                                <LinearProgress variant="determinate" value={uploadProgress}  sx={{height: 15, mt:2}} />
+                                                <LinearProgress variant="determinate" value={uploadProgress} sx={{ height: 15, mt: 2 }} />
                                                 <Typography variant="body2" color="textSecondary">
                                                     {`${uploadProgress}%`}
                                                 </Typography>
@@ -246,7 +255,6 @@ const Profile = () => {
                                     </Typography>
                                 </FormControl>
 
-                                
                                 <TextField
                                     id="email"
                                     label="Change Email"
@@ -257,7 +265,7 @@ const Profile = () => {
                                     fullWidth
                                     margin="normal"
                                 />
-                                
+
                                 {/* Password Fields */}
                                 <TextField
                                     id="password"

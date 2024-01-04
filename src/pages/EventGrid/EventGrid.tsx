@@ -248,17 +248,17 @@ const EventGrid = () => {
             {/* Event Grid */}
             <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1200px' }}>
                 {isLoading ? (
-                    <Box 
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    position="fixed"  // Use fixed positioning
-                    top="60%"        // Adjust this to move the CircularProgress up
-                    left="50%"       // Center horizontally
-                    style={{ transform: 'translate(-50%, -40%)' }} // Adjust the transform to align correctly
-                >
-                    <CircularProgress color="secondary" size={100} />
-                </Box>
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        position="fixed" // Use fixed positioning
+                        top="60%" // Adjust this to move the CircularProgress up
+                        left="50%" // Center horizontally
+                        style={{ transform: 'translate(-50%, -40%)' }} // Adjust the transform to align correctly
+                    >
+                        <CircularProgress color="secondary" size={100} />
+                    </Box>
                 ) : error ? (
                     <Typography>Error: {error}</Typography>
                 ) : eventsForPage.length > 0 ? (

@@ -42,52 +42,52 @@ const SavedEvents = () => {
 
     useEffect(() => {
         if (user) {
-          const q = query(
-            collection(db, 'savedEvents'), 
-            where('userId', '==', signedInUser?.uid),
-            orderBy('eventData.eventDateTime', 'asc')
-          );
-      
-          const unsubscribe = onSnapshot(q, async (querySnapshot) => {
-            setIsLoading(true);
-            try {
-              const updates = querySnapshot.docs.map((docSnapshot) => {
-                const savedEventData = docSnapshot.data();
-                const eventRef = doc(db, 'events', savedEventData.eventId);
-      
-                return getDoc(eventRef).then((eventSnap) => {
-                  if (eventSnap.exists()) {
-                    return {
-                      id: docSnapshot.id,
-                      userId: savedEventData.userId,
-                      eventId: savedEventData.eventId,
-                      eventData: {
-                        ...eventSnap.data(), // Ensure all properties of Event are included
-                        id: eventSnap.id // Include the event's ID if needed
-                      }
-                    } as SavedEvent;
-                  } else {
-                    return null;
-                  }
-                });
-              });
-      
-              const resolvedUpdates = (await Promise.all(updates)).filter(Boolean) as SavedEvent[];
-              setSavedEvents(resolvedUpdates);
-            } catch (error) {
-              console.error('Error getting saved events: ', error);
-              showMessage(typeof error === "string" ? error : (error as Error).message || "An error occurred");
-            }
-            setIsLoading(false);
-          }, (error) => {
-            console.error('Error with real-time updates: ', error);
-            showMessage(typeof error === "string" ? error : (error as Error).message || "An error occurred");
-            setIsLoading(false);
-          });
-      
-          return () => unsubscribe();
+            const q = query(collection(db, 'savedEvents'), where('userId', '==', signedInUser?.uid), orderBy('eventData.eventDateTime', 'asc'));
+
+            const unsubscribe = onSnapshot(
+                q,
+                async (querySnapshot) => {
+                    setIsLoading(true);
+                    try {
+                        const updates = querySnapshot.docs.map((docSnapshot) => {
+                            const savedEventData = docSnapshot.data();
+                            const eventRef = doc(db, 'events', savedEventData.eventId);
+
+                            return getDoc(eventRef).then((eventSnap) => {
+                                if (eventSnap.exists()) {
+                                    return {
+                                        id: docSnapshot.id,
+                                        userId: savedEventData.userId,
+                                        eventId: savedEventData.eventId,
+                                        eventData: {
+                                            ...eventSnap.data(), // Ensure all properties of Event are included
+                                            id: eventSnap.id // Include the event's ID if needed
+                                        }
+                                    } as SavedEvent;
+                                } else {
+                                    return null;
+                                }
+                            });
+                        });
+
+                        const resolvedUpdates = (await Promise.all(updates)).filter(Boolean) as SavedEvent[];
+                        setSavedEvents(resolvedUpdates);
+                    } catch (error) {
+                        console.error('Error getting saved events: ', error);
+                        showMessage(typeof error === 'string' ? error : (error as Error).message || 'An error occurred');
+                    }
+                    setIsLoading(false);
+                },
+                (error) => {
+                    console.error('Error with real-time updates: ', error);
+                    showMessage(typeof error === 'string' ? error : (error as Error).message || 'An error occurred');
+                    setIsLoading(false);
+                }
+            );
+
+            return () => unsubscribe();
         }
-      }, [user, showMessage, signedInUser?.uid]);
+    }, [user, showMessage, signedInUser?.uid]);
 
     const handleDialogOpen = (eventId: string) => {
         setOpenDialog(true);
@@ -104,7 +104,6 @@ const SavedEvents = () => {
                 await deleteDoc(doc(db, 'savedEvents', selectedEventId));
                 setSavedEvents(savedEvents.filter((event) => event.id !== selectedEventId));
                 handleDialogClose();
-                
             } catch (error) {
                 console.error('Error unsaving event: ', error);
             }
@@ -120,18 +119,17 @@ const SavedEvents = () => {
         navigate(`?${newSearchParams.toString()}`);
     };
 
-    
     return (
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={2}>
             {isLoading ? (
-                <Box 
-                display="flex" 
-                justifyContent="center" 
-                alignItems="center" 
-                minHeight="100vh" // This makes the Box take the full viewport height
-            >
-                <CircularProgress color="secondary" size={100} /> {/* Increase the size here */}
-            </Box>
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh" // This makes the Box take the full viewport height
+                >
+                    <CircularProgress color="secondary" size={100} /> {/* Increase the size here */}
+                </Box>
             ) : savedEvents.length === 0 ? (
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     You have no saved events at the moment.
@@ -153,7 +151,8 @@ const SavedEvents = () => {
                                                 m: 1,
                                                 bgcolor: 'background.paper',
                                                 '&:hover': { bgcolor: 'grey.300' }
-                                            }}>
+                                            }}
+                                        >
                                             <DeleteOutlineIcon fontSize="small" />
                                         </IconButton>
                                     </Tooltip>
@@ -163,7 +162,7 @@ const SavedEvents = () => {
                     </Grid>
                     {savedEvents.length > 0 && (
                         <Box display="flex" justifyContent="center" width="100%" marginTop={2} marginBottom={2}>
-                             <Pagination count={Math.ceil(savedEvents.length / itemsPerPage)} onPageChange={handlePageChange} />
+                            <Pagination count={Math.ceil(savedEvents.length / itemsPerPage)} onPageChange={handlePageChange} />
                         </Box>
                     )}
                 </>

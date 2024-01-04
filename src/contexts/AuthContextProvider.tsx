@@ -176,7 +176,6 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
                 setSignedInUserName(user.displayName);
                 setSignedInUserPhotoUrl(user.photoURL);
             } else {
-                
                 setSignedInUserEmail(null);
                 setSignedInUserName(null);
                 setSignedInUserPhotoUrl(null);
@@ -204,20 +203,21 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
                 signedInUserEmail,
                 signedInUserName,
                 signedInUserPhotoUrl
-            }}>
+            }}
+        >
             {isLoading ? (
-                <div className="flex justify-center items-center">           
-              <Box 
-  display="flex"
-  justifyContent="center"
-  alignItems="center"
-  position="fixed"  // Use fixed positioning
-  top="40%"        // Adjust this to move the CircularProgress up
-  left="50%"       // Center horizontally
-  style={{ transform: 'translate(-50%, -40%)' }} // Adjust the transform to align correctly
->
-  <CircularProgress color="secondary" size={80} />
-</Box>
+                <div className="flex justify-center items-center">
+                    <Box
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                        position="fixed" // Use fixed positioning
+                        top="40%" // Adjust this to move the CircularProgress up
+                        left="50%" // Center horizontally
+                        style={{ transform: 'translate(-50%, -40%)' }} // Adjust the transform to align correctly
+                    >
+                        <CircularProgress color="secondary" size={80} />
+                    </Box>
                 </div>
             ) : (
                 <>{children}</>

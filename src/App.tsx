@@ -94,7 +94,7 @@ function App() {
                             }
                         />
                         <Route path="/404" element={<FourOFour />} />
-                        <Route path='*' element={< FourOFour />} />
+                        <Route path="*" element={<FourOFour />} />
                     </Routes>
                 </div>
             </AuthContextProvider>

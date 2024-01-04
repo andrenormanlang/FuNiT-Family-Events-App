@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,8 +9,8 @@ import useAuth from '../../hooks/useAuth';
 import { Login } from '../../types/User.types';
 
 const loginSchema = z.object({
-  email: z.string().email("Invalid email format").min(1, "Email missing"),
-  password: z.string().min(6, "Enter at least 6 characters"),
+    email: z.string().email('Invalid email format').min(1, 'Email missing'),
+    password: z.string().min(6, 'Enter at least 6 characters')
 });
 
 const LogInPage = () => {
@@ -21,8 +21,12 @@ const LogInPage = () => {
     const { signInUser } = useAuth();
     const navigate = useNavigate();
 
-    const { handleSubmit, register, formState: { errors } } = useForm<Login>({
-        resolver: zodResolver(loginSchema),
+    const {
+        handleSubmit,
+        register,
+        formState: { errors }
+    } = useForm<Login>({
+        resolver: zodResolver(loginSchema)
     });
 
     const onSignIn = async (data: Login) => {
@@ -37,7 +41,7 @@ const LogInPage = () => {
             if (error instanceof FirebaseError) {
                 setErrorMessage(error.message);
             } else {
-                setErrorMessage("Something went wrong when trying to sign in");
+                setErrorMessage('Something went wrong when trying to sign in');
             }
             setIsError(true);
             setIsSubmitting(false);
@@ -50,7 +54,9 @@ const LogInPage = () => {
                 <Grid item xs={12} md={6} lg={4}>
                     <Card>
                         <CardContent>
-                            <Typography variant="h5" className="mb-3">Sign In</Typography>
+                            <Typography variant="h5" className="mb-3">
+                                Sign In
+                            </Typography>
 
                             {isError && <Alert severity="error">{errorMessage}</Alert>}
 
@@ -79,15 +85,8 @@ const LogInPage = () => {
                                     className="mb-3"
                                 />
 
-                                <Button
-                                    disabled={isSubmitting}
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    fullWidth
-                                    className="mt-4"
-                                >
-                                    {isSubmitting ? "Signing In..." : "Sign In"}
+                                <Button disabled={isSubmitting} type="submit" variant="contained" color="primary" fullWidth className="mt-4">
+                                    {isSubmitting ? 'Signing In...' : 'Sign In'}
                                 </Button>
                             </form>
 
@@ -114,4 +113,3 @@ const LogInPage = () => {
 };
 
 export default LogInPage;
-

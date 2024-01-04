@@ -5,14 +5,12 @@ import useAuth from '../hooks/useAuth';
 
 // Define the shape of the context
 interface SavedEventsContextProps {
-  savedEventsCount: number;
-
+    savedEventsCount: number;
 }
 
 // Default values for the context
 const defaultValues: SavedEventsContextProps = {
-  savedEventsCount: 0,
-  
+    savedEventsCount: 0
 };
 
 // Create the context with the default values
@@ -24,40 +22,39 @@ export const useSavedEvents = () => useContext(SavedEventsContext);
 
 // Define the provider component
 interface SavedEventsProviderProps {
-  children: ReactNode;
+    children: ReactNode;
 }
 
 export const SavedEventsProvider: React.FC<SavedEventsProviderProps> = ({ children }) => {
-  const [savedEventsCount, setSavedEventsCount] = useState(0);
-  const { signedInUser } = useAuth();
+    const [savedEventsCount, setSavedEventsCount] = useState(0);
+    const { signedInUser } = useAuth();
 
-  useEffect(() => {
-    let unsubscribe = () => {};
+    useEffect(() => {
+        let unsubscribe = () => {};
 
-    if (signedInUser) {
-      const q = query(collection(db, 'savedEvents'), where('userId', '==', signedInUser.uid));
+        if (signedInUser) {
+            const q = query(collection(db, 'savedEvents'), where('userId', '==', signedInUser.uid));
 
-      unsubscribe = onSnapshot(q, (querySnapshot) => {
-        setSavedEventsCount(querySnapshot.docs.length);
-      }, (error) => {
-        console.error("Error fetching real-time saved events count:", error);
-      });
-    }
+            unsubscribe = onSnapshot(
+                q,
+                (querySnapshot) => {
+                    setSavedEventsCount(querySnapshot.docs.length);
+                },
+                (error) => {
+                    console.error('Error fetching real-time saved events count:', error);
+                }
+            );
+        }
 
-    // Clean up the listener when the component unmounts or user changes
-    return () => {
-      if (unsubscribe) {
-          unsubscribe();
-      }
-  };
-  }, [signedInUser]);
+        // Clean up the listener when the component unmounts or user changes
+        return () => {
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+    }, [signedInUser]);
 
-
-  return (
-    <SavedEventsContext.Provider value={{ savedEventsCount }}>
-      {children}
-    </SavedEventsContext.Provider>
-  );
+    return <SavedEventsContext.Provider value={{ savedEventsCount }}>{children}</SavedEventsContext.Provider>;
 };
 
 export default SavedEventsProvider;

@@ -22,16 +22,15 @@ import { DesktopDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import  { db, eventsCol, storage } from '../../services/firebase';
+import { db, eventsCol, storage } from '../../services/firebase';
 import { setDoc } from 'firebase/firestore';
 import { Libraries, useLoadScript } from '@react-google-maps/api';
 import PlacesAutocomplete from '../../helpers/PlacesAutoComplete';
-import  AddressMap  from '../../helpers/AddressMap';
+import AddressMap from '../../helpers/AddressMap';
 import { Event } from '../../types/Event.types';
 import useAuth from '../../hooks/useAuth';
 import { RemoveCircleOutline } from '@mui/icons-material';
 import { geocodeByAddress, getLatLng } from 'react-places-autocomplete';
-
 
 const libraries: Libraries = ['places'];
 
@@ -73,8 +72,7 @@ const eventSchema = z.object({
     ageGroup: z.enum(ageGroups),
     category: z.enum(categoryValues),
     email: z.union([z.string().email(), z.literal('')]).optional(),
-    website: z.union([z.string().url(), z.literal('')]).optional(),
-
+    website: z.union([z.string().url(), z.literal('')]).optional()
 });
 
 type EventData = z.infer<typeof eventSchema>;
@@ -101,7 +99,6 @@ const EventForm: React.FC = () => {
     });
 
     const { signedInUserInfo } = useAuth();
-   
 
     const [mapCenter, setMapCenter] = useState<MapCenter | null>(null);
 
@@ -201,7 +198,8 @@ const EventForm: React.FC = () => {
                             <Box
                                 component="form"
                                 onSubmit={handleSubmit(onSubmit)}
-                                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'le' }}>
+                                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'le' }}
+                            >
                                 {/* Form content goes here */}
                                 <input type="file" id="image" onChange={handleImageChange} accept="image/*" style={{ display: 'none' }} />
                                 <label htmlFor="image">
@@ -250,28 +248,28 @@ const EventForm: React.FC = () => {
                         <MenuItem value="Malmö">Malmö</MenuItem>
                     </Select>
                 </FormControl> */}
-                                 <Controller
-                  name="address"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <>
-                      <PlacesAutocomplete
-                        value={field.value}
-                        onChange={(value) => {
-                          field.onChange(value); // Notify react-hook-form of the change
-                          handleAddressSelect(value); // Update the map location
-                        }}
-                        error={!!errors.address}
-                        helperText={errors.address?.message}
-                        selectedCity={''} // You can provide a dynamic value if needed
-                      />
-                      {mapCenter && (
-                        <AddressMap center={mapCenter} /> // Display the map here
-                      )}
-                    </>
-                  )}
-                />
+                                <Controller
+                                    name="address"
+                                    control={control}
+                                    defaultValue=""
+                                    render={({ field }) => (
+                                        <>
+                                            <PlacesAutocomplete
+                                                value={field.value}
+                                                onChange={(value) => {
+                                                    field.onChange(value); // Notify react-hook-form of the change
+                                                    handleAddressSelect(value); // Update the map location
+                                                }}
+                                                error={!!errors.address}
+                                                helperText={errors.address?.message}
+                                                selectedCity={''} // You can provide a dynamic value if needed
+                                            />
+                                            {mapCenter && (
+                                                <AddressMap center={mapCenter} /> // Display the map here
+                                            )}
+                                        </>
+                                    )}
+                                />
 
                                 <Controller
                                     name="email"

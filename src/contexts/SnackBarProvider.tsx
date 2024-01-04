@@ -38,12 +38,12 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({ children }) 
 
     return (
         <SnackbarContext.Provider value={{ showMessage }}>
-            <Snackbar 
-              open={open} 
-              autoHideDuration={6000} 
-              onClose={handleClose}
-              anchorOrigin={{ vertical: 'top', horizontal: 'center' }} 
-              message={message} 
+            <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                message={message}
             />
             {children}
         </SnackbarContext.Provider>

@@ -21,7 +21,9 @@ const LogOutPage = () => {
             <Grid item xs={12} md={6} lg={4}>
                 <Card>
                     <CardContent>
-                        <Typography variant="h5" className="mb-3">Sign Out</Typography>
+                        <Typography variant="h5" className="mb-3">
+                            Sign Out
+                        </Typography>
                         <Typography>Please wait while you're being signed out...</Typography>
                     </CardContent>
                 </Card>

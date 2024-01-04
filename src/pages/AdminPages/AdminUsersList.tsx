@@ -7,10 +7,10 @@ const AdminUsersListPage = () => {
 
     if (isLoading) {
         return (
-            <Box 
-                display="flex" 
-                justifyContent="center" 
-                alignItems="center" 
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
                 minHeight="100vh" // This makes the Box take the full viewport height
             >
                 <CircularProgress color="success" size={80} /> {/* Increase the size here */}

@@ -17,9 +17,9 @@ const FilterContext = createContext<{
         categoryFilter: '',
         ageGroupFilter: '',
         cityFilter: '',
-        selectedMonth: '',
+        selectedMonth: ''
     },
-    setFilters: () => {}, // empty function as a placeholder
+    setFilters: () => {} // empty function as a placeholder
 });
 
 export const useFilter = () => useContext(FilterContext);
@@ -29,12 +29,8 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
         categoryFilter: '',
         ageGroupFilter: '',
         cityFilter: '',
-        selectedMonth: '',
+        selectedMonth: ''
     });
 
-    return (
-        <FilterContext.Provider value={{ filters, setFilters }}>
-            {children}
-        </FilterContext.Provider>
-    );
+    return <FilterContext.Provider value={{ filters, setFilters }}>{children}</FilterContext.Provider>;
 };

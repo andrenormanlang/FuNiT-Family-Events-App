@@ -21,7 +21,6 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
     };
 
     const [editUser, setEditUser] = useState<UserInfo | null>(null);
-    
 
     const handleEditOpen = (user: UserInfo) => {
         setEditUser(user);
@@ -40,23 +39,18 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
         {
             field: 'photoURL',
             headerName: 'Avatar',
-            renderCell: (params: GridRenderCellParams) => (
-                <Avatar src={params.value as string} />
-            ),
+            renderCell: (params: GridRenderCellParams) => <Avatar src={params.value as string} />,
             width: 100
         },
         { field: 'displayName', headerName: 'Name', width: 200 },
         { field: 'email', headerName: 'Email', width: 400 },
-        { 
-            field: 'isAdmin', 
-            headerName: 'Admin', 
+        {
+            field: 'isAdmin',
+            headerName: 'Admin',
             renderCell: (params: GridRenderCellParams) => (
-                <Switch
-                    checked={params.value as boolean}
-                    onChange={() => handleAdminToggle(params.id as string, params.value as boolean)}
-                />
+                <Switch checked={params.value as boolean} onChange={() => handleAdminToggle(params.id as string, params.value as boolean)} />
             ),
-            width: 100 
+            width: 100
         },
         {
             field: 'edit',
@@ -93,7 +87,6 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
                     }
                 }}
                 pageSizeOptions={[25, 50]}
-                
             />
             <Dialog open={!!editUser} onClose={handleEditClose}>
                 <DialogTitle>Edit User</DialogTitle>
@@ -117,7 +110,6 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
                     <Button onClick={handleEditSave}>Save</Button>
                 </DialogActions>
             </Dialog>
-            
         </div>
     );
 };

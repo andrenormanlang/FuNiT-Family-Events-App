@@ -12,7 +12,7 @@ const useStreamUsers = () => {
 
     useEffect(() => {
         const usersCol = collection(db, 'users');
-    
+
         let q;
         if (signedInUserInfo?.isAdmin) {
             q = query(usersCol, orderBy('createdAt', 'asc'));
@@ -21,17 +21,21 @@ const useStreamUsers = () => {
             // For example, you might want to fetch only the current user's data
             q = query(usersCol, where('uid', '==', signedInUserInfo?.uid));
         }
-    
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const userData = snapshot.docs.map(doc => ({ ...(doc.data() as UserInfo), id: doc.id }));
-            setUsers(userData);
-            setIsLoading(false);
-            // setIsLoading(false);
-        }, (err) => {
-            setError(err.message);
-            setIsLoading(false);
-        });
-    
+
+        const unsubscribe = onSnapshot(
+            q,
+            (snapshot) => {
+                const userData = snapshot.docs.map((doc) => ({ ...(doc.data() as UserInfo), id: doc.id }));
+                setUsers(userData);
+                setIsLoading(false);
+                // setIsLoading(false);
+            },
+            (err) => {
+                setError(err.message);
+                setIsLoading(false);
+            }
+        );
+
         return () => unsubscribe();
     }, [signedInUserInfo?.isAdmin, signedInUserInfo?.uid]);
 

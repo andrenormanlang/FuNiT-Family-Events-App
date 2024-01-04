@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -9,7 +9,7 @@ import useAuth from '../../hooks/useAuth';
 import { ForgotPassword } from '../../types/User.types';
 
 const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email format").min(1, "Email missing"),
+    email: z.string().email('Invalid email format').min(1, 'Email missing')
 });
 
 const SendPassword = () => {
@@ -18,8 +18,12 @@ const SendPassword = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { resetPassword } = useAuth();
 
-    const { handleSubmit, register, formState: { errors } } = useForm<ForgotPassword>({
-        resolver: zodResolver(forgotPasswordSchema),
+    const {
+        handleSubmit,
+        register,
+        formState: { errors }
+    } = useForm<ForgotPassword>({
+        resolver: zodResolver(forgotPasswordSchema)
     });
 
     const onForgotPassword = async (data: ForgotPassword) => {
@@ -29,13 +33,13 @@ const SendPassword = () => {
         try {
             setIsSubmitting(true);
             await resetPassword(data.email);
-            setSuccessMessage("Check your email for password reset instructions.");
+            setSuccessMessage('Check your email for password reset instructions.');
             setIsSubmitting(false);
         } catch (error) {
             if (error instanceof FirebaseError) {
                 setErrorMessage(error.message);
             } else {
-                setErrorMessage("Something went wrong. Please try again.");
+                setErrorMessage('Something went wrong. Please try again.');
             }
             setIsSubmitting(false);
         }
@@ -47,7 +51,9 @@ const SendPassword = () => {
                 <Grid item xs={12} md={6} lg={4}>
                     <Card>
                         <CardContent>
-                            <Typography variant="h5" className="mb-3">Forgot Password</Typography>
+                            <Typography variant="h5" className="mb-3">
+                                Forgot Password
+                            </Typography>
 
                             {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
                             {successMessage && <Alert severity="success">{successMessage}</Alert>}
@@ -64,15 +70,8 @@ const SendPassword = () => {
                                     className="mb-3"
                                 />
 
-                                <Button
-                                    disabled={isSubmitting}
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    fullWidth
-                                    className="mt-4"
-                                >
-                                    {isSubmitting ? "Sending..." : "Send Reset Email"}
+                                <Button disabled={isSubmitting} type="submit" variant="contained" color="primary" fullWidth className="mt-4">
+                                    {isSubmitting ? 'Sending...' : 'Send Reset Email'}
                                 </Button>
                             </form>
 
@@ -95,7 +94,7 @@ const SendPassword = () => {
                 </Grid>
             </Grid>
         </Container>
-  )
-}
+    );
+};
 
-export default SendPassword
+export default SendPassword;

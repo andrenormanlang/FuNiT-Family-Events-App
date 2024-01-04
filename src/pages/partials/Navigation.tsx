@@ -80,7 +80,8 @@ const Navbar: React.FC = () => {
                             color: 'inherit',
                             textDecoration: 'none',
                             flexGrow: 1
-                        }}>
+                        }}
+                    >
                         <Typography variant="h6" component="div" onClick={navigateHome} style={{ cursor: 'pointer' }}>
                             FunniT
                         </Typography>
@@ -111,7 +112,8 @@ const Navbar: React.FC = () => {
                                             top: -1, // Adjust vertical position
                                             transform: 'scale(1)'
                                         }
-                                    }}>
+                                    }}
+                                >
                                     <Button color="inherit" component={NavLink} to="/saved-events">
                                         Saved Events
                                     </Button>
@@ -173,7 +175,8 @@ const Navbar: React.FC = () => {
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 marginBottom: 2 // Adds some spacing below the avatar
-                            }}>
+                            }}
+                        >
                             <Avatar
                                 src={signedInUserPhotoUrl || undefined}
                                 alt={signedInUserName || 'Profile'}
@@ -226,7 +229,8 @@ const Navbar: React.FC = () => {
                                             component={NavLink}
                                             to="/events-list"
                                             onClick={handleDrawerToggle}
-                                            sx={{ justifyContent: 'center' }}>
+                                            sx={{ justifyContent: 'center' }}
+                                        >
                                             <Button color="inherit">Events List</Button>
                                         </ListItemButton>
                                     </ListItem>
@@ -235,7 +239,8 @@ const Navbar: React.FC = () => {
                                             component={NavLink}
                                             to="/users-list"
                                             onClick={handleDrawerToggle}
-                                            sx={{ justifyContent: 'center' }}>
+                                            sx={{ justifyContent: 'center' }}
+                                        >
                                             <Button color="inherit">Users List</Button>
                                         </ListItemButton>
                                     </ListItem>
