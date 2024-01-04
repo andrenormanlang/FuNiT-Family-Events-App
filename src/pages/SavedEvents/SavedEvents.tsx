@@ -19,7 +19,7 @@ import {
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EventCard from '../EventGrid/EventCard';
 import { SavedEvent } from '../../types/SavedEvent.types';
-import { useSavedEvents } from '../../contexts/SavedEventsProvider';
+
 import Pagination from '../../components/MUI/Pagination';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from '../../contexts/SnackBarProvider';
@@ -30,7 +30,7 @@ const SavedEvents = () => {
     const [isLoading, setIsLoading] = useState(true);
     const auth = getAuth();
     const user = auth.currentUser;
-    const { updateSavedEventsCount } = useSavedEvents();
+
     const [searchParams] = useSearchParams();
     const itemsPerPage = 6; // Number of items per page
     const { showMessage } = useSnackbar();
@@ -87,7 +87,7 @@ const SavedEvents = () => {
       
           return () => unsubscribe();
         }
-      }, [user, showMessage]);
+      }, [user, showMessage, signedInUser?.uid]);
 
     const handleDialogOpen = (eventId: string) => {
         setOpenDialog(true);
@@ -104,7 +104,7 @@ const SavedEvents = () => {
                 await deleteDoc(doc(db, 'savedEvents', selectedEventId));
                 setSavedEvents(savedEvents.filter((event) => event.id !== selectedEventId));
                 handleDialogClose();
-                updateSavedEventsCount();
+                
             } catch (error) {
                 console.error('Error unsaving event: ', error);
             }
@@ -124,7 +124,14 @@ const SavedEvents = () => {
     return (
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={2}>
             {isLoading ? (
-                <CircularProgress />
+                <Box 
+                display="flex" 
+                justifyContent="center" 
+                alignItems="center" 
+                minHeight="100vh" // This makes the Box take the full viewport height
+            >
+                <CircularProgress color="secondary" size={100} /> {/* Increase the size here */}
+            </Box>
             ) : savedEvents.length === 0 ? (
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     You have no saved events at the moment.

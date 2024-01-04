@@ -11,7 +11,7 @@ import {
 } from 'firebase/auth';
 import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { createContext, useEffect, useState } from 'react';
-import { CircularProgress } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { useSnackbar } from './SnackBarProvider';
 import { auth, usersCol } from '../services/firebase';
 import { UserInfo } from '../types/User.types';
@@ -206,8 +206,18 @@ const AuthContextProvider: React.FC<AuthContextProps> = ({ children }) => {
                 signedInUserPhotoUrl
             }}>
             {isLoading ? (
-                <div className="flex justify-center items-center">
-                    <CircularProgress />
+                <div className="flex justify-center items-center">           
+              <Box 
+  display="flex"
+  justifyContent="center"
+  alignItems="center"
+  position="fixed"  // Use fixed positioning
+  top="40%"        // Adjust this to move the CircularProgress up
+  left="50%"       // Center horizontally
+  style={{ transform: 'translate(-50%, -40%)' }} // Adjust the transform to align correctly
+>
+  <CircularProgress color="secondary" size={80} />
+</Box>
                 </div>
             ) : (
                 <>{children}</>

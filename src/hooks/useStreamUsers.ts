@@ -26,6 +26,7 @@ const useStreamUsers = () => {
             const userData = snapshot.docs.map(doc => ({ ...(doc.data() as UserInfo), id: doc.id }));
             setUsers(userData);
             setIsLoading(false);
+            // setIsLoading(false);
         }, (err) => {
             setError(err.message);
             setIsLoading(false);

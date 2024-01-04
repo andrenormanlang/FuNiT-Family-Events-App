@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Grid, Box, FormControl, InputLabel, Select, MenuItem, Typography, Chip, Button } from '@mui/material';
+import { Grid, Box, FormControl, InputLabel, Select, MenuItem, Typography, Chip, Button, CircularProgress } from '@mui/material';
 import EventCard from './EventCard';
 import useStreamEvents from '../../hooks/useStreamEvents';
 import useAuth from '../../hooks/useAuth';
@@ -61,7 +61,7 @@ const EventGrid = () => {
         ageGroupFilter,
         cityFilter,
         selectedMonth,
-        page,
+        page
     });
 
     useEffect(() => {
@@ -97,15 +97,18 @@ const EventGrid = () => {
         loadMonths();
     }, []);
 
-    const updateURLParameters = useCallback((category: string, ageGroup: string, city: string, month: string, currentPage: number) => {
-        const newSearchParams = new URLSearchParams();
-        if (category) newSearchParams.set('category', category);
-        if (ageGroup) newSearchParams.set('ageGroup', ageGroup);
-        if (city) newSearchParams.set('city', city);
-        if (month) newSearchParams.set('month', month);
-        newSearchParams.set('page', currentPage.toString());
-        setSearchParams(newSearchParams);
-    } , [setSearchParams]);
+    const updateURLParameters = useCallback(
+        (category: string, ageGroup: string, city: string, month: string, currentPage: number) => {
+            const newSearchParams = new URLSearchParams();
+            if (category) newSearchParams.set('category', category);
+            if (ageGroup) newSearchParams.set('ageGroup', ageGroup);
+            if (city) newSearchParams.set('city', city);
+            if (month) newSearchParams.set('month', month);
+            newSearchParams.set('page', currentPage.toString());
+            setSearchParams(newSearchParams);
+        },
+        [setSearchParams]
+    );
 
     const resetFilters = () => {
         setCategoryFilter('');
@@ -134,8 +137,6 @@ const EventGrid = () => {
         setSearchParams(newSearchParams);
     }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page, setSearchParams]);
 
-
-
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
         updateURLParameters(categoryFilter, ageGroupFilter, cityFilter, selectedMonth, newPage);
@@ -143,13 +144,11 @@ const EventGrid = () => {
 
     const eventsForPage = filteredEvents.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
-
     return (
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
             {/* Filter UI */}
             <Box sx={{ mb: 4, width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', p: 2 }}>
                 <Grid container spacing={2} justifyContent="center">
-
                     {/* Category Filter */}
                     <Grid item xs={12} sm={6} md={3}>
                         <FormControl fullWidth>
@@ -249,7 +248,17 @@ const EventGrid = () => {
             {/* Event Grid */}
             <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1200px' }}>
                 {isLoading ? (
-                    <Typography>Loading...</Typography>
+                    <Box 
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    position="fixed"  // Use fixed positioning
+                    top="60%"        // Adjust this to move the CircularProgress up
+                    left="50%"       // Center horizontally
+                    style={{ transform: 'translate(-50%, -40%)' }} // Adjust the transform to align correctly
+                >
+                    <CircularProgress color="secondary" size={100} />
+                </Box>
                 ) : error ? (
                     <Typography>Error: {error}</Typography>
                 ) : eventsForPage.length > 0 ? (

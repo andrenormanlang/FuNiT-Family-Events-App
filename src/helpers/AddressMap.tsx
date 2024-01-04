@@ -1,4 +1,4 @@
-import { CircularProgress } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { GoogleMap, MarkerF, useLoadScript } from '@react-google-maps/api';
 import marker from '../assets/images/mapmarker.svg';
 
@@ -24,7 +24,17 @@ const AddressMap = ({ center }: Props) => {
     height: '400px',
   };
 
-  if (!isLoaded) return <CircularProgress />;
+  if (!isLoaded) return  (
+        <Box 
+            display="flex" 
+            justifyContent="center" 
+            alignItems="center" 
+            minHeight="100vh" // This makes the Box take the full viewport height
+        >
+            <CircularProgress color="success" size={100} /> {/* Increase the size here */}
+        </Box>
+    );
+
 
   return (
     <GoogleMap

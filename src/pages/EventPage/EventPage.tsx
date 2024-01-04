@@ -8,7 +8,6 @@ import defaultImage from '../../assets/images/default-image.webp';
 import useAuth from '../../hooks/useAuth';
 // import { SavedEvent } from '../../types/SavedEvent.types';
 import { auth } from '../../services/firebase';
-import { useSavedEvents } from '../../contexts/SavedEventsProvider';
 import { LocationOn } from '@mui/icons-material';
 import AddressMap from '../../helpers/AddressMap';
 
@@ -53,7 +52,6 @@ const EventPage = () => {
     const [error, setError] = useState('');
     const { signedInUser, signedInUserInfo } = useAuth();
     const [isSaved, setIsSaved] = useState(false);
-    const { updateSavedEventsCount } = useSavedEvents();
     const [mapLocation, setMapLocation] = useState<{ lat: number; lng: number } | null>(null);
 
     if (!id) {
@@ -155,7 +153,6 @@ const EventPage = () => {
             }
     
             // Update the saved events count for the user
-            updateSavedEventsCount();
         }
     };
     

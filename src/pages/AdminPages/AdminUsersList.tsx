@@ -1,11 +1,22 @@
 import AdminUsersTable from './AdminUsersTable';
 import useStreamUsers from '../../hooks/useStreamUsers';
-import { CircularProgress, Container, Typography } from '@mui/material';
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
 
 const AdminUsersListPage = () => {
     const { users, isLoading, error } = useStreamUsers();
 
-    if (isLoading) return <CircularProgress />;
+    if (isLoading) {
+        return (
+            <Box 
+                display="flex" 
+                justifyContent="center" 
+                alignItems="center" 
+                minHeight="100vh" // This makes the Box take the full viewport height
+            >
+                <CircularProgress color="success" size={80} /> {/* Increase the size here */}
+            </Box>
+        );
+    }
     if (error) return <div>Error: {error}</div>;
 
     return (

@@ -162,7 +162,16 @@ const EventEditPage = () => {
         navigate('/'); // Navigates to the homepage
     };
 
-    if (isLoading) return <CircularProgress />;
+    if (isLoading) return (
+                <Box 
+                    display="flex" 
+                    justifyContent="center" 
+                    alignItems="center" 
+                    minHeight="100vh" // This makes the Box take the full viewport height
+                >
+                    <CircularProgress color="secondary" size={80} /> {/* Increase the size here */}
+                </Box>
+            );
     if (error) return <Alert severity="error">{error}</Alert>;
     if (!event) return <div>Loading event data...</div>; // Show loading state until event data is available
     if (!isLoaded) {
