@@ -1,8 +1,8 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Event } from '../../types/Event.types';
-import { Box, Button, Tooltip } from '@mui/material';
+import { Category, Event } from '../../types/Event.types';
+import { Box, Button, Chip, Tooltip } from '@mui/material';
 import { CardMedia } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
 import { useState } from 'react';
@@ -17,6 +17,23 @@ interface EventCardProps {
     isSaved: boolean;
     isAdmin: boolean;
 }
+
+const getCategoryColor = (category: Category): string => {
+    const categoryColors: { [key in Category]: string } = {
+        'Art, Film & Books': 'red',
+        'Community Festivals': 'blue',
+        'Cooking': 'green',
+        'DIY': 'orange',
+        'Educational Activities': 'purple',
+        'Games': 'pink',
+        'Health and Wellness': 'darkblue',
+        'Music': 'brown',
+        'Outdoor Activities': 'teal',
+        'Theatre & Dance': 'maroon',
+        'Other': 'black'
+    };
+    return categoryColors[category] || 'grey'; // default to grey if category not found
+};
 
 const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
     const navigate = useNavigate(); // or const history = useHistory(); in v5
@@ -55,7 +72,8 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
             sx={{
                 display: 'flex',
                 flexDirection: 'column',
-                height: 380,               
+                 // This will make the card height adjust based on the content
+        minHeight: 370,              
                 backgroundColor: theme.palette.background.default,
                 border: isSaved ? '5px solid green' : 'none', //
                 typography: theme.typography,
@@ -82,6 +100,24 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                         objectFit: 'cover' // Ensure it takes the full width of the card
                     }}
                 />
+                {/* Positioning the category label */}
+
+
+    <Chip 
+        label={event.category} 
+        sx={{ 
+            position: 'absolute', 
+            bottom: 2, 
+            right: 8, 
+            backgroundColor: getCategoryColor(event.category), 
+            color: 'white',
+            fontFamily: theme.typography.h6.fontFamily,
+            fontSize: theme.typography.h6.fontSize,
+            fontWeight: theme.typography.h6.fontWeight,
+            lineHeight: theme.typography.h6.lineHeight 
+        }} 
+    />
+
                 {isAdmin && (
                     <>
                         {/* Edit Button */}
@@ -126,14 +162,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                 <Typography variant='h1' fontSize={25} component="div" gutterBottom>
                     {event.name}
                 </Typography>
-                {/* <Typography variant="subtitle2" color="textSecondary" paragraph>
-                    {event.description}
-                </Typography> */}
-                <Box marginBottom={1}>
-                    <Typography variant='h6' fontSize={15} color="primary">
-                        {event.category}
-                    </Typography>
-                </Box>
+                
                 <Typography fontSize={13} fontWeight={600} color="textSecondary">
                     {event.address}
                 </Typography>
