@@ -21,8 +21,9 @@ import EventCard from '../EventGrid/EventCard';
 import { SavedEvent } from '../../types/SavedEvent.types';
 import { useSavedEvents } from '../../contexts/SavedEventsProvider';
 import Pagination from '../../components/MUI/Pagination';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSnackbar } from '../../contexts/SnackBarProvider';
+import useAuth from '../../hooks/useAuth';
 
 const SavedEvents = () => {
     const [savedEvents, setSavedEvents] = useState<SavedEvent[]>([]);
@@ -33,15 +34,17 @@ const SavedEvents = () => {
     const [searchParams] = useSearchParams();
     const itemsPerPage = 6; // Number of items per page
     const { showMessage } = useSnackbar();
+    const navigate = useNavigate();
 
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+    const { signedInUser } = useAuth();
 
     useEffect(() => {
         if (user) {
           const q = query(
             collection(db, 'savedEvents'), 
-            where('userId', '==', user.uid),
+            where('userId', '==', signedInUser?.uid),
             orderBy('eventData.eventDateTime', 'asc')
           );
       
@@ -111,6 +114,13 @@ const SavedEvents = () => {
     const page = Number(searchParams.get('page')) || 1;
     const savedEventsForPage = savedEvents.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
+    const handlePageChange = (newPage: number) => {
+        const newSearchParams = new URLSearchParams(searchParams);
+        newSearchParams.set('page', newPage.toString());
+        navigate(`?${newSearchParams.toString()}`);
+    };
+
+    
     return (
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={2}>
             {isLoading ? (
@@ -146,7 +156,7 @@ const SavedEvents = () => {
                     </Grid>
                     {savedEvents.length > 0 && (
                         <Box display="flex" justifyContent="center" width="100%" marginTop={2} marginBottom={2}>
-                            <Pagination count={Math.ceil(savedEvents.length / itemsPerPage)}  />
+                             <Pagination count={Math.ceil(savedEvents.length / itemsPerPage)} onPageChange={handlePageChange} />
                         </Box>
                     )}
                 </>

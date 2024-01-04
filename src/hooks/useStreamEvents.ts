@@ -4,19 +4,18 @@ import { db } from '../services/firebase';
 import { AppEvent } from '../types/Event.types';
 import useAuth from './useAuth';
 
-
-
 const useStreamEvents = ({
     categoryFilter = '',
     ageGroupFilter = '',
     selectedMonth = '',
-    cityFilter = ''
+    cityFilter = '',
+    page = 1
 } = {}) => {
     const [events, setEvents] = useState<AppEvent[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const { signedInUserInfo } = useAuth();
-    
+
 
     useEffect(() => {
         let q = query(collection(db, 'events'));
@@ -60,7 +59,7 @@ const useStreamEvents = ({
                 unsubscribe();
             }
         };
-    }, [signedInUserInfo?.isAdmin, signedInUserInfo?.uid, categoryFilter, ageGroupFilter, selectedMonth, cityFilter]);
+    }, [signedInUserInfo?.isAdmin, signedInUserInfo?.uid, categoryFilter, ageGroupFilter, selectedMonth, cityFilter, page]);
 
     return { events, isLoading, error };
 };

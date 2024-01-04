@@ -4,23 +4,26 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 interface PaginationProps {
   count: number;
-  onPageChange: (page: number) => void; // Add this line
+  onPageChange: (page: number) => void;
 }
 
 const Pagination: React.FC<PaginationProps> = ({ count, onPageChange }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const page = Number(searchParams.get('page')) || 1;
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   const handleChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+    // Update the page state by calling the onPageChange function from parent component
+    onPageChange(value);
+
+    // Update the URL search params
     searchParams.set('page', value.toString());
     navigate(`${location.pathname}?${searchParams.toString()}`);
-    onPageChange(value); // Call the callback function
   };
 
   return (
-    <MuiPagination count={count} page={page} onChange={handleChange} />
+    <MuiPagination count={count} page={currentPage} onChange={handleChange} />
   );
 };
 

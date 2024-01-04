@@ -1,74 +1,4 @@
-// // EventGrid.js
-// import { useEffect, useState } from 'react';
-// import {Grid, Box} from '@mui/material';
-// import EventCard from './EventCard';
-// import { getDocs, collection, query, where} from 'firebase/firestore';
-// import { db } from '../../services/firebase';
-// import { getAuth, onAuthStateChanged } from 'firebase/auth';
-// import { useTheme } from '@mui/material/styles';
-// import Pagination from '../../components/MUI/Pagination'
-// import { useSearchParams } from 'react-router-dom';
-// import useStreamEvents from '../../hooks/useStreamEvents';
-// import useAuth from '../../hooks/useAuth';
-
-// const EventGrid = () => {
-//   const { events, isLoading, error } = useStreamEvents();
-//   const [savedEventIds, setSavedEventIds] = useState<string[]>([]);
-//   const auth = getAuth();
-//   const theme = useTheme();
-//   const [searchParams] = useSearchParams();
-//   const itemsPerPage = 6; // Number of items per page
-//   const { signedInUserInfo } = useAuth();
-
-//   useEffect(() => {
-//     const fetchSavedEvents = async (userId: string) => {
-//       const q = query(collection(db, 'savedEvents'), where('userId', '==', userId));
-//       const querySnapshot = await getDocs(q);
-//       const savedIds = querySnapshot.docs.map((doc) => doc.data().eventData.id);
-//       setSavedEventIds(savedIds);
-//     };
-
-//     const unsubscribe = onAuthStateChanged(auth, (user) => {
-//       if (user) {
-//         fetchSavedEvents(user.uid);
-//       } else {
-//         setSavedEventIds([]);
-//       }
-//     });
-
-//     return () => unsubscribe();
-//   }, [auth]);
-
-//   const page = Number(searchParams.get('page')) || 1;
-//   const eventsForPage = events.slice((page - 1) * itemsPerPage, page * itemsPerPage);
-
-//   if (isLoading) {
-//     // Render loading state here
-//   }
-
-//   if (error) {
-//     // Render error state here
-//   }
-
-//   return (
-//     <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
-//       <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1200px' }}>
-//         {eventsForPage.map((event) => (
-//           <Grid item key={event.id} xs={11} sm={5.5} md={5.5} lg={4} xl={4}>
-//             <EventCard event={event} isSaved={savedEventIds.includes(event.id)} isAdmin={signedInUserInfo?.isAdmin || false}/>
-//           </Grid>
-//         ))}
-//       </Grid>
-//       <Box display="flex" justifyContent="center" marginTop={2} marginBottom={2}>
-//         <Pagination count={Math.ceil(events.length / itemsPerPage)} />
-//       </Box>
-//     </Box>
-//   );
-// };
-
-// export default EventGrid;
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Grid, Box, FormControl, InputLabel, Select, MenuItem, Typography, Chip, Button } from '@mui/material';
 import EventCard from './EventCard';
 import useStreamEvents from '../../hooks/useStreamEvents';
@@ -125,13 +55,14 @@ const EventGrid = () => {
     const [filteredEvents, setFilteredEvents] = useState<AppEvent[]>([]);
     const [uniqueMonths, setUniqueMonths] = useState<string[]>([]);
     const [selectedMonth, setSelectedMonth] = useState('');
+    const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
     const { events, isLoading, error } = useStreamEvents({
         categoryFilter,
         ageGroupFilter,
         cityFilter,
-        selectedMonth
+        selectedMonth,
+        page,
     });
-    const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
 
     useEffect(() => {
         const fetchSavedEvents = async (userId: string) => {
@@ -166,28 +97,29 @@ const EventGrid = () => {
         loadMonths();
     }, []);
 
+    const updateURLParameters = useCallback((category: string, ageGroup: string, city: string, month: string, currentPage: number) => {
+        const newSearchParams = new URLSearchParams();
+        if (category) newSearchParams.set('category', category);
+        if (ageGroup) newSearchParams.set('ageGroup', ageGroup);
+        if (city) newSearchParams.set('city', city);
+        if (month) newSearchParams.set('month', month);
+        newSearchParams.set('page', currentPage.toString());
+        setSearchParams(newSearchParams);
+    } , [setSearchParams]);
+
     const resetFilters = () => {
         setCategoryFilter('');
         setAgeGroupFilter('');
         setCityFilter('');
         setSelectedMonth('');
-        // Reset other filter states as needed
+        setSelectedMonth('');
+        setPage(1);
+        updateURLParameters('', '', '', '', 1);
     };
 
     useEffect(() => {
-        const category = searchParams.get('category') || '';
-        const ageGroup = searchParams.get('ageGroup') || '';
-        const city = searchParams.get('city') || '';
-        const month = searchParams.get('month') || '';
-
-        setCategoryFilter(category);
-        setAgeGroupFilter(ageGroup);
-        setCityFilter(city);
-        setSelectedMonth(month);
-
-        // You may also want to initiate a fetch based on these params
-        // fetchEvents({ category, ageGroup, city, month });
-    }, []);
+        updateURLParameters(categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page);
+    }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page, updateURLParameters]);
 
     useEffect(() => {
         const newSearchParams = new URLSearchParams();
@@ -197,29 +129,27 @@ const EventGrid = () => {
         if (cityFilter) newSearchParams.set('city', cityFilter);
         if (selectedMonth) newSearchParams.set('month', selectedMonth);
 
-        if (page !== 1) newSearchParams.set('page', page.toString());
-
-        setSearchParams(newSearchParams);
-    }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, setSearchParams, page]);
-
-    useEffect(() => {
-        const newSearchParams = new URLSearchParams(searchParams);
-
         newSearchParams.set('page', page.toString());
+
         setSearchParams(newSearchParams);
-    }, [page, setSearchParams]);
+    }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page, setSearchParams]);
+
+
 
     const handlePageChange = (newPage: number) => {
-        setPage(newPage); // Update the page state
+        setPage(newPage);
+        updateURLParameters(categoryFilter, ageGroupFilter, cityFilter, selectedMonth, newPage);
     };
 
     const eventsForPage = filteredEvents.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
             {/* Filter UI */}
             <Box sx={{ mb: 4, width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', p: 2 }}>
                 <Grid container spacing={2} justifyContent="center">
+
                     {/* Category Filter */}
                     <Grid item xs={12} sm={6} md={3}>
                         <FormControl fullWidth>
@@ -242,6 +172,7 @@ const EventGrid = () => {
                             </Select>
                         </FormControl>
                     </Grid>
+
                     {/* Age Group Filter */}
                     <Grid item xs={12} sm={6} md={3}>
                         <FormControl fullWidth>
@@ -301,15 +232,6 @@ const EventGrid = () => {
                             </Select>
                         </FormControl>
                     </Grid>
-
-                    {/* <FormControl sx={{ m: 1, minWidth: 120 }}>
-                  <InputLabel>City</InputLabel>
-                  <Select value={cityFilter} onChange={(e) => setCityFilter(e.target.value)}>
-                      <MenuItem value="">All Cities</MenuItem>
-                      <MenuItem value="Copenhagen">Copenhagen</MenuItem>
-                      <MenuItem value="Malmö">Malmö</MenuItem>
-                  </Select>
-              </FormControl> */}
                 </Grid>
             </Box>
 

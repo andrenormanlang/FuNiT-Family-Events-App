@@ -1,18 +1,18 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { db } from '../services/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import useAuth from '../hooks/useAuth';
 
 // Define the shape of the context
 interface SavedEventsContextProps {
   savedEventsCount: number;
-  updateSavedEventsCount: () => Promise<void>;
+
 }
 
 // Default values for the context
 const defaultValues: SavedEventsContextProps = {
   savedEventsCount: 0,
-  updateSavedEventsCount: async () => {},
+  
 };
 
 // Create the context with the default values
@@ -31,21 +31,30 @@ export const SavedEventsProvider: React.FC<SavedEventsProviderProps> = ({ childr
   const [savedEventsCount, setSavedEventsCount] = useState(0);
   const { signedInUser } = useAuth();
 
-  const updateSavedEventsCount = async () => {
+  useEffect(() => {
+    let unsubscribe = () => {};
+
     if (signedInUser) {
       const q = query(collection(db, 'savedEvents'), where('userId', '==', signedInUser.uid));
-      const querySnapshot = await getDocs(q);
-      setSavedEventsCount(querySnapshot.docs.length);
-    }
-  };
 
-  useEffect(() => {
-    updateSavedEventsCount();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+      unsubscribe = onSnapshot(q, (querySnapshot) => {
+        setSavedEventsCount(querySnapshot.docs.length);
+      }, (error) => {
+        console.error("Error fetching real-time saved events count:", error);
+      });
+    }
+
+    // Clean up the listener when the component unmounts or user changes
+    return () => {
+      if (unsubscribe) {
+          unsubscribe();
+      }
+  };
   }, [signedInUser]);
 
+
   return (
-    <SavedEventsContext.Provider value={{ savedEventsCount, updateSavedEventsCount }}>
+    <SavedEventsContext.Provider value={{ savedEventsCount }}>
       {children}
     </SavedEventsContext.Provider>
   );
