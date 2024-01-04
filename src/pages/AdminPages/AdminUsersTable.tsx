@@ -46,7 +46,7 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
             width: 100
         },
         { field: 'displayName', headerName: 'Name', width: 200 },
-        { field: 'email', headerName: 'Email', width: 200 },
+        { field: 'email', headerName: 'Email', width: 400 },
         { 
             field: 'isAdmin', 
             headerName: 'Admin', 

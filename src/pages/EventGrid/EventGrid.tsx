@@ -48,7 +48,7 @@ const EventGrid = () => {
     const auth = getAuth();
     const theme = useTheme();
     const [searchParams, setSearchParams] = useSearchParams();
-    const itemsPerPage = 6; // Number of items per page
+    const itemsPerPage = 6; // Number of items per page;
     const [categoryFilter, setCategoryFilter] = useState('');
     const [ageGroupFilter, setAgeGroupFilter] = useState('');
     const [cityFilter, setCityFilter] = useState('');
