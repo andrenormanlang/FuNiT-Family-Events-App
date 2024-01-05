@@ -1,59 +1,50 @@
 import React, { useState } from 'react';
-import { TextField, IconButton } from '@mui/material';
+import { TextField, IconButton, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import algoliasearch from 'algoliasearch/lite';
-
-// Initialize Algolia search client
-const searchClient = algoliasearch(
-  import.meta.env.VITE_ALGOLIA_APP_ID,
-  import.meta.env.VITE_ALGOLIA_SEARCH_ONLY_API_KEY
-);
-
-// Replace 'your_index_name' with the name of the Algolia index you configured in the extension
-const index = searchClient.initIndex('events_index');
 
 interface SearchComponentProps {
-    onSearch: (searchTerm: string) => void; // Use a more specific type instead of 'any' if possible
+    onSearch: (searchTerm: string, isDateSearch?: boolean) => void;
     placeholder?: string;
 }
 
+const Search: React.FC<SearchComponentProps> = ({ onSearch, placeholder = 'Search...' }) => {
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [isDateSearch, setIsDateSearch] = useState<boolean>(false);
 
-const Search = ({ onSearch, placeholder = 'Search...' }: SearchComponentProps): JSX.Element => {
-    const [searchTerm, setSearchTerm] = useState('');
-  
-    const handleSearch = async () => {
-      try {
-        // Perform an Algolia search
-        await index.search(searchTerm);
-        // onSearch is now called with the searchTerm instead of hits
-        onSearch(searchTerm); 
-      } catch (error) {
-        console.error('Error performing search:', error);
-        // Handle the error appropriately
-      }
+    const handleSearchClick = () => {
+        onSearch(searchTerm, isDateSearch);
     };
-  
+
     const handleKeyPress = (event: React.KeyboardEvent) => {
-      if (event.key === 'Enter') {
-        handleSearch();
-      }
+        if (event.key === 'Enter') {
+            handleSearchClick();
+        }
     };
-  
+
+    const toggleSearchType = () => {
+        setIsDateSearch(!isDateSearch);
+        setSearchTerm('');
+    };
+
     return (
-      <div>
-        <TextField
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder={placeholder}
-          variant="outlined"
-          size="small"
-        />
-        <IconButton onClick={handleSearch}>
-          <SearchIcon />
-        </IconButton>
-      </div>
+        <div>
+            <TextField
+                type={isDateSearch ? 'date' : 'text'}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleKeyPress}
+                placeholder={placeholder}
+                variant="outlined"
+                size="small"
+            />
+            <IconButton onClick={handleSearchClick}>
+                <SearchIcon />
+            </IconButton>
+            <Button onClick={toggleSearchType}>
+                {isDateSearch ? 'General Search' : 'Date Search'}
+            </Button>
+        </div>
     );
-  };
-  
-  export default Search;
+};
+
+export default Search;

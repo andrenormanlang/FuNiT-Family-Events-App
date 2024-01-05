@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { AppEvent, Category } from '../types/Event.types';
 import useAuth from './useAuth';
@@ -8,8 +8,11 @@ import algoliasearch from 'algoliasearch/lite';
 // Initialize Algolia search client
 const searchClient = algoliasearch(
   import.meta.env.VITE_ALGOLIA_APP_ID,
-  import.meta.env.VITE_ALGOLIA_SEARCH_ONLY_API_KEY,
+  import.meta.env.VITE_ALGOLIA_SEARCH_ONLY_API_KEY
 );
+
+// Create an index instance
+const index = searchClient.initIndex('events_index');
 
 interface Hit {
   objectID: string;
@@ -17,8 +20,16 @@ interface Hit {
   ageGroup?: string;
   address?: string;
   name?: string;
-  eventDateTime?: number; // Assuming this comes as a string from Algolia
+  eventDateTime?: number;
 }
+
+const convertUnixToDate = (unixTimestamp: number): string => {
+  const date = new Date(unixTimestamp);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+};
 
 const useStreamEvents = ({
   searchTerm = '',
@@ -27,6 +38,7 @@ const useStreamEvents = ({
   selectedMonth = '',
   cityFilter = '',
   page = 1,
+  isDateSearch = false,
 } = {}) => {
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,21 +49,27 @@ const useStreamEvents = ({
     const fetchEvents = async () => {
       setIsLoading(true);
       try {
+        let queryResults;
         if (searchTerm) {
-          const { hits } = await searchClient.initIndex('events_index').search<Hit>(searchTerm, {
-            ...(categoryFilter && { facetFilters: [`category:${categoryFilter}`] }),
-            ...(ageGroupFilter && { facetFilters: [`ageGroup:${ageGroupFilter}`] }),
-          });
+          if (isDateSearch) {
+            const timestamp = new Date(searchTerm).getTime();
+            if (isNaN(timestamp)) {
+              throw new Error("Invalid date format");
+            }
+            queryResults = await index.search<Hit>('', {
+              numericFilters: [`eventDateTime >= ${timestamp}`, `eventDateTime <= ${timestamp + 86400000}`],
+            });
+          } else {
+            queryResults = await index.search<Hit>(searchTerm);
+          }
 
-          const transformedHits: AppEvent[] = hits.map((hit) => ({
+          const transformedHits = queryResults.hits.map((hit: Hit) => ({
             id: hit.objectID,
             name: hit.name || '',
             category: hit.category as Category || 'Other',
             address: hit.address || '',
             ageGroup: hit.ageGroup || '',
-            eventDateTime: hit.eventDateTime ? new Timestamp(hit.eventDateTime / 1000, 0) : undefined,
-            // Add default values or transformations for other fields as needed
-            // ...
+            eventDateTime: hit.eventDateTime ? convertUnixToDate(hit.eventDateTime) : '',
           }));
 
           setEvents(transformedHits);
@@ -111,7 +129,7 @@ const useStreamEvents = ({
     };
 
     fetchEvents();
-  }, [signedInUserInfo?.isAdmin, signedInUserInfo?.uid, categoryFilter, searchTerm, ageGroupFilter, selectedMonth, cityFilter, page]);
+  }, [signedInUserInfo?.isAdmin, signedInUserInfo?.uid, categoryFilter, searchTerm, ageGroupFilter, selectedMonth, cityFilter, page, isDateSearch]);
 
   return { events, isLoading, error };
 };

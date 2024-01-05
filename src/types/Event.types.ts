@@ -7,7 +7,7 @@ export type Event = {
     category: Category;
     createdAt: Timestamp;
     updatedAt: Timestamp;
-    eventDateTime: Timestamp;
+    eventDateTime: Timestamp ;
     // eventDateStart: Timestamp;
     // eventDateEnd: Timestamp;
     description: string;
@@ -26,7 +26,7 @@ export type AppEvent = {
     category?: Category;
     createdAt?: Timestamp;
     updatedAt?: Timestamp;
-    eventDateTime?: Timestamp;
+    eventDateTime?: number | Timestamp | string;
     // eventDateStart: Timestamp;
     // eventDateEnd: Timestamp;
     description?: string;
