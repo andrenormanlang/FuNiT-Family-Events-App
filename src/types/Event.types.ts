@@ -21,20 +21,20 @@ export type Event = {
 
 export type AppEvent = {
     id: string;
-    address: string;
-    ageGroup: string;
-    category: Category;
-    createdAt: Timestamp;
-    updatedAt: Timestamp;
-    eventDateTime: Timestamp;
+    address?: string;
+    ageGroup?: string;
+    category?: Category;
+    createdAt?: Timestamp;
+    updatedAt?: Timestamp;
+    eventDateTime?: Timestamp;
     // eventDateStart: Timestamp;
     // eventDateEnd: Timestamp;
-    description: string;
+    description?: string;
     email?: string;
-    isApproved: boolean;
-    imageUrl: string;
+    isApproved?: boolean;
+    imageUrl?: string;
     location?: GeoPoint;
-    name: string;
+    name?: string;
     website?: string;
 };
 

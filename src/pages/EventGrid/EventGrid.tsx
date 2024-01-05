@@ -9,7 +9,7 @@ import { db } from '../../services/firebase';
 import { useTheme } from '@mui/material/styles';
 import Pagination from '../../components/MUI/Pagination';
 import { useSearchParams } from 'react-router-dom';
-import { AppEvent } from '../../types/Event.types';
+import { AppEvent, Event } from '../../types/Event.types';
 
 const categoryValues = [
     'Art, Film & Books',
@@ -264,7 +264,7 @@ const EventGrid = () => {
                 ) : eventsForPage.length > 0 ? (
                     eventsForPage.map((event) => (
                         <Grid item key={event.id} xs={11} sm={5.5} md={5.5} lg={4} xl={4}>
-                            <EventCard event={event} isSaved={savedEventIds.includes(event.id)} isAdmin={signedInUserInfo?.isAdmin || false} />
+                            <EventCard event={event as Event} isSaved={savedEventIds.includes(event.id)} isAdmin={signedInUserInfo?.isAdmin || false} />
                         </Grid>
                     ))
                 ) : (

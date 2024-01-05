@@ -40,10 +40,11 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({ children }) 
         <SnackbarContext.Provider value={{ showMessage }}>
             <Snackbar
                 open={open}
-                autoHideDuration={6000}
+                autoHideDuration={4000}
                 onClose={handleClose}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 message={message}
+                style={{ bottom: '50%' }} 
             />
             {children}
         </SnackbarContext.Provider>
