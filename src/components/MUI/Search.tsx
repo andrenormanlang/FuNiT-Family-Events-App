@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, IconButton, Switch, FormControlLabel } from '@mui/material';
+import { TextField, IconButton, Switch, FormControlLabel, Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useSearchParams } from 'react-router-dom';
+import { ClearIcon } from '@mui/x-date-pickers';
+import { Refresh } from '@mui/icons-material';
 
 interface SearchComponentProps {
   onSearch: (searchTerm: string, isDateSearch: boolean) => void;
@@ -24,6 +26,12 @@ const Search: React.FC<SearchComponentProps> = ({ onSearch }) => {
     onSearch(searchTerm, isDateSearch);
   };
 
+  const handleRefreshClick = () => {
+    setSearchTerm(''); // Reset the search term
+    onSearch('', isDateSearch); // Call onSearch with empty string to reset the search
+  };
+
+
   const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
       handleSearchClick();
@@ -36,11 +44,7 @@ const Search: React.FC<SearchComponentProps> = ({ onSearch }) => {
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <FormControlLabel
-        control={<Switch checked={isDateSearch} onChange={handleToggle} />}
-        label={isDateSearch ? 'Date Search' : 'General Search'}
-      />
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
       <TextField
         type={isDateSearch ? 'date' : 'text'}
         value={searchTerm}
@@ -49,11 +53,24 @@ const Search: React.FC<SearchComponentProps> = ({ onSearch }) => {
         placeholder={isDateSearch ? 'Search by date...' : 'Search events...'}
         variant="outlined"
         size="small"
-        style={{ margin: '0 8px' }}
+        style={{ margin: '0' }}
+        InputProps={{
+          endAdornment: searchTerm && (
+            <IconButton onClick={() => setSearchTerm('')}>
+              <ClearIcon />
+            </IconButton>
+          ),
+        }}
       />
-      <IconButton onClick={handleSearchClick}>
-        <SearchIcon />
-      </IconButton>
+      <Tooltip title={searchTerm ? "Refresh" : "Search"}>
+        <IconButton onClick={searchTerm ? handleRefreshClick : handleSearchClick}>
+          {searchTerm ? <Refresh /> : <SearchIcon />}
+        </IconButton>
+      </Tooltip>
+      <FormControlLabel
+        control={<Switch checked={isDateSearch} onChange={handleToggle} />}
+        label={isDateSearch ? 'Date Search' : 'General Search'}
+      />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { UserInfo } from '../../types/User.types';
 import { db } from '../../services/firebase';
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { useState } from 'react';
+import { formatDate } from '../../helpers/FormatDate';
 
 const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
     const handleAdminToggle = async (userId: string, isAdmin: boolean) => {
@@ -44,13 +45,18 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
         },
         { field: 'displayName', headerName: 'Name', width: 200 },
         { field: 'email', headerName: 'Email', width: 400 },
+       
         {
-            field: 'isAdmin',
-            headerName: 'Admin',
-            renderCell: (params: GridRenderCellParams) => (
-                <Switch checked={params.value as boolean} onChange={() => handleAdminToggle(params.id as string, params.value as boolean)} />
-            ),
-            width: 100
+            field: 'createdAt',
+            headerName: 'Created',
+            width: 200,
+            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
+        },
+        {
+            field: 'updatedAt',
+            headerName: 'Updated',
+            width: 200,
+            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
         },
         {
             field: 'edit',
@@ -71,9 +77,17 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
                     <Delete />
                 </IconButton>
             ),
-            width: 100,
+            width: 120,
             sortable: false
-        }
+        },
+        {
+            field: 'isAdmin',
+            headerName: 'Admin',
+            renderCell: (params: GridRenderCellParams) => (
+                <Switch checked={params.value as boolean} onChange={() => handleAdminToggle(params.id as string, params.value as boolean)} />
+            ),
+            width: 150
+        },
     ];
 
     return (
