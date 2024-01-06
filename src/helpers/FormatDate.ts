@@ -2,8 +2,6 @@ import { Timestamp } from "firebase/firestore";
 
 export const formatDate = (value: Timestamp | number | string | Date) => {
  
- 
-
   // Check if value is a Firestore Timestamp object
   if (value instanceof Timestamp) {
     value = new Date(value.seconds * 1000); // Convert to JavaScript Date object
@@ -22,6 +20,7 @@ export const formatDate = (value: Timestamp | number | string | Date) => {
   // Validate the date
   if (!(value instanceof Date) || isNaN(value.getTime())) {
     return ''; // Invalid date
+    
   }
 
   // Format the date
