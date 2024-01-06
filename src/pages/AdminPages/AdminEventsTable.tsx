@@ -28,7 +28,9 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
             field: 'eventDateTime',
             headerName: 'Date',
             width: 150,
-            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
+            renderCell: (params: GridRenderCellParams) => formatDate(params.value),
+            // renderCell: (params: GridRenderCellParams) => params.value as string,
+
         },
         {
             field: 'address',

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { AppEvent, Category } from '../types/Event.types';
 import useAuth from './useAuth';
@@ -19,7 +19,7 @@ interface Hit {
     ageGroup?: string;
     address?: string;
     name?: string;
-    eventDateTime?: number;
+    eventDateTime?: Timestamp;
     isDateSearch?: boolean; // Add this line
    
 }
@@ -66,18 +66,37 @@ const useStreamEvents = ({
                         queryResults = await index.search<Hit>(searchTerm);
                     }
 
-                    const transformedHits = queryResults.hits.map((hit) => ({
-                        id: hit.objectID,
+                    const transformedHits = queryResults.hits.map((hit: Hit) => {
+                        let formattedDate = ''; // Default empty string if the date is invalid or not provided
+                        
+                        if (hit.eventDateTime) {
+                            const eventDate = hit.eventDateTime.toDate();
+                          if ((eventDate.getTime())) {
+                            // If eventDate is a valid date, format it
+                            formattedDate = eventDate.toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: '2-digit',
+                              day: '2-digit',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: false,
+                            });
+                          }
+                        }
+                      
+                        return {
+                            id: hit.objectID,
                             name: hit.name || '',
-                            category: hit.category as Category || 'Other', // Cast the category to Category type
+                            category: hit.category as Category || 'Other',
                             address: hit.address || '',
                             ageGroup: hit.ageGroup || '',
-                            eventDateTime: hit.eventDateTime || 0,
-                            // Adjust as needed for your data format
-                        // ... other fields
-                    }));
-
-                    setEvents(transformedHits);
+                            eventDateTime: formattedDate,  // Use formattedDate here
+                        };
+                      });
+                      
+                      setEvents(transformedHits);
+                    
                 } else {
                     // Firestore query setup
                     let q = query(collection(db, 'events'));
@@ -139,48 +158,3 @@ const useStreamEvents = ({
 
 export default useStreamEvents;
 
-// import { useEffect, useState } from 'react';
-// import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
-// import { db } from '../services/firebase';
-// import { UserInfo } from '../types/User.types';
-// import useAuth from './useAuth';
-
-// const useStreamUsers = () => {
-//     const [users, setUsers] = useState<UserInfo[]>([]);
-//     const [isLoading, setIsLoading] = useState(true);
-//     const [error, setError] = useState('');
-//     const { signedInUserInfo } = useAuth();
-
-//     useEffect(() => {
-//         const usersCol = collection(db, 'users');
-
-//         let q;
-//         if (signedInUserInfo?.isAdmin) {
-//             q = query(usersCol, orderBy('createdAt', 'asc'));
-//         } else {
-//             // You might want to modify this query according to your application's logic
-//             // For example, you might want to fetch only the current user's data
-//             q = query(usersCol, where('uid', '==', signedInUserInfo?.uid));
-//         }
-
-//         const unsubscribe = onSnapshot(
-//             q,
-//             (snapshot) => {
-//                 const userData = snapshot.docs.map((doc) => ({ ...(doc.data() as UserInfo), id: doc.id }));
-//                 setUsers(userData);
-//                 setIsLoading(false);
-//                 // setIsLoading(false);
-//             },
-//             (err) => {
-//                 setError(err.message);
-//                 setIsLoading(false);
-//             }
-//         );
-
-//         return () => unsubscribe();
-//     }, [signedInUserInfo?.isAdmin, signedInUserInfo?.uid]);
-
-//     return { users, isLoading, error };
-// };
-
-// export default useStreamUsers;
