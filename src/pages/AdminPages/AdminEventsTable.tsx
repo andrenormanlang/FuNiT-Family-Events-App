@@ -17,6 +17,8 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
     };
 
     console.log('events', events);
+   
+
 
     const handleDeleteEvent = async (eventId: string) => {
         if (window.confirm('Are you sure you want to delete this event?')) {

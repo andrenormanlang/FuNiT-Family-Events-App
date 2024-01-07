@@ -48,16 +48,19 @@ const useStreamEvents = ({
           let queryResults;
           if (isDateSearch) {
             const date = new Date(searchTerm);
-            if (isNaN(date.getTime())) {
-              throw new Error("Invalid date format");
-            }
-            const timestamp = Math.floor(date.getTime() / 1000);
-            queryResults = await index.search<Hit>('', {
-              numericFilters: [
-                `eventDateTime.seconds >= ${timestamp}`,
-                `eventDateTime.seconds <= ${timestamp + 86400}`, // +1 day in seconds
-              ],
-            });
+date.setUTCHours(0, 0, 0, 0); // Set to the start of the day in UTC
+const startOfDayTimestamp = Math.floor(date.getTime() / 1000); // Convert to seconds
+
+date.setUTCHours(23, 59, 59, 999); // Set to the end of the day in UTC
+const endOfDayTimestamp = Math.floor(date.getTime() / 1000); // Convert to seconds
+
+// Now use these timestamps to filter your search in Algolia
+queryResults = await index.search<Hit>('', {
+  numericFilters: [
+    `eventDateTime._seconds >= ${startOfDayTimestamp}`,
+    `eventDateTime._seconds <= ${endOfDayTimestamp}`
+  ],
+});
           } else {
             queryResults = await index.search<Hit>(searchTerm);
           }

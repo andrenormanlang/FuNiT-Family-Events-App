@@ -44,9 +44,11 @@ const Search: React.FC<SearchComponentProps> = ({ onSearch }) => {
 
   const handleToggle = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsDateSearch(event.target.checked);
-    setSearchTerm('');
-    setSearchPerformed(false);
+    // setSearchTerm('');
+    // setSearchPerformed(false);
   };
+
+  console.log('searchTerm', searchTerm);
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
