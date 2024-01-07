@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 /* eslint-disable @typescript-eslint/no-var-requires */
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -31,3 +32,45 @@ exports.syncFirestoreToAlgolia = functions.firestore
       });
       return null;
     });
+
+
+// Rebuild the Algolia
+// const algoliasearch = require("algoliasearch");
+// const admin = require("firebase-admin");
+
+// // Initialize Firebase Admin SDK
+// admin.initializeApp({
+//   // Your Firebase config
+// });
+
+// // Initialize Firestore
+// const db = admin.firestore();
+
+// // Initialize Algolia
+// const algoliaClient =
+// algoliasearch(
+//  functions.config().algolia.app_id, functions.config().algolia.api_key);
+// const algoliaIndex = algoliaClient.initIndex("events_index");
+
+// // eslint-disable-next-line require-jsdoc
+// async function rebuildIndex() {
+//   // Fetch data from Firestore
+//   const querySnapshot = await db.collection("events").get();
+
+//   // Format data for Algolia
+//   const records = querySnapshot.docs.map((doc) => {
+//     const record = doc.data();
+//     record.objectID = doc.id; // Algolia requires an objectID
+//     return record;
+//   });
+
+//   // Optionally clear the index
+//   // await algoliaIndex.clearObjects();
+
+//   // Push data to Algolia
+//   await algoliaIndex.saveObjects(records);
+
+//   console.log("Index has been rebuilt with Firestore data.");
+// }
+
+// rebuildIndex().catch(console.error);

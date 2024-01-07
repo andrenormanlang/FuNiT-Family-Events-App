@@ -29,10 +29,8 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
         {
             field: 'eventDateTime',
             headerName: 'Date',
-            width: 150,
-            renderCell: (params: GridRenderCellParams) => formatDate(params.value),
-            // renderCell: (params: GridRenderCellParams) => params.value as string,
-
+            width: 200,
+            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
         },
         {
             field: 'address',
@@ -57,35 +55,26 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
         {
             field: 'isApproved',
             headerName: 'Approved?',
+            width: 100,
             renderCell: (params: GridRenderCellParams) => (
                 <Switch
                     checked={params.value as boolean}
                     onChange={() => handleApproval(params.id as string, params.value as boolean)}
                     color="primary"
                 />
-            ),
-            width: 100
+            )
         },
         {
             field: 'delete',
             headerName: 'Delete',
+            width: 100,
             renderCell: (params: GridRenderCellParams) => (
                 <IconButton onClick={() => handleDeleteEvent(params.id as string)}>
                     <Delete />
                 </IconButton>
             ),
-            width: 100,
             sortable: false
         }
-
-        // {
-        //   field: 'edit',
-        //   headerName: 'Edit',
-        //   renderCell: () => (
-        //     <Button variant="contained" color="primary">Edit</Button>
-        //   ),
-        //   width: 100
-        // }
     ];
 
     return (

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { UserInfo } from '../types/User.types';
-import useAuth from './useAuth';
+import useAuth from './useAuth'
 
 const useStreamUsers = () => {
     const [users, setUsers] = useState<UserInfo[]>([]);
