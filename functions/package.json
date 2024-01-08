@@ -15,7 +15,8 @@
   "main": "index.js",
   "dependencies": {
     "algoliasearch": "^4.22.0",
-    "firebase-admin": "^11.8.0",
+    "cors": "^2.8.5",
+    "firebase-admin": "^11.11.1",
     "firebase-functions": "^4.6.0"
   },
   "devDependencies": {
