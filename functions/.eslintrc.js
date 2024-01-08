@@ -1,26 +1,42 @@
 module.exports = {
     env: {
         es6: true,
-        node: true
+        node: true,
     },
     parserOptions: {
-        ecmaVersion: 2018
+        ecmaVersion: 2018,
     },
-    extends: ['eslint:recommended', 'google'],
+    extends: [
+        "eslint:recommended",
+    ],
     rules: {
-        'no-restricted-globals': ['error', 'name', 'length'],
-        'prefer-arrow-callback': 'error',
-        quotes: ['error', 'double', { allowTemplateLiterals: true }],
-        'linebreak-style': 0 // Disable the linebreak-style rule
+        "indent": ["error", 4],
+        "quotes": ["error", "double", { "allowTemplateLiterals": true }],
+        "comma-dangle": ["error", "always-multiline"],
+        "no-restricted-globals": ["error", "name", "length"],
+        "prefer-arrow-callback": "error",
+        "linebreak-style": 0, // Disable the linebreak-style rule
+        "max-len": ["error", { "code": 180 }],
     },
     overrides: [
         {
-            files: ['**/*.spec.*'],
-            env: {
-                mocha: true
+            files: ["*.ts", "*.tsx"], // Apply these rules only to TypeScript files
+            parser: "@typescript-eslint/parser",
+            plugins: ["@typescript-eslint"],
+            extends: [
+                "plugin:@typescript-eslint/recommended",
+                // ... any TypeScript specific extends
+            ],
+            rules: {
+                // ... TypeScript specific rules
             },
-            rules: {}
-        }
+        },
+        {
+            files: ["*.js", "*.jsx"], // Apply these rules only to JavaScript files
+            rules: {
+                // ... JavaScript specific rules (you can omit the no-var-requires rule here)
+            },
+        },
     ],
-    globals: {}
+    globals: {},
 };

@@ -1,19 +1,18 @@
-/* eslint-disable linebreak-style */
-/* eslint-disable @typescript-eslint/no-var-requires */
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const algoliasearch = require('algoliasearch');
 
-admin.initializeApp();
+import { config, firestore } from "firebase-functions";
+import { initializeApp } from "firebase-admin";
+import algoliasearch from "algoliasearch";
+
+initializeApp();
 
 // Replace the following lines with your Algolia configuration
-const algoliaAppId = functions.config().algolia.app_id;
-const algoliaApiKey = functions.config().algolia.api_key;
+const algoliaAppId = config().algolia.app_id;
+const algoliaApiKey = config().algolia.api_key;
 
 const algoliaClient = algoliasearch(algoliaAppId, algoliaApiKey);
-const algoliaIndex = algoliaClient.initIndex('events_index');
+const algoliaIndex = algoliaClient.initIndex("events_index");
 
-exports.syncFirestoreToAlgolia = functions.firestore.document('events/{eventId}').onWrite(async (change, context) => {
+export const syncFirestoreToAlgolia = firestore.document("events/{eventId}").onWrite(async (change, context) => {
     const eventData = change.after.exists ? change.after.data() : null;
     const eventId = context.params.eventId;
 
@@ -26,7 +25,7 @@ exports.syncFirestoreToAlgolia = functions.firestore.document('events/{eventId}'
     // If the document is created or updated, add/update it in Algolia
     await algoliaIndex.saveObject({
         objectID: eventId,
-        ...eventData
+        ...eventData,
     });
     return null;
 });
