@@ -45,7 +45,7 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
         },
         { field: 'displayName', headerName: 'Name', width: 200 },
         { field: 'email', headerName: 'Email', width: 400 },
-       
+
         {
             field: 'createdAt',
             headerName: 'Created',
@@ -53,7 +53,7 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
             renderCell: (params: GridRenderCellParams) => {
                 const { date, time } = formatDate(params.value);
                 return `${date} ${time}`; // Combine date and time or display them separately as needed.
-              }
+            }
         },
         {
             field: 'updatedAt',
@@ -62,7 +62,7 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
             renderCell: (params: GridRenderCellParams) => {
                 const { date, time } = formatDate(params.value);
                 return `${date} ${time}`; // Combine date and time or display them separately as needed.
-              }
+            }
         },
         {
             field: 'edit',
@@ -93,7 +93,7 @@ const AdminUsersTable = ({ users }: { users: UserInfo[] }) => {
                 <Switch checked={params.value as boolean} onChange={() => handleAdminToggle(params.id as string, params.value as boolean)} />
             ),
             width: 150
-        },
+        }
     ];
 
     return (

@@ -12,7 +12,6 @@ import { useSearchParams } from 'react-router-dom';
 import { AppEvent, Event } from '../../types/Event.types';
 import Search from '../../components/MUI/Search';
 
-
 const categoryValues = [
     'Art, Film & Books',
     'Community Festivals',
@@ -280,7 +279,11 @@ const EventGrid = () => {
                 ) : eventsForPage.length > 0 ? (
                     eventsForPage.map((event) => (
                         <Grid item key={event.id} xs={11} sm={5.5} md={5.5} lg={4} xl={4}>
-                            <EventCard event={event as Event} isSaved={savedEventIds.includes(event.id)} isAdmin={signedInUserInfo?.isAdmin || false} />
+                            <EventCard
+                                event={event as Event}
+                                isSaved={savedEventIds.includes(event.id)}
+                                isAdmin={signedInUserInfo?.isAdmin || false}
+                            />
                         </Grid>
                     ))
                 ) : (

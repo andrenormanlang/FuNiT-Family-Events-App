@@ -20,8 +20,6 @@ import EventEditPage from './pages/AdminPages/EventEditPage';
 import AdminUsersListPage from './pages/AdminPages/AdminUsersList';
 import Algolia from './components/Algolia/SyncToAlgolia';
 
-
-
 function App() {
     return (
         <SavedEventsProvider>
@@ -35,7 +33,7 @@ function App() {
                         {/* <Route path='*' element={< FourOFour />} /> */}
                         <Route path="/:id" element={<EventPage />} />
                         <Route path="/" element={<EventGrid />} />
-                        
+
                         <Route path="/register" element={<SignUp />} />
                         <Route path="/login" element={<LogInPage />} />
                         <Route path="/forgot-password" element={<SendPassword />} />
@@ -69,11 +67,11 @@ function App() {
                             path="/algolia"
                             element={
                                 <AdminOnly>
-                                    <Algolia/>
+                                    <Algolia />
                                 </AdminOnly>
                             }
                         />
-                        
+
                         <Route
                             path="/edit-event/:id"
                             element={

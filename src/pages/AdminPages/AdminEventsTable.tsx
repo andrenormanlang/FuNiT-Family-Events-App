@@ -17,8 +17,6 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
     };
 
     console.log('events', events);
-   
-
 
     const handleDeleteEvent = async (eventId: string) => {
         if (window.confirm('Are you sure you want to delete this event?')) {
@@ -35,7 +33,7 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
             renderCell: (params: GridRenderCellParams) => {
                 const { date, time } = formatDate(params.value);
                 return `${date} ${time}`; // Combine date and time or display them separately as needed.
-              }
+            }
         },
         {
             field: 'address',
@@ -52,7 +50,7 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
             renderCell: (params: GridRenderCellParams) => {
                 const { date, time } = formatDate(params.value);
                 return `${date} ${time}`; // Combine date and time or display them separately as needed.
-              }
+            }
         },
         {
             field: 'updatedAt',
@@ -61,7 +59,7 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
             renderCell: (params: GridRenderCellParams) => {
                 const { date, time } = formatDate(params.value);
                 return `${date} ${time}`; // Combine date and time or display them separately as needed.
-              }
+            }
         },
         {
             field: 'isApproved',

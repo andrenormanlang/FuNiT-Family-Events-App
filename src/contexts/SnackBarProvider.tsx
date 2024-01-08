@@ -44,7 +44,7 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({ children }) 
                 onClose={handleClose}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 message={message}
-                style={{ bottom: '50%' }} 
+                style={{ bottom: '50%' }}
             />
             {children}
         </SnackbarContext.Provider>

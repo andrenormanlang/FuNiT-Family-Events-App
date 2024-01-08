@@ -24,23 +24,25 @@ export const auth = getAuth(app);
 
 // Function to get and log the current user's ID token
 const logUserIdToken = (user: User) => {
-    user.getIdToken().then(idToken => {
-        console.log("User ID Token:", idToken);
-    }).catch(error => {
-        console.error("Error getting ID token:", error);
-    });
+    user.getIdToken()
+        .then((idToken) => {
+            console.log('User ID Token:', idToken);
+        })
+        .catch((error) => {
+            console.error('Error getting ID token:', error);
+        });
 };
 
 // Listen for authentication state changes
 const setupAuthListener = () => {
-    onAuthStateChanged(auth, user => {
+    onAuthStateChanged(auth, (user) => {
         if (user) {
             // User is signed in, get the ID token
             console.log('User is signed in.');
             logUserIdToken(user);
         } else {
             // User is signed out
-            console.log("User is signed out.");
+            console.log('User is signed out.');
         }
     });
 };

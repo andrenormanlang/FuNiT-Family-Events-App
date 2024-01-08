@@ -165,13 +165,13 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
 <Typography variant="body1">{formattedDate.time}</Typography>
                 </Box> */}
                 <Box position="absolute" bottom={0} left={0} bgcolor="linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5))" color="white">
-        <Box bgcolor="DarkCyan" color="white" p={1}>
-            <Typography variant="body1">{formattedDate.date}</Typography>
-        </Box>
-        <Box bgcolor="SteelBlue" color="white" p={1}>
-            <Typography variant="body1">{formattedDate.time}</Typography>
-        </Box>
-    </Box>
+                    <Box bgcolor="DarkCyan" color="white" p={1}>
+                        <Typography variant="body1">{formattedDate.date}</Typography>
+                    </Box>
+                    <Box bgcolor="SteelBlue" color="white" p={1}>
+                        <Typography variant="body1">{formattedDate.time}</Typography>
+                    </Box>
+                </Box>
             </Box>
             <CardContent>
                 <Typography variant="h1" fontSize={25} component="div" gutterBottom>

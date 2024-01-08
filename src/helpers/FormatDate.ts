@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+import { Timestamp } from 'firebase/firestore';
 
 export const formatDate = (value: Timestamp | number | string | Date | undefined) => {
     // Handle undefined values
@@ -34,7 +34,7 @@ export const formatDate = (value: Timestamp | number | string | Date | undefined
     const formattedDate = date.toLocaleDateString('en-US', {
         month: 'short',
         day: '2-digit',
-        year: 'numeric',
+        year: 'numeric'
     });
 
     const formattedTime = date.toLocaleTimeString('en-US', {
