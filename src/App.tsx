@@ -18,6 +18,8 @@ import AdminOnly from './components/Auth/AdminOnly';
 import SendPassword from './pages/UserPages/SendPassword';
 import EventEditPage from './pages/AdminPages/EventEditPage';
 import AdminUsersListPage from './pages/AdminPages/AdminUsersList';
+import Algolia from './components/Algolia/SyncToAlgolia';
+
 
 function App() {
     return (
@@ -61,6 +63,15 @@ function App() {
                                 </AdminOnly>
                             }
                         />
+                        <Route
+                            path="/algolia"
+                            element={
+                                <AdminOnly>
+                                    <Algolia/>
+                                </AdminOnly>
+                            }
+                        />
+                        
                         <Route
                             path="/edit-event/:id"
                             element={
