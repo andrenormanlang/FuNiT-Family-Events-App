@@ -11,6 +11,7 @@ import { useTheme } from '@mui/material/styles';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { Delete, Edit } from '@mui/icons-material';
+import { formatDate } from '../../helpers/FormatDate';
 
 interface EventCardProps {
     event: Event;
@@ -40,10 +41,11 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
 
     const theme = useTheme();
 
-    let date: Date | undefined;
-    if (event && event.eventDateTime) {
-        date = event.eventDateTime.toDate();
-    }
+    // let date: Date | undefined;
+    // if (event && event.eventDateTime) {
+    //     date = event.eventDateTime.toDate();
+    // }
+    const formattedDate = formatDate(event.eventDateTime);
 
     const imageUrl = event.imageUrl || defaultImage;
 
@@ -149,13 +151,16 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                         </Tooltip>
                     </>
                 )}
-                <Box position="absolute" bottom={0} left={0} bgcolor="linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5))" color="white">
+                {/* <Box position="absolute" bottom={0} left={0} bgcolor="linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5))" color="white">
                     <Box bgcolor="DarkCyan" color="white" p={1}>
                         <Typography variant="body1"> {date && date.toLocaleDateString('en-US', { day: '2-digit', month: 'short' })}</Typography>
                     </Box>
                     <Box bgcolor="SteelBlue" color="white" p={1}>
                         <Typography variant="body1">{date && date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</Typography>
                     </Box>
+                </Box> */}
+                <Box position="absolute" bottom={0} left={0} bgcolor="linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.5))" color="white">
+                    <Typography variant="body1">{formattedDate}</Typography>
                 </Box>
             </Box>
             <CardContent>

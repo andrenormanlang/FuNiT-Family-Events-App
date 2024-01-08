@@ -48,8 +48,6 @@ const Search: React.FC<SearchComponentProps> = ({ onSearch }) => {
     // setSearchPerformed(false);
   };
 
-  console.log('searchTerm', searchTerm);
-
   return (
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
       <TextField

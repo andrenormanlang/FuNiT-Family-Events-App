@@ -10,6 +10,8 @@ import { useTheme } from '@mui/material/styles';
 import Pagination from '../../components/MUI/Pagination';
 import { useSearchParams } from 'react-router-dom';
 import { AppEvent, Event } from '../../types/Event.types';
+import Search from '../../components/MUI/Search';
+
 
 const categoryValues = [
     'Art, Film & Books',
@@ -56,7 +58,20 @@ const EventGrid = () => {
     const [uniqueMonths, setUniqueMonths] = useState<string[]>([]);
     const [selectedMonth, setSelectedMonth] = useState('');
     const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isDateSearch, setIsDateSearch] = useState(false);
+
+    // This function will be called by the Search component
+    const handleSearch = (newSearchTerm: string, newIsDateSearch: boolean) => {
+        setSearchTerm(newSearchTerm);
+        setIsDateSearch(newIsDateSearch);
+        // Reset the page to 1 when new search is performed
+        setPage(1);
+    };
     const { events, isLoading, error } = useStreamEvents({
+        searchTerm,
+        isDateSearch,
         categoryFilter,
         ageGroupFilter,
         cityFilter,
@@ -148,6 +163,7 @@ const EventGrid = () => {
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
             {/* Filter UI */}
             <Box sx={{ mb: 4, width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', p: 2 }}>
+                <Search onSearch={handleSearch} />
                 <Grid container spacing={2} justifyContent="center">
                     {/* Category Filter */}
                     <Grid item xs={12} sm={6} md={3}>
