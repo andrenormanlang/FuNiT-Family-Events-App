@@ -32,7 +32,10 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
             field: 'eventDateTime',
             headerName: 'Date',
             width: 200,
-            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
+            renderCell: (params: GridRenderCellParams) => {
+                const { date, time } = formatDate(params.value);
+                return `${date} ${time}`; // Combine date and time or display them separately as needed.
+              }
         },
         {
             field: 'address',
@@ -46,13 +49,19 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
             field: 'createdAt',
             headerName: 'Created',
             width: 150,
-            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
+            renderCell: (params: GridRenderCellParams) => {
+                const { date, time } = formatDate(params.value);
+                return `${date} ${time}`; // Combine date and time or display them separately as needed.
+              }
         },
         {
             field: 'updatedAt',
             headerName: 'Updated',
             width: 150,
-            renderCell: (params: GridRenderCellParams) => formatDate(params.value)
+            renderCell: (params: GridRenderCellParams) => {
+                const { date, time } = formatDate(params.value);
+                return `${date} ${time}`; // Combine date and time or display them separately as needed.
+              }
         },
         {
             field: 'isApproved',

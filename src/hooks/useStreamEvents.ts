@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from 'react';
 import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '../services/firebase';
@@ -22,6 +23,7 @@ interface Hit {
   ageGroup?: string;
   address?: string;
   name?: string;
+  imageUrl?: string
   eventDateTime?: Timestamp | string | null;
 }
 
@@ -67,22 +69,19 @@ queryResults = await index.search<Hit>('', {
         
           // Transform hits to include readable date format
           const transformedHits = queryResults?.hits.map((hit: Hit) => {
-            let formattedDate = '';
-            if (hit.eventDateTime && typeof hit.eventDateTime === 'object' && '_seconds' in hit.eventDateTime)  {
-              // Assuming hit.eventDateTime is an object with a seconds property
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-expect-error
-              const eventDate = new Date(hit.eventDateTime._seconds * 1000);
-              formattedDate = formatDate(eventDate); // Use the formatDate function for a readable string
-            } 
-           else if (typeof hit.eventDateTime === 'string') {
-            const eventDate = new Date(hit.eventDateTime);
-            formattedDate = formatDate(eventDate); // Use formatDate function
-          } else
-            {
-              // If hit.eventDateTime is missing the seconds property or is not present at all
-              formattedDate = 'Unknown Date'; // You can decide how to handle this case
-            }
+            let formattedDateString = '';
+  if (hit.eventDateTime && typeof hit.eventDateTime === 'object' && '_seconds' in hit.eventDateTime)  {
+    // @ts-expect-error
+    const eventDate = new Date(hit.eventDateTime._seconds * 1000);
+    const { date, time } = formatDate(eventDate);
+    formattedDateString = `${date} ${time}`;
+  } else if (typeof hit.eventDateTime === 'string') {
+    const eventDate = new Date(hit.eventDateTime);
+    const { date, time } = formatDate(eventDate);
+    formattedDateString = `${date} ${time}`;
+  } else {
+    formattedDateString = 'Unknown Date';
+  }
         
             return {
               id: hit.objectID,
@@ -90,7 +89,8 @@ queryResults = await index.search<Hit>('', {
               category: hit.category as Category || 'Other',
               address: hit.address || '',
               ageGroup: hit.ageGroup || '',
-              eventDateTime: formattedDate
+              eventDateTime: formattedDateString,
+              imageUrl: hit.imageUrl || '',
             };
           });
         
