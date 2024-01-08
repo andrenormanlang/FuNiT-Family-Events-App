@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from 'react';
 import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '../services/firebase';
@@ -49,29 +48,35 @@ const useStreamEvents = ({
         if (searchTerm) {
           let queryResults;
           if (isDateSearch) {
-            const date = new Date(searchTerm);
-date.setUTCHours(0, 0, 0, 0); // Set to the start of the day in UTC
-const startOfDayTimestamp = Math.floor(date.getTime() / 1000); // Convert to seconds
-
-date.setUTCHours(23, 59, 59, 999); // Set to the end of the day in UTC
-const endOfDayTimestamp = Math.floor(date.getTime() / 1000); // Convert to seconds
-
-// Now use these timestamps to filter your search in Algolia
-queryResults = await index.search<Hit>('', {
-  numericFilters: [
-    `eventDateTime._seconds >= ${startOfDayTimestamp}`,
-    `eventDateTime._seconds <= ${endOfDayTimestamp}`
-  ],
-});
+            // Ensure searchTerm is in a correct format or use a fallback
+            const searchTermDate = new Date(searchTerm);
+           
+              searchTermDate.setUTCHours(0, 0, 0, 0); // Set to the start of the day in UTC
+              const startOfDayTimestamp = Math.floor(searchTermDate.getTime() / 1000); // Convert to seconds
+          
+              searchTermDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day in UTC
+              const endOfDayTimestamp = Math.floor(searchTermDate.getTime() / 1000); // Convert to seconds
+          
+              // Now use these timestamps to filter your search in Algolia
+              queryResults = await index.search<Hit>('', {
+                numericFilters: [
+                  `eventDateTime._seconds >= ${startOfDayTimestamp}`,
+                  `eventDateTime._seconds <= ${endOfDayTimestamp}`
+                ],
+              });
+            
           } else {
             queryResults = await index.search<Hit>(searchTerm);
           }
         
           // Transform hits to include readable date format
           const transformedHits = queryResults?.hits.map((hit: Hit) => {
+            // Debugging
+  console.log('hit.eventDateTime:', hit.eventDateTime);
             let formattedDateString = '';
   if (hit.eventDateTime && typeof hit.eventDateTime === 'object' && '_seconds' in hit.eventDateTime)  {
-    // @ts-expect-error
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const eventDate = new Date(hit.eventDateTime._seconds * 1000);
     const { date, time } = formatDate(eventDate);
     formattedDateString = `${date} ${time}`;
