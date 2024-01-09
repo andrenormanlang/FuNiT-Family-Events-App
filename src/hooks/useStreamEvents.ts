@@ -58,8 +58,12 @@ const useStreamEvents = ({
                             numericFilters: [`eventDateTime._seconds >= ${startOfDayTimestamp}`, `eventDateTime._seconds <= ${endOfDayTimestamp}`]
                         });
                     } else {
-                        queryResults = await index.search<Hit>(searchTerm);
-                    }
+                        // This will search only in the 'name' attribute, since we've set it as the searchable attribute
+                        queryResults = await index.search<Hit>(searchTerm, {
+                          attributesToRetrieve: ['name', 'objectID', 'eventDateTime', 'address', 'category', 'ageGroup', 'imageUrl'], // Add here all the attributes you want to retrieve.
+                        });
+                        // ... your logic to handle the hits
+                      }
 
                     // Transform hits to include readable date format
                     const transformedHits = queryResults?.hits.map((hit: Hit) => {
@@ -152,4 +156,3 @@ const useStreamEvents = ({
     };
     
     export default useStreamEvents;
-               
