@@ -63,12 +63,7 @@ const EventGrid = () => {
     const [uniqueMonths, setUniqueMonths] = useState<string[]>([]);
 
     // This function will be called by the Search component
-    const handleSearch = (newSearchTerm: string, newIsDateSearch: boolean) => {
-        setSearchTerm(newSearchTerm);
-        setIsDateSearch(newIsDateSearch);
-        // Reset the page to 1 when new search is performed
-        setPage(1);
-    };
+
     
     const { events, isLoading, error } = useStreamEvents({
         searchTerm,
@@ -114,6 +109,27 @@ const EventGrid = () => {
     }, []);
 
     useEffect(() => {
+        const params = searchParams;
+    
+        const pageParam = params.get('page');
+        const categoryParam = params.get('category');
+        const ageGroupParam = params.get('ageGroup');
+        const cityParam = params.get('city');
+        const monthParam = params.get('month');
+        const searchTermParam = params.get('searchTerm');
+        const isDateSearchParam = params.get('isDateSearch') === 'true'; // Convert string to boolean
+    
+        setPage(pageParam ? Number(pageParam) : 1);
+        setCategoryFilter(categoryParam || '');
+        setAgeGroupFilter(ageGroupParam || '');
+        setCityFilter(cityParam || '');
+        setSelectedMonth(monthParam || '');
+        setSearchTerm(searchTermParam || '');
+        setIsDateSearch(isDateSearchParam);
+    
+    }, []);
+
+    useEffect(() => {
         const params = new URLSearchParams();
         if (categoryFilter) params.set('category', categoryFilter);
         if (ageGroupFilter) params.set('ageGroup', ageGroupFilter);
@@ -125,10 +141,21 @@ const EventGrid = () => {
 
     const handleFilterChange = (filterType: string, value: string) => {
         setPage(1);
-        if (filterType === 'category') setCategoryFilter(value);
-        else if (filterType === 'ageGroup') setAgeGroupFilter(value);
-        else if (filterType === 'city') setCityFilter(value);
-        else if (filterType === 'selectedMonth') setSelectedMonth(value);
+        if (filterType === 'category') {
+            setCategoryFilter(value);
+            setSearchParams({ ...searchParams, category: value, page: '1' });
+        } else if (filterType === 'ageGroup') {
+            setAgeGroupFilter(value);
+            setSearchParams({ ...searchParams, ageGroup: value, page: '1' });
+        } 
+        else if (filterType === 'city') {
+            setCityFilter(value);
+            setSearchParams({ ...searchParams, city: value, page: '1' });
+        } 
+        else if (filterType === 'selectedMonth') {
+            setSelectedMonth(value);
+            setSearchParams({ ...searchParams, selectedMonth: value, page: '1' });
+        } 
     };
 
 
@@ -149,16 +176,26 @@ const EventGrid = () => {
 
     useEffect(() => {
         const newSearchParams = new URLSearchParams();
-
+    
         if (categoryFilter) newSearchParams.set('category', categoryFilter);
         if (ageGroupFilter) newSearchParams.set('ageGroup', ageGroupFilter);
         if (cityFilter) newSearchParams.set('city', cityFilter);
         if (selectedMonth) newSearchParams.set('month', selectedMonth);
-
+        if (searchTerm) newSearchParams.set('searchTerm', searchTerm);
+        if (isDateSearch) newSearchParams.set('isDateSearch', isDateSearch.toString());
+    
         newSearchParams.set('page', page.toString());
-
+    
         setSearchParams(newSearchParams);
-    }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page, setSearchParams]);
+    }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page, searchTerm, isDateSearch, setSearchParams]);
+
+    const handleSearch = (newSearchTerm: string, newIsDateSearch: boolean) => {
+        setSearchTerm(newSearchTerm);
+        setIsDateSearch(newIsDateSearch);
+        setPage(1);
+        // Update URL parameters
+        setSearchParams({ ...searchParams, searchTerm: newSearchTerm, isDateSearch: newIsDateSearch.toString(), page: '1' });
+    };
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
