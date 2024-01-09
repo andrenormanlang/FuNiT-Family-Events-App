@@ -40,7 +40,6 @@ const ageGroups = [
     '7-9 Years', // Mid School Age
     '7-12 Years', // Mid School Age
     '10-12 Years', // Preteens
-    'All Ages'
 ] as const;
 
 const categoryValues = [

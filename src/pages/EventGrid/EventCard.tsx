@@ -1,7 +1,7 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Category, Event } from '../../types/Event.types';
+import { Categories, Event } from '../../types/Event.types';
 import { Box, Button, Chip, Tooltip } from '@mui/material';
 import { CardMedia } from '@mui/material';
 import defaultImage from '../../assets/images/default-image.webp';
@@ -19,8 +19,8 @@ interface EventCardProps {
     isAdmin: boolean;
 }
 
-const getCategoryColor = (category: Category): string => {
-    const categoryColors: { [key in Category]: string } = {
+const getCategoryColor = (category: Categories): string => {
+    const categoryColors: { [key in Categories]: string } = {
         'Art, Film & Books': 'red',
         'Community Festivals': 'blue',
         Cooking: 'green',
@@ -111,7 +111,7 @@ const EventCard: React.FC<EventCardProps> = ({ event, isSaved, isAdmin }) => {
                         position: 'absolute',
                         bottom: 2,
                         right: 8,
-                        backgroundColor: getCategoryColor(event.category),
+                        backgroundColor: getCategoryColor(event.category as Categories),
                         color: 'white',
                         fontFamily: theme.typography.h6.fontFamily,
                         fontSize: theme.typography.h6.fontSize,

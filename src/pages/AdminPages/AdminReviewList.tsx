@@ -1,18 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AdminEventsTable from './AdminEventsTable';
 import useStreamEvents from '../../hooks/useStreamEvents';
 import Search from '../../components/MUI/Search';
 import { CircularProgress, Container, Typography } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
 
 const AdminEventsListPage: React.FC = () => {
+    const [searchParams ,setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [isDateSearch, setIsDateSearch] = useState<boolean>(false);
     const { events, isLoading, error } = useStreamEvents({ searchTerm, isDateSearch });
 
+
     const handleSearch = (term: string, dateSearch: boolean) => {
         setSearchTerm(term);
         setIsDateSearch(dateSearch);
+
+        const newSearchParams = new URLSearchParams();
+        newSearchParams.set('query', term);
+        newSearchParams.set('dateSearch', dateSearch.toString());
+        setSearchParams(newSearchParams);
     };
+
+    useEffect(() => {
+        const query = searchParams.get('query') || '';
+        const dateSearch = searchParams.get('dateSearch') === 'true';
+        setSearchTerm(query);
+        setIsDateSearch(dateSearch);
+    }, [searchParams]);
 
     const renderSearchResultsMessage = () => {
         if (searchTerm && !isLoading && !error && events.length > 0) {
@@ -35,7 +50,7 @@ const AdminEventsListPage: React.FC = () => {
         if (events.length === 0 && searchTerm) {
             return <div>No events {isDateSearch ? 'on this date' : 'with this term'}</div>;
         }
-        return <AdminEventsTable events={events} />;
+        return <AdminEventsTable events={events} searchTerm={searchTerm} />;
     };
 
     return (

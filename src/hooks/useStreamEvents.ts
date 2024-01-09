@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { collection, query, where, orderBy, onSnapshot, Timestamp } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import { AppEvent, Category } from '../types/Event.types';
+import { AppEvent, Categories } from '../types/Event.types';
 import useAuth from './useAuth';
 import algoliasearch from 'algoliasearch/lite';
 import { formatDate } from '../helpers/FormatDate';
+import { GetCityFromAddress } from '../helpers/GetCityFromAddress';
 
 // Initialize Algolia search client
 const searchClient = algoliasearch(import.meta.env.VITE_ALGOLIA_APP_ID, import.meta.env.VITE_ALGOLIA_SEARCH_ONLY_API_KEY);
@@ -82,7 +83,7 @@ const useStreamEvents = ({
                         return {
                             id: hit.objectID,
                             name: hit.name || '',
-                            category: (hit.category as Category) || 'Other',
+                            category: (hit.category as Categories) || 'Other',
                             address: hit.address || '',
                             ageGroup: hit.ageGroup || '',
                             eventDateTime: formattedDateString,
@@ -91,7 +92,7 @@ const useStreamEvents = ({
                     });
 
                     setEvents(transformedHits || []);
-                } else {
+                } else{
                     let q = query(collection(db, 'events'));
                     if (signedInUserInfo?.isAdmin) {
                         q = query(q, orderBy('eventDateTime', 'asc'));
@@ -104,42 +105,51 @@ const useStreamEvents = ({
                     if (ageGroupFilter) {
                         q = query(q, where('ageGroup', '==', ageGroupFilter));
                     }
-                    if (cityFilter) {
-                        q = query(q, where('city', '==', cityFilter));
-                    }
+                    // The city filter is removed from here
                     if (selectedMonth) {
                         const [monthName, year] = selectedMonth.split('-');
                         const monthIndex = new Date(`${monthName} 1 ${year}`).getMonth();
-                        const startOfMonth = new Date(Number(year), monthIndex, 1);
-                        const endOfMonth = new Date(Number(year), monthIndex + 1, 0, 23, 59, 59);
+                        const startOfMonth = new Timestamp(new Date(Number(year), monthIndex, 1).getTime() / 1000, 0);
+                        const endOfMonth = new Timestamp(new Date(Number(year), monthIndex + 1, 0, 23, 59, 59).getTime() / 1000, 0);
                         q = query(q, where('eventDateTime', '>=', startOfMonth), where('eventDateTime', '<=', endOfMonth));
                     }
+    
                     const unsubscribe = onSnapshot(q, (snapshot) => {
-                        const allEvents: AppEvent[] = snapshot.docs.map((doc) => ({
+                        let fetchedEvents = snapshot.docs.map((doc) => ({
                             ...(doc.data() as AppEvent),
                             id: doc.id
                         }));
-                        setEvents(allEvents);
+    
+                        if (cityFilter) {
+                            fetchedEvents = fetchedEvents.filter((event) => {
+                                const eventCity = GetCityFromAddress(event.address || '');
+                                return eventCity.toLowerCase().includes(cityFilter.toLowerCase());
+                            });
+                        }
+                        
+                        setEvents(fetchedEvents);
                     });
+    
                     return () => {
                         unsubscribe();
-                    };
+                    }}
+    
+                } catch (err) {
+                    if (err instanceof Error) {
+                        setError(err.message);
+                    } else {
+                        setError('An unexpected error occurred');
+                    }
+                } finally {
+                    setIsLoading(false);
                 }
-            } catch (err) {
-                if (err instanceof Error) {
-                    setError(err.message);
-                } else {
-                    setError('An unexpected error occurred');
-                }
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchEvents();
-    }, [signedInUserInfo?.isAdmin, signedInUserInfo?.uid, categoryFilter, searchTerm, ageGroupFilter, selectedMonth, cityFilter, page, isDateSearch]);
-
-    return { events, isLoading, error };
-};
-
-export default useStreamEvents;
+            };
+    
+            fetchEvents();
+        }, [signedInUserInfo?.isAdmin, categoryFilter, ageGroupFilter, selectedMonth, cityFilter, isDateSearch, page, searchTerm]);
+    
+        return { events, isLoading, error };
+    };
+    
+    export default useStreamEvents;
+               

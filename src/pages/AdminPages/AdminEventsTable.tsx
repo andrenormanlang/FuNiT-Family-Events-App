@@ -7,8 +7,9 @@ import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { IconButton, Switch } from '@mui/material';
 import { db } from '../../services/firebase';
 import { Delete } from '@mui/icons-material';
+import { highlightUtils } from '../../helpers/HighLightUtils';
 
-const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
+const AdminEventsTable = ({ events, searchTerm }: { events: AppEvent[], searchTerm: string }) => {
     const handleApproval = async (eventId: string, isCurrentlyApproved: boolean) => {
         const eventDocRef = doc(db, 'events', eventId as string);
         await updateDoc(eventDocRef, {
@@ -25,7 +26,12 @@ const AdminEventsTable = ({ events }: { events: AppEvent[] }) => {
         }
     };
     const columns = [
-        { field: 'name', headerName: 'Name', width: 200 },
+        { 
+            field: 'name', 
+            headerName: 'Name', 
+            width: 200,
+            renderCell: (params: GridRenderCellParams) => highlightUtils(params.value as string, searchTerm),
+        },
         {
             field: 'eventDateTime',
             headerName: 'Date',

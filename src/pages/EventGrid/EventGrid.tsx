@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, Box, FormControl, InputLabel, Select, MenuItem, Typography, Chip, Button, CircularProgress } from '@mui/material';
 import EventCard from './EventCard';
 import useStreamEvents from '../../hooks/useStreamEvents';
@@ -49,17 +49,18 @@ const EventGrid = () => {
     const auth = getAuth();
     const theme = useTheme();
     const [searchParams, setSearchParams] = useSearchParams();
-    const itemsPerPage = 6; // Number of items per page;
-    const [categoryFilter, setCategoryFilter] = useState('');
+    const initialPage = Number(searchParams.get('page')) || 1;
+    const initialCategory = searchParams.get('category') || '';
+    const itemsPerPage = 6;
+    const [categoryFilter, setCategoryFilter] = useState(initialCategory);
     const [ageGroupFilter, setAgeGroupFilter] = useState('');
     const [cityFilter, setCityFilter] = useState('');
-    const [filteredEvents, setFilteredEvents] = useState<AppEvent[]>([]);
-    const [uniqueMonths, setUniqueMonths] = useState<string[]>([]);
     const [selectedMonth, setSelectedMonth] = useState('');
-    const [page, setPage] = useState(Number(searchParams.get('page')) || 1);
-
+    const [page, setPage] = useState(initialPage);
     const [searchTerm, setSearchTerm] = useState('');
     const [isDateSearch, setIsDateSearch] = useState(false);
+    const [filteredEvents, setFilteredEvents] = useState<AppEvent[]>([]);
+    const [uniqueMonths, setUniqueMonths] = useState<string[]>([]);
 
     // This function will be called by the Search component
     const handleSearch = (newSearchTerm: string, newIsDateSearch: boolean) => {
@@ -68,6 +69,7 @@ const EventGrid = () => {
         // Reset the page to 1 when new search is performed
         setPage(1);
     };
+    
     const { events, isLoading, error } = useStreamEvents({
         searchTerm,
         isDateSearch,
@@ -77,7 +79,8 @@ const EventGrid = () => {
         selectedMonth,
         page
     });
-
+    
+    
     useEffect(() => {
         const fetchSavedEvents = async (userId: string) => {
             const q = query(collection(db, 'savedEvents'), where('userId', '==', userId));
@@ -96,7 +99,6 @@ const EventGrid = () => {
 
         return () => unsubscribe();
     }, [auth]);
-
     // Apply filters to events
     useEffect(() => {
         setFilteredEvents(events);
@@ -111,18 +113,29 @@ const EventGrid = () => {
         loadMonths();
     }, []);
 
-    const updateURLParameters = useCallback(
-        (category: string, ageGroup: string, city: string, month: string, currentPage: number) => {
-            const newSearchParams = new URLSearchParams();
-            if (category) newSearchParams.set('category', category);
-            if (ageGroup) newSearchParams.set('ageGroup', ageGroup);
-            if (city) newSearchParams.set('city', city);
-            if (month) newSearchParams.set('month', month);
-            newSearchParams.set('page', currentPage.toString());
-            setSearchParams(newSearchParams);
-        },
-        [setSearchParams]
-    );
+    useEffect(() => {
+        const params = new URLSearchParams();
+        if (categoryFilter) params.set('category', categoryFilter);
+        if (ageGroupFilter) params.set('ageGroup', ageGroupFilter);
+        if (cityFilter) params.set('city', cityFilter);
+        if (selectedMonth) params.set('month', selectedMonth);
+        params.set('page', page.toString());
+        setSearchParams(params);
+    }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page, setSearchParams]);
+
+    const handleFilterChange = (filterType: string, value: string) => {
+        setPage(1);
+        if (filterType === 'category') setCategoryFilter(value);
+        else if (filterType === 'ageGroup') setAgeGroupFilter(value);
+        else if (filterType === 'city') setCityFilter(value);
+        else if (filterType === 'selectedMonth') setSelectedMonth(value);
+    };
+
+
+    useEffect(() => {
+        setFilteredEvents(events);
+    }, [events]);
+
 
     const resetFilters = () => {
         setCategoryFilter('');
@@ -131,12 +144,8 @@ const EventGrid = () => {
         setSelectedMonth('');
         setSelectedMonth('');
         setPage(1);
-        updateURLParameters('', '', '', '', 1);
     };
 
-    useEffect(() => {
-        updateURLParameters(categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page);
-    }, [categoryFilter, ageGroupFilter, cityFilter, selectedMonth, page, updateURLParameters]);
 
     useEffect(() => {
         const newSearchParams = new URLSearchParams();
@@ -153,10 +162,12 @@ const EventGrid = () => {
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
-        updateURLParameters(categoryFilter, ageGroupFilter, cityFilter, selectedMonth, newPage);
+
     };
 
     const eventsForPage = filteredEvents.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+    console.log({ cityFilter, selectedMonth, categoryFilter, ageGroupFilter });
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
@@ -172,7 +183,7 @@ const EventGrid = () => {
                                 labelId="category-label"
                                 id="category-select"
                                 value={categoryFilter}
-                                onChange={(e) => setCategoryFilter(e.target.value)}
+                                onChange={(e) => handleFilterChange('category', e.target.value)}
                                 label="Category" // This should match the InputLabel
                             >
                                 <MenuItem value="">
@@ -195,7 +206,7 @@ const EventGrid = () => {
                                 labelId="category-label"
                                 id="category-select"
                                 value={ageGroupFilter}
-                                onChange={(e) => setAgeGroupFilter(e.target.value)}
+                                onChange={(e) => handleFilterChange('ageGroup', e.target.value)}
                                 label="Age Group" // This should match the InputLabel
                             >
                                 <MenuItem value="">All Ages</MenuItem>
@@ -213,12 +224,12 @@ const EventGrid = () => {
                         <FormControl fullWidth>
                             <InputLabel>Month</InputLabel>
                             <Select
-                                labelId="month-label"
-                                id="month-select"
-                                value={selectedMonth}
-                                onChange={(e) => setSelectedMonth(e.target.value)}
-                                label="Category" // This should match the InputLabel
-                            >
+        labelId="month-label"
+        id="month-select"
+        value={selectedMonth}
+        onChange={(e) => handleFilterChange('selectedMonth', e.target.value)} // Use 'selectedMonth', not 'month'
+        label="Month"
+    >
                                 <MenuItem value="">All Months</MenuItem>
                                 {uniqueMonths.map((month, index) => (
                                     <MenuItem key={index} value={month}>
@@ -237,7 +248,7 @@ const EventGrid = () => {
                                 labelId="city-label"
                                 id="city-select"
                                 value={cityFilter}
-                                onChange={(e) => setCityFilter(e.target.value)}
+                                onChange={(e) => handleFilterChange('city', e.target.value)}
                                 label="City" // This should match the InputLabel
                             >
                                 <MenuItem value="">Both Cities</MenuItem>
