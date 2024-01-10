@@ -61,9 +61,11 @@ const EventGrid = () => {
     const [isDateSearch, setIsDateSearch] = useState(false);
     const [filteredEvents, setFilteredEvents] = useState<AppEvent[]>([]);
     const [uniqueMonths, setUniqueMonths] = useState<string[]>([]);
+    const [showSearch, setShowSearch] = useState(true);
 
-    // This function will be called by the Search component
-
+    const toggleSearchFilters = () => {
+        setShowSearch(!showSearch);
+    };
     
     const { events, isLoading, error } = useStreamEvents({
         searchTerm,
@@ -197,6 +199,17 @@ const EventGrid = () => {
         setSearchParams({ ...searchParams, searchTerm: newSearchTerm, isDateSearch: newIsDateSearch.toString(), page: '1' });
     };
 
+    const renderSearchResultsMessage = () => {
+        if (searchTerm && !isLoading && !error && events.length > 0) {
+            return (
+                <Typography variant="subtitle1" gutterBottom>
+                    {`There are ${events.length} events ${isDateSearch ? `on ${searchTerm}` : `with the term '${searchTerm}'`}`}
+                </Typography>
+            );
+        }
+        return null; // Display nothing if no search term is entered or no results are found
+    };
+
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
 
@@ -208,9 +221,23 @@ const EventGrid = () => {
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
+            <Box sx={{ width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'flex-start', flexWrap: 'wrap', p: 2 }}>
+            <Button onClick={toggleSearchFilters}  variant="outlined" sx={{ }}>
+            <Typography variant="body2" gutterBottom sx={{ textTransform: 'uppercase', fontFamily: '"Sansita", sans-serif', fontSize: '1.3rem' }}>
+                {showSearch ? "Show Filters" : "Show Search"}
+                </Typography>
+            </Button>
+
+            </Box>
             {/* Filter UI */}
+            {showSearch ? (
             <Box sx={{ mb: 4, width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', p: 2 }}>
+            <Box sx={{ mb: 2, width: '100%', display: 'flex', flexDirection: 'column' }}>
                 <Search onSearch={handleSearch} />
+                {renderSearchResultsMessage()}
+                </Box>
+            </Box>) :(
+            <Box sx={{ mb: 4, width: '100%', maxWidth: '1200px', display: 'flex', justifyContent: 'center', flexWrap: 'wrap', p: 2 }}>
                 <Grid container spacing={2} justifyContent="center">
                     {/* Category Filter */}
                     <Grid item xs={12} sm={6} md={3}>
@@ -295,7 +322,7 @@ const EventGrid = () => {
                         </FormControl>
                     </Grid>
                 </Grid>
-            </Box>
+            </Box>)}
 
             {/* Active Filters Display */}
             <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
