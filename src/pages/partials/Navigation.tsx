@@ -96,6 +96,9 @@ const Navbar: React.FC = () => {
                                 <Button color="inherit" component={NavLink} to="/event-form">
                                     Tip Us!
                                 </Button>
+                                <Button color="inherit" component={NavLink} to="/forums">
+                                    Forums
+                                </Button>
                                 <Badge
                                     badgeContent={savedEventsCount}
                                     color="secondary"
@@ -215,6 +218,7 @@ const Navbar: React.FC = () => {
                             <CustomListItemButton onClick={handleDrawerToggle} to="/profile" text="Profile" />
                             <CustomListItemButton onClick={handleDrawerToggle} to="/event-form" text="Tip Us!" />
                             <CustomListItemButton onClick={handleDrawerToggle} to="/saved-events" text="Saved Events" />
+                            <CustomListItemButton onClick={handleDrawerToggle} to="/forums" text="Forums" />
                             {signedInUserInfo && signedInUserInfo.isAdmin && (
                                 <>
                                     <CustomListItemButton onClick={handleDrawerToggle} to="/events-list" text="Events List" />

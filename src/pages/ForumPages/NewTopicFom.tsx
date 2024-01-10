@@ -5,6 +5,7 @@ import { TextField, Button, Box } from '@mui/material';
 import { db } from '../../services/firebase';
 import { collection, doc, setDoc } from 'firebase/firestore';
 import useAuth from '../../hooks/useAuth';
+import { useParams } from 'react-router-dom';
 
 // Zod schema for Topic data validation
 const topicSchema = z.object({
@@ -18,7 +19,8 @@ interface Props {
     forumId: string;
   }
 
-  const NewTopicForm: React.FC<Props> = ({ forumId }) => {
+  const NewTopicForm: React.FC<Props> = () => {
+    const { forumId } = useParams<{ forumId: string }>();
   const { control, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<TopicFormData>({
     resolver: zodResolver(topicSchema),
   });
@@ -29,6 +31,12 @@ interface Props {
       alert('You must be logged in to create a topic.');
       return;
     }
+  
+    if (!forumId) {
+      console.error('Forum ID is undefined');
+      return;
+    }
+
 
     const newTopicRef = doc(collection(db, 'forums', forumId, 'topics'));
     const newTopicData = {

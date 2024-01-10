@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import { getDocs } from 'firebase/firestore';
 import { postsCol } from '../../services/firebase';
 import { Post } from '../../types/Forum.types';
+import useAuth from '../../hooks/useAuth';
+import { Button } from '@mui/material';
 
 const TopicView = () => {
   const { forumId, topicId } = useParams<{ forumId?: string; topicId?: string }>();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const { signedInUser } = useAuth();
 
   useEffect(() => {
     if (forumId && topicId) {
@@ -43,13 +46,23 @@ const TopicView = () => {
 
   return (
     <div>
-      {posts.map((post) => (
-        <div key={post.id}>
-          <h3>{post.title}</h3>
-          <p>{post.content}</p>
-          {/* Additional post details */}
-        </div>
-      ))}
+        <NavLink to={`/forums/${forumId}`}>Back to Topics</NavLink>
+        {signedInUser && (
+            <NavLink to={`/forums/${forumId}/topics/${topicId}/create-post`}>
+                <Button variant="contained" color="primary" style={{ margin: '10px 0' }}>
+                    Create New Post
+                </Button>
+            </NavLink>
+        )}
+        {posts.map((post) => (
+            // Existing post display code
+            <div key={post.id}>
+                <NavLink to={`/forums/${forumId}/${post.id}`}>
+                    <h2>{post.title}</h2>
+                    <p>{post.content}</p>
+                </NavLink>
+            </div>
+        ))}
     </div>
   );
 };

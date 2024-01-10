@@ -22,6 +22,8 @@ import Algolia from './components/Algolia/SyncToAlgolia';
 import ForumList from './pages/ForumPages/ForumList';
 import TopicList from './pages/ForumPages/TopicList';
 import TopicView from './pages/ForumPages/TopicView';
+import NewTopicForm from './pages/ForumPages/NewTopicFom';
+import NewPostForm from './pages/ForumPages/NewPostForm';
 
 function App() {
     return (
@@ -99,31 +101,11 @@ function App() {
                                 </AuthOnly>
                             }
                         />
-                        <Route
-                            path="/forums"
-                            element={
-                                <AuthOnly>
-                                    <ForumList />
-                                </AuthOnly>
-                            }
-                        />
-                        <Route
-                            path="/forums/:forumId"
-                            element={
-                                <AuthOnly>
-                                    <TopicList />
-                                </AuthOnly>
-                            }
-                        />
-                        <Route
-                            path="/forums/:forumId/topics/:topicId"
-                            element={
-                                <AuthOnly>
-                                    <TopicView />
-                                </AuthOnly>
-                            }
-                        />
-
+                        <Route path="/forums" element={<AuthOnly><ForumList /></AuthOnly>} />
+                        <Route path="/forums/:forumId" element={<AuthOnly><TopicList /></AuthOnly>} />
+                        <Route path="/forums/:forumId/topics/:topicId" element={<AuthOnly><TopicView /></AuthOnly>} />
+                        <Route path="/forums/:forumId/create-topic" element={<AuthOnly><NewTopicForm /></AuthOnly>} />
+                        <Route path="/forums/:forumId/topics/:topicId/create-post" element={<AuthOnly><NewPostForm /></AuthOnly>} />
                         <Route
                             path="/logout"
                             element={

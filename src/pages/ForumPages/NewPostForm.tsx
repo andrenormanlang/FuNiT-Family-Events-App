@@ -5,6 +5,7 @@ import { TextField, Button, Box, CircularProgress } from '@mui/material';
 import { db } from '../../services/firebase';
 import { doc, setDoc, collection } from 'firebase/firestore';
 import useAuth from '../../hooks/useAuth';
+import { useParams } from 'react-router-dom';
 
 // Zod schema for Post data validation
 const postSchema = z.object({
@@ -18,7 +19,8 @@ interface Props {
     topicId: string;
   }
 
-const NewPostForm: React.FC<Props> = ({ forumId, topicId }) => {
+const NewPostForm: React.FC<Props> = () => {
+    const { forumId, topicId } = useParams<{ forumId: string; topicId: string }>();
   const { control, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
   });
@@ -27,6 +29,11 @@ const NewPostForm: React.FC<Props> = ({ forumId, topicId }) => {
   const onSubmit = async (data: PostFormData) => {
     if (!signedInUserInfo) {
       alert('You must be logged in to create a post.');
+      return;
+    }
+  
+    if (!forumId || !topicId) {
+      console.error('Forum ID or Topic ID is undefined');
       return;
     }
 
