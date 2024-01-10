@@ -47,8 +47,15 @@ const AdminEventsListPage: React.FC = () => {
         if (error) {
             return <div>Error: {error}</div>;
         }
-        if (events.length === 0 && searchTerm) {
-            return <div>No events {isDateSearch ? 'on this date' : 'with this term'}</div>;
+        const eventCount = events.length;
+        const eventWord = eventCount === 1 ? 'event' : 'events'; // Singular or plural
+        const isOrAre = eventCount === 1 ? 'is' : 'are'; // Singular or plural verb
+        const onOrWith = isDateSearch ? 'on this date' : 'with this term'; // Context for search
+    
+        if (eventCount === 0 && searchTerm) {
+            return <div>No {eventWord} {onOrWith}</div>;
+        } else if (eventCount === 1 && searchTerm) {
+            return <div>There {isOrAre} {eventCount} {eventWord} {onOrWith}</div>;
         }
         return <AdminEventsTable events={events} searchTerm={searchTerm} />;
     };

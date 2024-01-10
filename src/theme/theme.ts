@@ -58,10 +58,15 @@ const theme = createTheme({
             contrastText: '#1c1c1c'
         },
         info: {
-            main: '#007bff'
+            main: '#007bff',
+            light: '#4FC3F7',
+            dark: '#0D47A1',
+            contrastText: '#ffffff'
         },
         error: {
-            main: '#d32f2f'
+            main: '#191970',
+            light: 'red',
+            dark: 'red',
         },
         // You can continue adding as many as you need
         background: {

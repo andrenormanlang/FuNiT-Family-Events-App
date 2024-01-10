@@ -26,7 +26,7 @@ const getCategoryColor = (category: Categories): string => {
         Cooking: 'green',
         DIY: 'orange',
         'Educational Activities': 'purple',
-        Games: 'pink',
+        Games: 'darkgreen',
         'Health and Wellness': 'darkblue',
         Music: 'brown',
         'Outdoor Activities': 'teal',

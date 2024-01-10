@@ -62,6 +62,7 @@ const EventGrid = () => {
     const [filteredEvents, setFilteredEvents] = useState<AppEvent[]>([]);
     const [uniqueMonths, setUniqueMonths] = useState<string[]>([]);
     const [showSearch, setShowSearch] = useState(true);
+    const [isFiltered, setIsFiltered] = useState(false);
 
     const toggleSearchFilters = () => {
         setShowSearch(!showSearch);
@@ -158,7 +159,8 @@ const EventGrid = () => {
         else if (filterType === 'selectedMonth') {
             setSelectedMonth(value);
             setSearchParams({ ...searchParams, selectedMonth: value, page: '1' });
-        } 
+        }
+        setIsFiltered(true);
     };
 
 
@@ -174,6 +176,7 @@ const EventGrid = () => {
         setSelectedMonth('');
         setSelectedMonth('');
         setPage(1);
+        setIsFiltered(false);
     };
 
 
@@ -201,15 +204,27 @@ const EventGrid = () => {
     };
 
     const renderSearchResultsMessage = () => {
-        if (searchTerm && !isLoading && !error && events.length > 0) {
+        if (searchTerm && !isLoading && !error) {
+          const eventCount = events.length;
+          const eventWord = eventCount === 1 ? 'event' : 'events'; // Singular or plural
+          const onOrWith = isDateSearch ? 'on' : 'with the term';
+          
+          if (eventCount > 0) {
             return (
-                <Typography variant="subtitle1" gutterBottom>
-                    {`There are ${events.length} events ${isDateSearch ? `on ${searchTerm}` : `with the term '${searchTerm}'`}`}
-                </Typography>
+              <Typography variant="body2" gutterBottom sx={{ textTransform: 'uppercase', fontFamily: '"Sansita", sans-serif', fontSize: '1.3rem', color: theme.palette.success.dark }}>
+                {`There ${eventCount === 1 ? 'is' : 'are'} ${eventCount} ${eventWord} ${onOrWith} '${searchTerm}'`}
+              </Typography>
             );
+          } else {
+            return (
+              <Typography variant="body2" gutterBottom sx={{ textTransform: 'uppercase', fontFamily: '"Sansita", sans-serif', fontSize: '1.3rem', color: theme.palette.error.dark }}>
+                {`There are no ${eventWord} ${onOrWith} '${searchTerm}'`}
+              </Typography>
+            );
+          }
         }
         return null; // Display nothing if no search term is entered or no results are found
-    };
+      };
 
     const handlePageChange = (newPage: number) => {
         setPage(newPage);
@@ -368,8 +383,10 @@ const EventGrid = () => {
                             />
                         </Grid>
                     ))
+                ) : isFiltered ? (
+                    <Typography>No events match this filter.</Typography>
                 ) : (
-                    <Typography>No events match your filters.</Typography>
+                    <Typography>Nothing found</Typography>
                 )}
             </Grid>
 
