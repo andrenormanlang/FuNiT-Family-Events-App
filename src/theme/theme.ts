@@ -32,7 +32,8 @@ const theme = createTheme({
             default: '#7AD9E0',
             paper: '#fff'
         }
-    }
+    },
+    
 });
 
 export default theme;

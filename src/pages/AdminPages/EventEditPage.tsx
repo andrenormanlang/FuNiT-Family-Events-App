@@ -4,7 +4,7 @@ import { Timestamp, collection, doc, getDoc, getDocs, query, where, writeBatch }
 import { storage } from '../../services/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db } from '../../services/firebase';
-import { Category, Event } from '../../types/Event.types';
+import { Categories, Event } from '../../types/Event.types';
 import useAuth from '../../hooks/useAuth';
 import {
     Box,
@@ -259,7 +259,7 @@ const EventEditPage = () => {
                                             <Select
                                                 value={event.category || categoryValues[0]}
                                                 label="Category"
-                                                onChange={(e) => setEvent({ ...event, category: e.target.value as Category })}
+                                                onChange={(e) => setEvent({ ...event, category: e.target.value as Categories })}
                                             >
                                                 {categoryValues.map((category, index) => (
                                                     <MenuItem key={index} value={category}>
