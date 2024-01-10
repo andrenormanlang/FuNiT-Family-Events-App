@@ -129,6 +129,7 @@ const EventGrid = () => {
         setSearchTerm(searchTermParam || '');
         setIsDateSearch(isDateSearchParam);
     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -322,18 +323,24 @@ const EventGrid = () => {
                         </FormControl>
                     </Grid>
                 </Grid>
+                <Box sx={{ width: '100%', maxWidth: '1200px', justifyContent: 'flex-start', flexWrap: 'wrap', mt:2 }}>
+        
+                    
+                    {categoryFilter && <Chip label={`Category: ${categoryFilter}`} sx={{fontFamily: '"Sansita", sans-serif', fontSize: '0.9rem' , mr: 1, backgroundColor: theme.palette.secondary.light, color: theme.palette.secondary.contrastText}} onDelete={() => setCategoryFilter('')}  />}
+
+                    {ageGroupFilter && <Chip label={`Age Group: ${ageGroupFilter}`} sx={{fontFamily: '"Sansita", sans-serif', fontSize: '0.9rem' ,  mr: 1, backgroundColor: theme.palette.success.light, color: theme.palette.success.contrastText}} onDelete={() => setAgeGroupFilter('')}  />}
+                    {cityFilter && <Chip label={`City: ${cityFilter}`} sx={{fontFamily: '"Sansita", sans-serif', fontSize: '0.9rem' , mr: 1, backgroundColor: theme.palette.warning.light, color: theme.palette.warning.contrastText}} onDelete={() => setCityFilter('')} />}
+                    {selectedMonth && <Chip label={`Month: ${selectedMonth}`} sx={{fontFamily: '"Sansita", sans-serif', fontSize: '0.9rem' , mr: 1}} onDelete={() => setSelectedMonth('')} color="error" />}
+                    <Button onClick={resetFilters} variant="contained" color="secondary" sx={{  }}>
+                <Typography variant="body2" gutterBottom sx={{ textTransform: 'uppercase', fontFamily: '"Sansita", sans-serif', fontSize: '1rem' }}>
+                        Reset Filters
+                </Typography>
+                    </Button>
+                
+            </Box>
             </Box>)}
 
             {/* Active Filters Display */}
-            <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center', flexWrap: 'wrap' }}>
-                {categoryFilter && <Chip label={`Category: ${categoryFilter}`} onDelete={() => setCategoryFilter('')} color="primary" />}
-                {ageGroupFilter && <Chip label={`Age Group: ${ageGroupFilter}`} onDelete={() => setAgeGroupFilter('')} color="primary" />}
-                {cityFilter && <Chip label={`City: ${cityFilter}`} onDelete={() => setCityFilter('')} color="primary" />}
-                {selectedMonth && <Chip label={`Month: ${selectedMonth}`} onDelete={() => setSelectedMonth('')} color="primary" />}
-                <Button onClick={resetFilters} variant="contained" color="secondary" sx={{ ml: 1 }}>
-                    Reset Filters
-                </Button>
-            </Box>
 
             {/* Event Grid */}
             <Grid container spacing={2} justifyContent="center" style={{ maxWidth: '1200px' }}>
