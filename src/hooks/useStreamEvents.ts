@@ -60,10 +60,10 @@ const useStreamEvents = ({
                     } else {
                         // This will search only in the 'name' attribute, since we've set it as the searchable attribute
                         queryResults = await index.search<Hit>(searchTerm, {
-                          attributesToRetrieve: ['name', 'objectID', 'eventDateTime', 'address', 'category', 'ageGroup', 'imageUrl'], // Add here all the attributes you want to retrieve.
+                            attributesToRetrieve: ['name', 'objectID', 'eventDateTime', 'address', 'category', 'ageGroup', 'imageUrl'] // Add here all the attributes you want to retrieve.
                         });
                         // ... your logic to handle the hits
-                      }
+                    }
 
                     // Transform hits to include readable date format
                     const transformedHits = queryResults?.hits.map((hit: Hit) => {
@@ -96,7 +96,7 @@ const useStreamEvents = ({
                     });
 
                     setEvents(transformedHits || []);
-                } else{
+                } else {
                     let q = query(collection(db, 'events'));
                     if (signedInUserInfo?.isAdmin) {
                         q = query(q, orderBy('eventDateTime', 'asc'));
@@ -117,42 +117,42 @@ const useStreamEvents = ({
                         const endOfMonth = new Timestamp(new Date(Number(year), monthIndex + 1, 0, 23, 59, 59).getTime() / 1000, 0);
                         q = query(q, where('eventDateTime', '>=', startOfMonth), where('eventDateTime', '<=', endOfMonth));
                     }
-    
+
                     const unsubscribe = onSnapshot(q, (snapshot) => {
                         let fetchedEvents = snapshot.docs.map((doc) => ({
                             ...(doc.data() as AppEvent),
                             id: doc.id
                         }));
-    
+
                         if (cityFilter) {
                             fetchedEvents = fetchedEvents.filter((event) => {
                                 const eventCity = GetCityFromAddress(event.address || '');
                                 return eventCity.toLowerCase().includes(cityFilter.toLowerCase());
                             });
                         }
-                        
+
                         setEvents(fetchedEvents);
                     });
-    
+
                     return () => {
                         unsubscribe();
-                    }}
-    
-                } catch (err) {
-                    if (err instanceof Error) {
-                        setError(err.message);
-                    } else {
-                        setError('An unexpected error occurred');
-                    }
-                } finally {
-                    setIsLoading(false);
+                    };
                 }
-            };
-    
-            fetchEvents();
-        }, [signedInUserInfo?.isAdmin, categoryFilter, ageGroupFilter, selectedMonth, cityFilter, isDateSearch, page, searchTerm]);
-    
-        return { events, isLoading, error };
-    };
-    
-    export default useStreamEvents;
+            } catch (err) {
+                if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError('An unexpected error occurred');
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchEvents();
+    }, [signedInUserInfo?.isAdmin, categoryFilter, ageGroupFilter, selectedMonth, cityFilter, isDateSearch, page, searchTerm]);
+
+    return { events, isLoading, error };
+};
+
+export default useStreamEvents;

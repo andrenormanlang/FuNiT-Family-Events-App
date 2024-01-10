@@ -75,17 +75,17 @@ const Navbar: React.FC = () => {
         <StyledAppBar>
             <Container maxWidth="lg">
                 <Toolbar>
-                <Typography variant="h6" component="div" style={{ flexGrow: 1, cursor: 'pointer' }}>
-    <a href="/" style={{ color: 'inherit', textDecoration: 'inherit' }}>
-      FunniT
-    </a>
-  </Typography>
+                    <Typography variant="h6" component="div" style={{ flexGrow: 1, cursor: 'pointer' }}>
+                        <a href="/" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+                            FunniT
+                        </a>
+                    </Typography>
                     <Box display={isMobile ? 'none' : 'block'}>
                         {/* <Button color="inherit" onClick={navigateHome} style={{ cursor: 'pointer' }}> */}
                         <Button color="inherit" style={{ cursor: 'pointer' }}>
-                        <a href="/" style={{ color: 'inherit', textDecoration: 'inherit' }}>
-                            Home
-                        </a>
+                            <a href="/" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+                                Home
+                            </a>
                         </Button>
                         <Button color="inherit">About</Button>
                         {signedInUser ? (
@@ -109,7 +109,8 @@ const Navbar: React.FC = () => {
                                             top: -1, // Adjust vertical position
                                             transform: 'scale(1)'
                                         }
-                                    }}>
+                                    }}
+                                >
                                     <Button color="inherit" component={NavLink} to="/saved-events">
                                         Saved Events
                                     </Button>
@@ -171,7 +172,8 @@ const Navbar: React.FC = () => {
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 marginBottom: 2 // Adds some spacing below the avatar
-                            }}>
+                            }}
+                        >
                             <Avatar
                                 src={signedInUserPhotoUrl || undefined}
                                 alt={signedInUserName || 'Profile'}
@@ -181,43 +183,51 @@ const Navbar: React.FC = () => {
                                     marginBottom: 1
                                 }} // Increase avatar size
                             />
-                            <Typography variant="body1" gutterBottom sx={{ textTransform: 'uppercase', fontFamily: '"Sansita", sans-serif', fontSize: '2rem' }}>
+                            <Typography
+                                variant="body1"
+                                gutterBottom
+                                sx={{ textTransform: 'uppercase', fontFamily: '"Sansita", sans-serif', fontSize: '2rem' }}
+                            >
                                 {signedInUserName}
                             </Typography>
                         </Box>
                     )}
                     <ListItem>
-                    <ListItemButton onClick={handleDrawerToggle}  sx={{ justifyContent: 'center' }}>
-    <Button  color="inherit" style={{ padding: 0 }}>
-      <a href="/" style={{ color: 'inherit', textDecoration: 'inherit',  }}>
-      <Typography variant="body1" gutterBottom sx={{ textTransform: 'uppercase', fontFamily: '"Sansita", sans-serif', fontSize: '1.5rem' }}>
-        Home
-        </Typography>
-      </a>
-    </Button>
-  </ListItemButton>
+                        <ListItemButton onClick={handleDrawerToggle} sx={{ justifyContent: 'center' }}>
+                            <Button color="inherit" style={{ padding: 0 }}>
+                                <a href="/" style={{ color: 'inherit', textDecoration: 'inherit' }}>
+                                    <Typography
+                                        variant="body1"
+                                        gutterBottom
+                                        sx={{ textTransform: 'uppercase', fontFamily: '"Sansita", sans-serif', fontSize: '1.5rem' }}
+                                    >
+                                        Home
+                                    </Typography>
+                                </a>
+                            </Button>
+                        </ListItemButton>
                     </ListItem>
-                    <CustomListItemButton onClick={handleDrawerToggle}  to="/about" text="About" />
+                    <CustomListItemButton onClick={handleDrawerToggle} to="/about" text="About" />
 
                     {signedInUser ? (
                         // Logged-in user menu items
                         <>
-                            <CustomListItemButton onClick={handleDrawerToggle}  to="/profile" text="Profile" />
-                            <CustomListItemButton onClick={handleDrawerToggle}  to="/event-form" text="Tip Us!" />
-                            <CustomListItemButton onClick={handleDrawerToggle}  to="/saved-events" text="Saved Events" />
+                            <CustomListItemButton onClick={handleDrawerToggle} to="/profile" text="Profile" />
+                            <CustomListItemButton onClick={handleDrawerToggle} to="/event-form" text="Tip Us!" />
+                            <CustomListItemButton onClick={handleDrawerToggle} to="/saved-events" text="Saved Events" />
                             {signedInUserInfo && signedInUserInfo.isAdmin && (
                                 <>
-                                    <CustomListItemButton onClick={handleDrawerToggle}  to="/events-list" text="Events List" />
-                                    <CustomListItemButton onClick={handleDrawerToggle}  to="/users-list" text="Users List" />
+                                    <CustomListItemButton onClick={handleDrawerToggle} to="/events-list" text="Events List" />
+                                    <CustomListItemButton onClick={handleDrawerToggle} to="/users-list" text="Users List" />
                                 </>
                             )}
-                            <CustomListItemButton onClick={handleDrawerToggle}  to="/logout" text="Logout" />
+                            <CustomListItemButton onClick={handleDrawerToggle} to="/logout" text="Logout" />
                         </>
                     ) : (
                         // Non-logged-in user menu items
                         <>
-                            <CustomListItemButton onClick={handleDrawerToggle}  to="/login" text="Login" />
-                            <CustomListItemButton onClick={handleDrawerToggle}  to="/register" text="Register" />
+                            <CustomListItemButton onClick={handleDrawerToggle} to="/login" text="Login" />
+                            <CustomListItemButton onClick={handleDrawerToggle} to="/register" text="Register" />
                         </>
                     )}
                 </List>

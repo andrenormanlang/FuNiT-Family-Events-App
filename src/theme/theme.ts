@@ -3,32 +3,32 @@ import {} from '@mui/material/colors';
 import { typography } from './typography';
 
 declare module '@mui/material/styles/createPalette' {
-  interface Palette {
-    sunnyYellow?: PaletteColor;
-    skyBlue?: PaletteColor;
-    grassGreen?: PaletteColor;
-    oceanTeal?: PaletteColor;
-    sunsetOrange: PaletteColor;
-    bubblegumPink: PaletteColor;
-    lavenderPurple: PaletteColor;
-    mintGreen: PaletteColor;
-    peachyCoral: PaletteColor;
-    berryRed: PaletteColor;
-    // ...other custom colors...
-  }
-  interface PaletteOptions {
-    sunnyYellow?: PaletteColorOptions;
-    skyBlue?: PaletteColorOptions;
-    grassGreen?: PaletteColorOptions;
-    oceanTeal?: PaletteColorOptions;
-    sunsetOrange: PaletteColorOptions;
-    bubblegumPink: PaletteColorOptions;
-    lavenderPurple: PaletteColorOptions;
-    mintGreen: PaletteColorOptions;
-    peachyCoral: PaletteColorOptions;
-    berryRed: PaletteColorOptions;
-    // ...other custom colors...
-  }
+    interface Palette {
+        sunnyYellow?: PaletteColor;
+        skyBlue?: PaletteColor;
+        grassGreen?: PaletteColor;
+        oceanTeal?: PaletteColor;
+        sunsetOrange: PaletteColor;
+        bubblegumPink: PaletteColor;
+        lavenderPurple: PaletteColor;
+        mintGreen: PaletteColor;
+        peachyCoral: PaletteColor;
+        berryRed: PaletteColor;
+        // ...other custom colors...
+    }
+    interface PaletteOptions {
+        sunnyYellow?: PaletteColorOptions;
+        skyBlue?: PaletteColorOptions;
+        grassGreen?: PaletteColorOptions;
+        oceanTeal?: PaletteColorOptions;
+        sunsetOrange: PaletteColorOptions;
+        bubblegumPink: PaletteColorOptions;
+        lavenderPurple: PaletteColorOptions;
+        mintGreen: PaletteColorOptions;
+        peachyCoral: PaletteColorOptions;
+        berryRed: PaletteColorOptions;
+        // ...other custom colors...
+    }
 }
 
 const theme = createTheme({
@@ -43,7 +43,7 @@ const theme = createTheme({
         secondary: {
             main: '#ce4e7c',
             light: '#FF8A65',
-            contrastText: '#1c1c1c',
+            contrastText: '#1c1c1c'
         },
         success: {
             main: '#4CAF50',
@@ -66,7 +66,7 @@ const theme = createTheme({
         error: {
             main: '#191970',
             light: 'red',
-            dark: 'red',
+            dark: 'red'
         },
         // You can continue adding as many as you need
         background: {
@@ -74,38 +74,36 @@ const theme = createTheme({
             paper: '#fff'
         },
         sunnyYellow: {
-          main: '#FFD54F'
+            main: '#FFD54F'
         },
         skyBlue: {
-          main: '#4FC3F7'
+            main: '#4FC3F7'
         },
         grassGreen: {
-          main: '#81C784'
+            main: '#81C784'
         },
         oceanTeal: {
-          main: '#4DB6AC'
+            main: '#4DB6AC'
         },
         sunsetOrange: {
-          main: '#FF8A65'
+            main: '#FF8A65'
         },
         bubblegumPink: {
-          main: '#F06292'
+            main: '#F06292'
         },
         lavenderPurple: {
-          main: '#BA68C8'
+            main: '#BA68C8'
         },
         mintGreen: {
-          main: '#AED581'
+            main: '#AED581'
         },
         peachyCoral: {
-          main: '#FFAB91'
+            main: '#FFAB91'
         },
         berryRed: {
-          main: '#E57373'
-        }       
-        
-    },
-    
+            main: '#E57373'
+        }
+    }
 });
 
 export default theme;

@@ -5,6 +5,7 @@ import { getStorage } from 'firebase/storage';
 import { Event } from '../types/Event.types';
 import { UserInfo } from '../types/User.types';
 import { SavedEvent } from '../types/SavedEvent.types';
+import { Forum, Post, Topic } from '../types/Forum.types';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -65,5 +66,8 @@ const createCollection = <T = DocumentData>(collectionName: string): CollectionR
 export const eventsCol = createCollection<Event>('events');
 export const usersCol = createCollection<UserInfo>('users');
 export const savedEventsCol = createCollection<SavedEvent>('savedEvents');
+export const forumsCol = createCollection<Forum>('forums'); // Use the Forum type here
+export const topicsCol = (forumId: string) => createCollection<Topic>(`forums/${forumId}/topics`); // Dynamic path for topics
+export const postsCol = (forumId: string, topicId: string) => createCollection<Post>(`forums/${forumId}/topics/${topicId}/posts`); // Dynamic path for posts
 
 export default app;

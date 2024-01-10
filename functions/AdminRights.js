@@ -1,25 +1,25 @@
-import { initializeApp, credential as _credential, auth } from "firebase-admin";
-import serviceAccount from "./funnit-adminsdk.json";
+import { initializeApp, credential as _credential, auth } from 'firebase-admin';
+import serviceAccount from './funnit-adminsdk.json';
 
 initializeApp({
     credential: _credential.cert(serviceAccount),
-    databaseURL: "https://fed22m-exjobb-funnit.firebaseio.com",
+    databaseURL: 'https://fed22m-exjobb-funnit.firebaseio.com'
 });
 
-const uid = ""; // Replace with the UID of the user
+const uid = ''; // Replace with the UID of the user
 
 auth()
     .getUser(uid)
     .then((userRecord) => {
         console.log(userRecord.customClaims); // This will display the custom claims
         if (userRecord.customClaims && userRecord.customClaims.admin === true) {
-            console.log("User is an admin.");
+            console.log('User is an admin.');
         } else {
-            console.log("User is not an admin.");
+            console.log('User is not an admin.');
         }
     })
     .catch((error) => {
-        console.log("Error fetching user data:", error);
+        console.log('Error fetching user data:', error);
     });
 
 // const admin = require('firebase-admin');

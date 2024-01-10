@@ -13,11 +13,11 @@ interface FiltersProps {
     onChange: (newFilters: FilterChange) => void;
     onReset: () => void;
     filters: {
-      category: Category;
-      ageGroup: AgeGroup;
-      selectedMonth: string;
+        category: Category;
+        ageGroup: AgeGroup;
+        selectedMonth: string;
     };
-  }
+}
 
 const fetchUniqueMonths = async (): Promise<string[]> => {
     const eventsQuery = query(collection(db, 'events'), orderBy('eventDateTime', 'asc'));
@@ -36,18 +36,16 @@ const fetchUniqueMonths = async (): Promise<string[]> => {
 };
 
 const Filters: React.FC<FiltersProps> = ({ filters, onChange, onReset }) => {
-
     const [internalFilters, setInternalFilters] = useState({
         category: '',
         ageGroup: '',
-        selectedMonth: '',
+        selectedMonth: ''
     });
-
 
     const handleFilterChange = (event: SelectChangeEvent) => {
         const { name, value } = event.target;
         if (name) {
-            setInternalFilters(prevFilters => ({ ...prevFilters, [name]: value }));
+            setInternalFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
         }
     };
 
@@ -78,10 +76,16 @@ const Filters: React.FC<FiltersProps> = ({ filters, onChange, onReset }) => {
                     onChange={handleFilterChange}
                     label="Category"
                 >
-                    <MenuItem value={Category.None}><em>None</em></MenuItem>
-                    {Object.values(Category).filter(value => value !== Category.None).map((category, index) => (
-                        <MenuItem key={index} value={category}>{category}</MenuItem>
-                    ))}
+                    <MenuItem value={Category.None}>
+                        <em>None</em>
+                    </MenuItem>
+                    {Object.values(Category)
+                        .filter((value) => value !== Category.None)
+                        .map((category, index) => (
+                            <MenuItem key={index} value={category}>
+                                {category}
+                            </MenuItem>
+                        ))}
                 </Select>
             </FormControl>
 
@@ -95,10 +99,16 @@ const Filters: React.FC<FiltersProps> = ({ filters, onChange, onReset }) => {
                     onChange={handleFilterChange}
                     label="Age Group"
                 >
-                    <MenuItem value={AgeGroup.None}><em>None</em></MenuItem>
-                    {Object.values(AgeGroup).filter(value => value !== AgeGroup.None).map((ageGroup, index) => (
-                        <MenuItem key={index} value={ageGroup}>{ageGroup}</MenuItem>
-                    ))}
+                    <MenuItem value={AgeGroup.None}>
+                        <em>None</em>
+                    </MenuItem>
+                    {Object.values(AgeGroup)
+                        .filter((value) => value !== AgeGroup.None)
+                        .map((ageGroup, index) => (
+                            <MenuItem key={index} value={ageGroup}>
+                                {ageGroup}
+                            </MenuItem>
+                        ))}
                 </Select>
             </FormControl>
 
