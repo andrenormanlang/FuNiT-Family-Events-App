@@ -121,6 +121,7 @@ const theme = useTheme();
     {
       field: 'title',
       headerName: 'Topic',
+      headerAlign: 'center',
       width: 300,
       renderCell: (params) => (
         <NavLink to={`/forums/${forumId}/topics/${params.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -131,6 +132,7 @@ const theme = useTheme();
     {
       field: 'authorId',
       headerName: 'Author',
+      
       width: 200,
       renderCell: (params) => {
         const authorInfo = usersInfo[params.value as string];
@@ -145,23 +147,33 @@ const theme = useTheme();
     {
       field: 'createdAt',
       headerName: 'Created At',
+      headerAlign: 'center',
+      align: 'center',
       width: 200,
       renderCell: (params) => (
-        <Typography>{params.value}</Typography>
+        <Typography>{params.value}</Typography> // Use value directly
       ),
     },
     {
       field: 'voiceCount',
       headerName: 'Voices',
+      headerAlign: 'center',
+      align: 'center', 
       width: 100,
-      renderCell: (params) => <Typography>{params.value}</Typography>,
+      renderCell: (params) => (
+        <Typography>{params.value}</Typography> // Use value directly
+      ),
     },
     {
       field: 'postCount',
       headerName: 'Posts',
+      headerAlign: 'center',
+      align: 'center', // Add this line
       width: 100,
-      renderCell: (params) => <Typography>{params.value}</Typography>,
-    },
+      renderCell: (params) => (
+        <Typography>{params.value}</Typography> // Use value directly
+      ),
+  },
     {
     field: 'lastPostTime',
     headerName: 'Freshness',
@@ -171,6 +183,8 @@ const theme = useTheme();
     ),
   },
   ];
+
+
 
 
   if (!forumId || !forum) {
@@ -184,17 +198,7 @@ return (
       <Box padding={2} sx={{ maxWidth: '1200px' }}>
       <Typography variant="h2" align="center" gutterBottom>{forum.title}</Typography>
      
-      <DataGrid
-      rows={topics}
-      columns={columns}
-      loading={isLoading}
-      // If you are using the free version of DataGrid, comment out the pageSize line
-      // pageSize={5}
-      
-      sx={dataGridStyle}
-      // For the free version, use the onPageSizeChange callback to handle page size changes
-    />
-       <Box mt={2}>
+      <Box mb={2} display="flex" justifyContent="space-between">
           <NavLink to="/forums" style={{ textDecoration: 'none' }}>
             <Button variant="contained" color="primary" style={{ marginRight: '10px' }}>
               Back to All Forums
@@ -208,6 +212,16 @@ return (
             </NavLink>
           )}
         </Box>
+      <DataGrid
+      rows={topics}
+      columns={columns}
+      loading={isLoading}
+      // If you are using the free version of DataGrid, comment out the pageSize line
+      // pageSize={5}
+      
+      sx={dataGridStyle}
+      // For the free version, use the onPageSizeChange callback to handle page size changes
+    />
 
       </Box>
         

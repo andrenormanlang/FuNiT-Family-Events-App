@@ -34,6 +34,7 @@ export type Post = {
     content: string;
     authorId: string;
     topicId: string;
+    imageUrl?: string;
     createdAt: Timestamp;
     updatedAt: Timestamp;
 };

@@ -2,11 +2,13 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { TextField, Button, Box, CircularProgress, Avatar, Typography } from '@mui/material';
-import { db } from '../../services/firebase';
+import { db, storage } from '../../services/firebase';
 import { doc, setDoc, collection } from 'firebase/firestore';
 import useAuth from '../../hooks/useAuth';
 import { useParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+
 
 // Zod schema for Post data validation
 const postSchema = z.object({
@@ -37,19 +39,26 @@ const NewPostForm: React.FC<Props> = () => {
   }, [selectedImage]);
 
   const onSubmit = async (data: PostFormData) => {
+    try {
     if (!signedInUserInfo) {
       alert('You must be logged in to create a post.');
       return;
     }
   
-    if (!forumId || !topicId) {
-      console.error('Forum ID or Topic ID is undefined');
+    if (!forumId || !topicId || !selectedImage) {
+      console.error('Required information is missing.');
       return;
     }
+
+    // Start image upload
+    const imageRef = ref(storage, `forumImages/${selectedImage.name}`);
+    await uploadBytes(imageRef, selectedImage);
+    const imageUrl = await getDownloadURL(imageRef);
 
     const newPostRef = doc(collection(db, 'forums', forumId, 'topics', topicId, 'posts'));
     const newPostData = {
       ...data,
+      imageUrl, // Add the image URL to your post data
       authorId: signedInUserInfo.uid,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -58,6 +67,11 @@ const NewPostForm: React.FC<Props> = () => {
     await setDoc(newPostRef, newPostData);
     reset();
     alert('Post created successfully!');
+  } catch (error) {
+    const err = error as Error;
+    console.error('Error creating post:', err);
+    alert('Error creating post: ' + err.message);
+  }
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
