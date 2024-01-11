@@ -10,7 +10,7 @@ const AdminUsersListPage = () => {
             <Box
                 display="flex"
                 justifyContent="center"
-                alignItems="center"
+                alignItems=""
                 minHeight="100vh" // This makes the Box take the full viewport height
             >
                 <CircularProgress color="success" size={80} /> {/* Increase the size here */}

@@ -1,96 +1,219 @@
 import  { useEffect, useState } from 'react';
-import { forumsCol, topicsCol } from '../../services/firebase';
-import { getDoc, getDocs, doc } from 'firebase/firestore';
-import { Topic, Forum } from '../../types/Forum.types';
 import { NavLink, useParams } from 'react-router-dom';
-import { Button, Card, CardContent, Typography, Grid, Box } from '@mui/material';
+import { getDoc, getDocs, doc} from 'firebase/firestore';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { forumsCol, postsCol, topicsCol, usersCol } from '../../services/firebase';
+import { Button, Box, Typography, Avatar } from '@mui/material';
+import {  Forum, Post, Topic } from '../../types/Forum.types';
 import useAuth from '../../hooks/useAuth';
+import { UserInfo } from '../../types/User.types';
 import { useTheme } from '@mui/material/styles';
+import { getRelativeTime } from '../../helpers/getRelativeTime';
+
+export type TopicWithUserInfo = Topic & {
+  author: UserInfo;
+  createdAtRelative: string;
+};
 
 const TopicList = () => {
-    const theme = useTheme();
-    const { forumId } = useParams<{ forumId?: string }>();
-    const [forum, setForum] = useState<Forum | null>(null);
-    const [topics, setTopics] = useState<Topic[]>([]);
 
-    const { signedInUser } = useAuth();
+const theme = useTheme();
+  const { forumId } = useParams<{ forumId?: string }>();
+  const [forum, setForum] = useState<Forum | null>(null);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [usersInfo, setUsersInfo] = useState<Record<string, UserInfo>>({});
 
-    useEffect(() => {
-        if (forumId) {
-            // Fetch forum details
-            const fetchForum = async () => {
-                const forumDoc = await getDoc(doc(forumsCol, forumId));
-                if (forumDoc.exists()) {
-                    const forumData = forumDoc.data() as Forum;
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-expect-error
-                    setForum({ id: forumDoc.id, ...forumData });
-                } else {
-                    console.error('Forum not found');
-                }
-            };
-    
-            // Fetch topics
-            const fetchTopics = async () => {
-                const topicsQuery = topicsCol(forumId);
-                const querySnapshot = await getDocs(topicsQuery);
-                const fetchedTopics: Topic[] = querySnapshot.docs.map((docSnapshot) => {
-                    const topicData = docSnapshot.data() as Topic;
-                    return { ...topicData, id: docSnapshot.id }; // Explicitly setting the id here
-                });
-                setTopics(fetchedTopics);
-            };
-    
-            fetchForum();
-            fetchTopics();
+  
+  const [isLoading, setIsLoading] = useState(true);
+  const { signedInUser } = useAuth();
+
+  const dataGridStyle = {
+    '& .MuiDataGrid-root': {
+      fontFamily: theme.typography.fontFamily,
+      fontSize: theme.typography.body2.fontSize,
+    },
+    '& .MuiDataGrid-columnHeader': {
+      backgroundColor: theme.palette.background.default,
+    },
+    // Add any additional styling here
+  };
+  
+
+  useEffect(() => {
+    const fetchForumAndTopics = async () => {
+      if (forumId) {
+        // Fetch forum details
+        const forumDocRef = doc(forumsCol, forumId);
+        const forumSnapshot = await getDoc(forumDocRef);
+        if (forumSnapshot.exists()) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          setForum({ id: forumSnapshot.id, ...(forumSnapshot.data() as Forum) });
+        } else {
+          console.error('Forum not found');
+          return;
         }
-    }, [forumId]);
-    
-    
+  
+        // Fetch topics
+        const topicsSnapshot = await getDocs(topicsCol(forumId));
+        const topicsData: Topic[] = [];
+        const usersInfoTemp: Record<string, UserInfo> = {};
+        const postCountsTemp: Record<string, number> = {};
+        const lastPostTimesTemp: Record<string, Date> = {};
+        const voiceCountsTemp: Record<string, number> = {};
+  
+        // Process each topic
+        for (const topicDoc of topicsSnapshot.docs) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          const topic = { id: topicDoc.id, ...(topicDoc.data() as Topic) };
+          topicsData.push(topic);
+  
+          // Fetch user info if not already present
+          if (!usersInfoTemp[topic.authorId]) {
+            const userDoc = await getDoc(doc(usersCol, topic.authorId));
+            if (userDoc.exists()) {
+              usersInfoTemp[topic.authorId] = userDoc.data() as UserInfo;
+            } else {
+              usersInfoTemp[topic.authorId] = { displayName: 'Unknown', photoURL: '', uid: topic.authorId } as UserInfo; // Replace with actual defaults
+            }
+          }
+  
+          // Fetch posts for the topic
+          const postsSnapshot = await getDocs(postsCol(forumId, topic.id));
+          postCountsTemp[topic.id] = postsSnapshot.size;
+  
+          // Fetch the last post time and voices
+          const authorsSet = new Set<string>();
+          postsSnapshot.forEach((postDoc) => {
+            const post = postDoc.data() as Post;
+            authorsSet.add(post.authorId);
+            if (!lastPostTimesTemp[topic.id] || post.createdAt.toDate() > lastPostTimesTemp[topic.id]) {
+              lastPostTimesTemp[topic.id] = post.createdAt.toDate();
+            }
+          });
+          voiceCountsTemp[topic.id] = authorsSet.size;
+        }
+        
+        // Enrich topics with additional data
+        const enrichedTopics = topicsData.map((topic) => ({
+          ...usersInfoTemp[topic.authorId],
+          ...topic,
+          createdAtRelative: getRelativeTime(topic.createdAt.toDate()), 
+          postCount: postCountsTemp[topic.id],
+          voiceCount: voiceCountsTemp[topic.id],
+          lastPostTime: lastPostTimesTemp[topic.id] ? getRelativeTime(lastPostTimesTemp[topic.id]) : "No posts",
+        }));
+        // Update state with all fetched data
+        setUsersInfo(usersInfoTemp); // Contains UserInfo objects keyed by user ID
 
-    if (!forumId || !forum) {
-        return <div>Please select a forum to view topics.</div>;
-    }
+        setTopics(enrichedTopics); // Contains enriched topics with all additional data
+        setIsLoading(false);
+      }
+    };
+  
+    fetchForumAndTopics();
+  }, [forumId]);
 
-    return (
-        <Box display="flex" flexDirection="column" alignItems="center" marginTop={1} marginBottom={theme.spacing(4)}>
-        <Box padding={2} sx={{maxWidth: '1200px'}}>
-            <Typography variant="h2" align="center" gutterBottom>{forum.title}</Typography>
-            <Typography variant="subtitle1" align="center" gutterBottom>{forum.description}</Typography>
-            <Grid container spacing={2} justifyContent="center">
-                <Grid item xs={12}>
-                    <NavLink to="/forums" style={{ textDecoration: 'none' }}>
-                        <Button variant="contained" color="primary" fullWidth style={{ marginBottom: '10px' }}>
-                            Back to All Forums
-                        </Button>
-                    </NavLink>
-                </Grid>
-                {signedInUser && (
-                    <Grid item xs={12}>
-                        <NavLink to={`/forums/${forumId}/create-topic`} style={{ textDecoration: 'none' }}>
-                            <Button variant="contained" color="secondary" fullWidth style={{ marginBottom: '10px' }}>
-                                Create New Topic
-                            </Button>
-                        </NavLink>
-                    </Grid>
-                )}
-                {topics.map((topic) => (
-                    <Grid item xs={12} sm={6} md={4} key={topic.id}>
-                        <Card variant="outlined">
-                            <CardContent>
-                                <NavLink to={`/forums/${forumId}/topics/${topic.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                                    <Typography variant="h5" gutterBottom>{topic.title}</Typography>
-                                    <Typography variant="body2">{topic.description}</Typography>
-                                </NavLink>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                ))}
-            </Grid>
+
+  
+
+  const columns: GridColDef[] = [
+    {
+      field: 'title',
+      headerName: 'Topic',
+      width: 300,
+      renderCell: (params) => (
+        <NavLink to={`/forums/${forumId}/topics/${params.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          {params.value}
+        </NavLink>
+      ),
+    },
+    {
+      field: 'authorId',
+      headerName: 'Author',
+      width: 200,
+      renderCell: (params) => {
+        const authorInfo = usersInfo[params.value as string];
+        return authorInfo ? (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar src={authorInfo.photoURL} alt={authorInfo.displayName} sx={{ width: 24, height: 24, marginRight: 1 }} />
+            {authorInfo.displayName}
+          </Box>
+        ) : null;
+      },
+    },
+    {
+      field: 'createdAt',
+      headerName: 'Created At',
+      width: 200,
+      renderCell: (params) => (
+        <Typography>{params.value}</Typography>
+      ),
+    },
+    {
+      field: 'voiceCount',
+      headerName: 'Voices',
+      width: 100,
+      renderCell: (params) => <Typography>{params.value}</Typography>,
+    },
+    {
+      field: 'postCount',
+      headerName: 'Posts',
+      width: 100,
+      renderCell: (params) => <Typography>{params.value}</Typography>,
+    },
+    {
+    field: 'lastPostTime',
+    headerName: 'Freshness',
+    width: 200,
+    renderCell: (params) => (
+      <Typography>{params.value}</Typography> // Use value directly
+    ),
+  },
+  ];
+
+
+  if (!forumId || !forum) {
+    return <div>Please select a forum to view topics.</div>;
+}
+
+
+
+return (
+    <Box display="flex" flexDirection="column" alignItems="center" marginTop={theme.spacing(1)} marginBottom={theme.spacing(4)}>
+      <Box padding={2} sx={{ maxWidth: '1200px' }}>
+      <Typography variant="h2" align="center" gutterBottom>{forum.title}</Typography>
+     
+      <DataGrid
+      rows={topics}
+      columns={columns}
+      loading={isLoading}
+      // If you are using the free version of DataGrid, comment out the pageSize line
+      // pageSize={5}
+      
+      sx={dataGridStyle}
+      // For the free version, use the onPageSizeChange callback to handle page size changes
+    />
+       <Box mt={2}>
+          <NavLink to="/forums" style={{ textDecoration: 'none' }}>
+            <Button variant="contained" color="primary" style={{ marginRight: '10px' }}>
+              Back to All Forums
+            </Button>
+          </NavLink>
+          {signedInUser && (
+            <NavLink to={`/forums/${forumId}/create-topic`} style={{ textDecoration: 'none' }}>
+              <Button variant="contained" color="secondary">
+                Create New Topic
+              </Button>
+            </NavLink>
+          )}
         </Box>
-        </Box>
 
-    );
+      </Box>
+        
+    </Box>
+  );
 };
 
 export default TopicList;

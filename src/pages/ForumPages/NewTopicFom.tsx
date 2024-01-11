@@ -52,24 +52,69 @@ interface Props {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="title"
-        control={control}
-        defaultValue=""
-        render={({ field }) => <TextField {...field} label="Title" error={!!errors.title} helperText={errors.title?.message} fullWidth />}
-      />
-      <Controller
-        name="description"
-        control={control}
-        defaultValue=""
-        render={({ field }) => <TextField {...field} label="Description" multiline rows={4} error={!!errors.description} helperText={errors.description?.message} fullWidth />}
-      />
-      <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-        {isSubmitting ? 'Creating...' : 'Create Topic'}
-      </Button>
+    <Box 
+        component="form" 
+        onSubmit={handleSubmit(onSubmit)} 
+        sx={{
+            padding: 3,
+            boxShadow: 3,
+            borderRadius: 2,
+            backgroundColor: 'background.paper',
+            maxWidth: 500,
+            mx: 'auto', // centers the box
+            my: 4 // margin top and bottom
+        }}
+    >
+        <Controller
+            name="title"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+                <TextField 
+                    {...field} 
+                    label="Title" 
+                    error={!!errors.title} 
+                    helperText={errors.title?.message}
+                    fullWidth 
+                    variant="outlined"
+                    margin="normal"
+                />
+            )}
+        />
+        <Controller
+            name="description"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+                <TextField 
+                    {...field} 
+                    label="Description" 
+                    multiline 
+                    rows={4} 
+                    error={!!errors.description} 
+                    helperText={errors.description?.message} 
+                    fullWidth 
+                    variant="outlined"
+                    margin="normal"
+                />
+            )}
+        />
+        <Button 
+            type="submit" 
+            variant="contained" 
+            color="primary" 
+            disabled={isSubmitting}
+            sx={{
+                mt: 2, // margin-top
+                ':hover': {
+                    backgroundColor: 'secondary.dark' // optional hover color
+                }
+            }}
+        >
+            {isSubmitting ? 'Creating...' : 'Create Topic'}
+        </Button>
     </Box>
-  );
+);
 };
 
 export default NewTopicForm;

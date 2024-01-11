@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import AdminEventsTable from './AdminEventsTable';
 import useStreamEvents from '../../hooks/useStreamEvents';
 import Search from '../../components/MUI/Search';
-import { CircularProgress, Container, Typography } from '@mui/material';
+import { Box, CircularProgress, Container, Typography } from '@mui/material';
 import { useSearchParams } from 'react-router-dom';
 
 const AdminEventsListPage: React.FC = () => {
@@ -68,13 +68,15 @@ const AdminEventsListPage: React.FC = () => {
     };
 
     return (
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" >
             <Typography variant="h4" component="h2" gutterBottom>
                 Events Review List
             </Typography>
             <Search onSearch={handleSearch} placeholder={isDateSearch ? 'Search by date...' : 'Search events...'} />
             {renderSearchResultsMessage()}
-            {renderContent()}
+            <Box mt={2}> {/* Set the top margin here */}
+                {renderContent()}
+            </Box>
         </Container>
     );
 };

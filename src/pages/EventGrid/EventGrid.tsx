@@ -441,7 +441,7 @@ const EventGrid = () => {
                 ) : isFiltered ? (
                     <Typography>No events match this filter.</Typography>
                 ) : (
-                    <Typography>Nothing found</Typography>
+                    <CircularProgress color="secondary" size={100} />
                 )}
             </Grid>
 
