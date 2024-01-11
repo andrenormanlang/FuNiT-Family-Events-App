@@ -7,6 +7,7 @@ import { collection, doc, setDoc } from 'firebase/firestore';
 import useAuth from '../../hooks/useAuth';
 import { useParams } from 'react-router-dom';
 
+
 // Zod schema for Topic data validation
 const topicSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -15,7 +16,7 @@ const topicSchema = z.object({
 
 type TopicFormData = z.infer<typeof topicSchema>;
 
-interface Props {
+type Props = {
     forumId: string;
   }
 

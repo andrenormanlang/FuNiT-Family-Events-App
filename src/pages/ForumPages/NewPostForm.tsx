@@ -5,7 +5,7 @@ import { TextField, Button, Box, CircularProgress, Avatar, Typography } from '@m
 import { db, storage } from '../../services/firebase';
 import { doc, setDoc, collection } from 'firebase/firestore';
 import useAuth from '../../hooks/useAuth';
-import { useParams } from 'react-router-dom';
+
 import { useState, useEffect } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 
@@ -22,8 +22,8 @@ interface Props {
     topicId: string;
   }
 
-const NewPostForm: React.FC<Props> = () => {
-    const { forumId, topicId } = useParams<{ forumId: string; topicId: string }>();
+const NewPostForm: React.FC<Props> = ({forumId, topicId}) => {
+
   const { control, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
   });

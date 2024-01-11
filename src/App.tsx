@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useParams } from 'react-router-dom';
 import Navbar from './pages/partials/Navigation';
 import EventGrid from './pages/EventGrid/EventGrid';
 import EventForm from './pages/FormPages/EventFormPage';
@@ -26,6 +26,19 @@ import NewTopicForm from './pages/ForumPages/NewTopicFom';
 import NewPostForm from './pages/ForumPages/NewPostForm';
 
 function App() {
+    const { forumId } = useParams<{ forumId: string }>();  
+    const { topicId } = useParams<{ topicId: string }>();  
+
+    if (!forumId) {
+
+    return null;
+    }
+    if (!topicId) {
+
+    return null;
+    }
+
+    
     return (
         <SavedEventsProvider>
             <AuthContextProvider>
@@ -104,8 +117,8 @@ function App() {
                         <Route path="/forums" element={<AuthOnly><ForumList /></AuthOnly>} />
                         <Route path="/forums/:forumId" element={<AuthOnly><TopicList /></AuthOnly>} />
                         <Route path="/forums/:forumId/topics/:topicId" element={<AuthOnly><TopicView /></AuthOnly>} />
-                        <Route path="/forums/:forumId/create-topic" element={<AuthOnly><NewTopicForm /></AuthOnly>} />
-                        <Route path="/forums/:forumId/topics/:topicId/create-post" element={<AuthOnly><NewPostForm /></AuthOnly>} />
+                        <Route path="/forums/:forumId/create-topic" element={<AuthOnly><NewTopicForm forumId={forumId}  /></AuthOnly>} />
+                        <Route path="/forums/:forumId/topics/:topicId/create-post" element={<AuthOnly><NewPostForm forumId={forumId} topicId={topicId} /></AuthOnly>} />
                         <Route
                             path="/logout"
                             element={
