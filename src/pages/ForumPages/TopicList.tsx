@@ -10,10 +10,7 @@ import { UserInfo } from '../../types/User.types';
 import { useTheme } from '@mui/material/styles';
 import { getRelativeTime } from '../../helpers/getRelativeTime';
 
-export type TopicWithUserInfo = Topic & {
-  author: UserInfo;
-  createdAtRelative: string;
-};
+
 
 const TopicList = () => {
 
@@ -47,7 +44,7 @@ const theme = useTheme();
         const forumSnapshot = await getDoc(forumDocRef);
         if (forumSnapshot.exists()) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
+          // @ts-ignore
           setForum({ id: forumSnapshot.id, ...(forumSnapshot.data() as Forum) });
         } else {
           console.error('Forum not found');
@@ -65,7 +62,7 @@ const theme = useTheme();
         // Process each topic
         for (const topicDoc of topicsSnapshot.docs) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
+          // @ts-ignore
           const topic = { id: topicDoc.id, ...(topicDoc.data() as Topic) };
           topicsData.push(topic);
   
@@ -94,20 +91,22 @@ const theme = useTheme();
           });
           voiceCountsTemp[topic.id] = authorsSet.size;
         }
+  
         
-        // Enrich topics with additional data
         const enrichedTopics = topicsData.map((topic) => ({
-          ...usersInfoTemp[topic.authorId],
           ...topic,
-          createdAtRelative: getRelativeTime(topic.createdAt.toDate()), 
+          author: usersInfoTemp[topic.authorId],
+          createdAt: getRelativeTime(topic.createdAt.toDate()), 
           postCount: postCountsTemp[topic.id],
           voiceCount: voiceCountsTemp[topic.id],
           lastPostTime: lastPostTimesTemp[topic.id] ? getRelativeTime(lastPostTimesTemp[topic.id]) : "No posts",
         }));
-        // Update state with all fetched data
-        setUsersInfo(usersInfoTemp); // Contains UserInfo objects keyed by user ID
-
-        setTopics(enrichedTopics); // Contains enriched topics with all additional data
+        
+       
+        setUsersInfo(usersInfoTemp); 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        setTopics(enrichedTopics); 
         setIsLoading(false);
       }
     };
