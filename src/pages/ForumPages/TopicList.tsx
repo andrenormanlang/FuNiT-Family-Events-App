@@ -21,9 +21,6 @@ const TopicList = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { signedInUserInfo } = useAuth();
 
-
-
-
     useEffect(() => {
         const fetchForumAndTopics = async () => {
             if (forumId) {
@@ -131,7 +128,7 @@ const TopicList = () => {
                 field: 'title',
                 headerName: 'Topic',
                 headerAlign: 'center',
-                
+
                 width: 300,
                 renderCell: (params) => (
                     <NavLink to={`/forums/${forumId}/topics/${params.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -169,7 +166,7 @@ const TopicList = () => {
                 headerName: 'Voices',
                 headerAlign: 'center',
                 align: 'center',
-                width: 85,
+                width: 150,
                 renderCell: (params) => (
                     <Typography>{params.value}</Typography> // Use value directly
                 )
@@ -179,7 +176,7 @@ const TopicList = () => {
                 headerName: 'Posts',
                 headerAlign: 'center',
                 align: 'center', // Add this line
-                width: 99,
+                width: 150,
                 renderCell: (params) => (
                     <Typography>{params.value}</Typography> // Use value directly
                 )
@@ -215,11 +212,11 @@ const TopicList = () => {
     const dataGridStyle = {
         '& .MuiDataGrid-root': {
             fontFamily: theme.typography.fontFamily,
-            fontSize: theme.typography.body2.fontSize,
+            fontSize: theme.typography.body2.fontSize
         },
         '& .MuiDataGrid-columnHeader': {
-            backgroundColor: theme.palette.background.default,
-        },
+            backgroundColor: theme.palette.background.default
+        }
         // You can add additional responsive styling here
     };
 
@@ -249,21 +246,20 @@ const TopicList = () => {
                     )}
                 </Box>
                 <Box display="flex" flexDirection="column" alignItems="center" marginTop={theme.spacing(1)} marginBottom={theme.spacing(4)}>
-    <Box padding={2} sx={{ width: '100%', maxWidth: '1200px' }}>
-       
-                <DataGrid
-                    rows={topics}
-                    columns={columns}
-                    loading={isLoading}
-                    // If you are using the free version of DataGrid, comment out the pageSize line
-                    // pageSize={5}
+                    <Box padding={2} sx={{ width: '100%', maxWidth: '1200px' }}>
+                        <DataGrid
+                            rows={topics}
+                            columns={columns}
+                            loading={isLoading}
+                            // If you are using the free version of DataGrid, comment out the pageSize line
+                            // pageSize={5}
 
-                    sx={dataGridStyle}
-                    autoHeight
-                    // For the free version, use the onPageSizeChange callback to handle page size changes
-                />
-    </Box>
-</Box>
+                            sx={dataGridStyle}
+                            autoHeight
+                            // For the free version, use the onPageSizeChange callback to handle page size changes
+                        />
+                    </Box>
+                </Box>
             </Box>
         </Box>
     );

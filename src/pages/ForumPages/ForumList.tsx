@@ -69,10 +69,9 @@ const ForumList: React.FC = () => {
         if (window.confirm('Are you sure you want to delete this forum?')) {
             try {
                 await deleteDoc(doc(db, 'forums', forumId));
-              
-                setForums(forums.filter(forum => forum.id !== forumId));
-    
-               
+
+                setForums(forums.filter((forum) => forum.id !== forumId));
+
                 const updatedForumDetails = { ...forumDetails };
                 delete updatedForumDetails[forumId];
                 setForumDetails(updatedForumDetails);

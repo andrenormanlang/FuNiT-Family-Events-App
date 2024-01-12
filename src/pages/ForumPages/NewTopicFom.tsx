@@ -54,8 +54,8 @@ const NewTopicForm: React.FC<Props> = () => {
 
         await setDoc(newTopicRef, newTopicData);
         reset();
-        alert('Topic created successfully!');~
-        navigate(`/forums/${forumId}`);
+        alert('Topic created successfully!');
+        ~navigate(`/forums/${forumId}`);
     };
 
     const handleBack = () => {
