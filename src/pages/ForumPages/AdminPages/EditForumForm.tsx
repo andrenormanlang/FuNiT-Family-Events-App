@@ -130,7 +130,7 @@ const EditForumForm: React.FC = () => {
                     Back to Forums List
                 </Button>
                 <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-                    {isSubmitting ? 'Creating...' : 'Create Forum'}
+                    {isSubmitting ? 'Updating...' : 'Update Forum'}
                 </Button>
             </Box>
         </Box>

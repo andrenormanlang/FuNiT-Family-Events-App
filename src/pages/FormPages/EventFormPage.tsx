@@ -101,7 +101,19 @@ const EventForm: React.FC = () => {
 
     const [mapCenter, setMapCenter] = useState<MapCenter | null>(null);
 
-    if (!isLoaded) return <div>Loading...</div>;
+    if (!isLoaded) return (
+        <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        position="fixed" 
+        top="60%" 
+        left="50%" 
+        style={{ transform: 'translate(-50%, -40%)' }}
+    >
+        <CircularProgress color="secondary" size={100} />
+    </Box>
+    );
 
     const onSubmit = async (data: EventData) => {
         setIsSubmitting(true);

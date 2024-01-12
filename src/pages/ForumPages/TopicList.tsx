@@ -21,16 +21,8 @@ const TopicList = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { signedInUserInfo } = useAuth();
 
-    const dataGridStyle = {
-        '& .MuiDataGrid-root': {
-            fontFamily: theme.typography.fontFamily,
-            fontSize: theme.typography.body2.fontSize
-        },
-        '& .MuiDataGrid-columnHeader': {
-            backgroundColor: theme.palette.background.default
-        }
-        // Add any additional styling here
-    };
+
+
 
     useEffect(() => {
         const fetchForumAndTopics = async () => {
@@ -139,6 +131,7 @@ const TopicList = () => {
                 field: 'title',
                 headerName: 'Topic',
                 headerAlign: 'center',
+                
                 width: 300,
                 renderCell: (params) => (
                     <NavLink to={`/forums/${forumId}/topics/${params.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -150,7 +143,7 @@ const TopicList = () => {
                 field: 'authorId',
                 headerName: 'Author',
 
-                width: 200,
+                width: 150,
                 renderCell: (params) => {
                     const authorInfo = usersInfo[params.value as string];
                     return authorInfo ? (
@@ -176,7 +169,7 @@ const TopicList = () => {
                 headerName: 'Voices',
                 headerAlign: 'center',
                 align: 'center',
-                width: 100,
+                width: 85,
                 renderCell: (params) => (
                     <Typography>{params.value}</Typography> // Use value directly
                 )
@@ -186,7 +179,7 @@ const TopicList = () => {
                 headerName: 'Posts',
                 headerAlign: 'center',
                 align: 'center', // Add this line
-                width: 100,
+                width: 99,
                 renderCell: (params) => (
                     <Typography>{params.value}</Typography> // Use value directly
                 )
@@ -214,11 +207,21 @@ const TopicList = () => {
                 )
             });
         }
-
         return baseColumns;
     };
 
     const columns = getColumns();
+
+    const dataGridStyle = {
+        '& .MuiDataGrid-root': {
+            fontFamily: theme.typography.fontFamily,
+            fontSize: theme.typography.body2.fontSize,
+        },
+        '& .MuiDataGrid-columnHeader': {
+            backgroundColor: theme.palette.background.default,
+        },
+        // You can add additional responsive styling here
+    };
 
     if (!forumId || !forum) {
         return <div>Please select a forum to view topics.</div>;
@@ -226,7 +229,7 @@ const TopicList = () => {
 
     return (
         <Box display="flex" flexDirection="column" alignItems="center" marginTop={theme.spacing(1)} marginBottom={theme.spacing(4)}>
-            <Box padding={2} sx={{ maxWidth: '1200px' }}>
+            <Box padding={2} sx={{ width: '100%', maxWidth: '1200px' }}>
                 <Typography variant="h2" align="center" gutterBottom>
                     {forum.title}
                 </Typography>
@@ -245,6 +248,9 @@ const TopicList = () => {
                         </NavLink>
                     )}
                 </Box>
+                <Box display="flex" flexDirection="column" alignItems="center" marginTop={theme.spacing(1)} marginBottom={theme.spacing(4)}>
+    <Box padding={2} sx={{ width: '100%', maxWidth: '1200px' }}>
+       
                 <DataGrid
                     rows={topics}
                     columns={columns}
@@ -253,8 +259,11 @@ const TopicList = () => {
                     // pageSize={5}
 
                     sx={dataGridStyle}
+                    autoHeight
                     // For the free version, use the onPageSizeChange callback to handle page size changes
                 />
+    </Box>
+</Box>
             </Box>
         </Box>
     );

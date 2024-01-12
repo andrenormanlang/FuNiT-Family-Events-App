@@ -67,8 +67,18 @@ const ForumList: React.FC = () => {
     };
     const handleDeleteForum = async (forumId: string) => {
         if (window.confirm('Are you sure you want to delete this forum?')) {
-            await deleteDoc(doc(db, 'forums', forumId));
-            // Refresh the list or remove the forum from state
+            try {
+                await deleteDoc(doc(db, 'forums', forumId));
+              
+                setForums(forums.filter(forum => forum.id !== forumId));
+    
+               
+                const updatedForumDetails = { ...forumDetails };
+                delete updatedForumDetails[forumId];
+                setForumDetails(updatedForumDetails);
+            } catch (error) {
+                console.error('Error deleting forum:', error);
+            }
         }
     };
 

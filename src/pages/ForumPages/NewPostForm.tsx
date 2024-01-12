@@ -8,7 +8,7 @@ import useAuth from '../../hooks/useAuth';
 
 import { useState, useEffect } from 'react';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // Zod schema for Post data validation
 const postSchema = z.object({
@@ -36,6 +36,8 @@ const NewPostForm: React.FC<Props> = () => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
     const [creationTime] = useState(new Date().toLocaleString());
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (selectedImage) {
@@ -77,6 +79,7 @@ const NewPostForm: React.FC<Props> = () => {
             await setDoc(newPostRef, newPostData);
             reset();
             alert('Post created successfully!');
+            navigate(`/forums/${forumId}/topics/${topicId}`);
         } catch (error) {
             const err = error as Error;
             console.error('Error creating post:', err);
