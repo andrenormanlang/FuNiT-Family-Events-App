@@ -24,6 +24,8 @@ import TopicList from './pages/ForumPages/TopicList';
 import TopicView from './pages/ForumPages/TopicView';
 import NewTopicForm from './pages/ForumPages/NewTopicFom';
 import NewPostForm from './pages/ForumPages/NewPostForm';
+import NewForumForm from './pages/ForumPages/AdminPages/NewForumForm';
+import EditForumForm from './pages/ForumPages/AdminPages/EditForumForm';
 
 function App() {
     return (
@@ -101,12 +103,64 @@ function App() {
                                 </AuthOnly>
                             }
                         />
-                        <Route path="/forums" element={<AuthOnly><ForumList /></AuthOnly>} />
-                        <Route path="/forums/:forumId" element={<AuthOnly><TopicList /></AuthOnly>} />
-                        <Route path="/forums/:forumId/topics/:topicId" element={<AuthOnly><TopicView /></AuthOnly>} />
-                        
-                        <Route path="/forums/:forumId/create-topic" element={<AuthOnly><NewTopicForm forumId={''} /></AuthOnly>} />
-                        <Route path="/forums/:forumId/topics/:topicId/create-post" element={<AuthOnly><NewPostForm forumId={''} topicId={''} /></AuthOnly>} />
+                        <Route
+                            path="/forums"
+                            element={
+                                <AuthOnly>
+                                    <ForumList />
+                                </AuthOnly>
+                            }
+                        />
+                        <Route
+                            path="/forums/:forumId"
+                            element={
+                                <AuthOnly>
+                                    <TopicList />
+                                </AuthOnly>
+                            }
+                        />
+                        <Route
+                            path="/forums/:forumId/topics/:topicId"
+                            element={
+                                <AuthOnly>
+                                    <TopicView />
+                                </AuthOnly>
+                            }
+                        />
+
+                        <Route
+                            path="/forums/:forumId/create-topic"
+                            element={
+                                <AuthOnly>
+                                    <NewTopicForm forumId={''} />
+                                </AuthOnly>
+                            }
+                        />
+                        <Route
+                            path="/forums/:forumId/topics/:topicId/create-post"
+                            element={
+                                <AuthOnly>
+                                    <NewPostForm forumId={''} topicId={''} />
+                                </AuthOnly>
+                            }
+                        />
+
+                        <Route
+                            path="/forums/create-forum"
+                            element={
+                                <AdminOnly>
+                                    <NewForumForm />
+                                </AdminOnly>
+                            }
+                        />
+                        <Route
+                            path="/forums/edit-forum/:forumId"
+                            element={
+                                <AdminOnly>
+                                    <EditForumForm />
+                                </AdminOnly>
+                            }
+                        />
                         <Route
                             path="/logout"
                             element={

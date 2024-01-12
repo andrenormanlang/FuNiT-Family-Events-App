@@ -2,13 +2,12 @@ import { Timestamp } from 'firebase/firestore';
 import { UserInfo } from './User.types';
 
 export type TopicWithUserInfo = Topic & {
-  author: UserInfo;
+    author: UserInfo;
 };
 
 export type PostWithUserInfo = Post & {
-  author: UserInfo;
+    author: UserInfo;
 };
-
 
 export type Forum = {
     id: string;

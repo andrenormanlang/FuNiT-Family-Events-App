@@ -4,7 +4,7 @@ export type UserInfo = {
     createdAt: Timestamp;
     displayName: string;
     email: string;
-    isAdmin: boolean;
+    isAdmin?: boolean;
     photoURL: string;
     uid: string;
     updatedAt: Timestamp;

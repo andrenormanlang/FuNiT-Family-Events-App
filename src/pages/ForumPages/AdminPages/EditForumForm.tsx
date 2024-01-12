@@ -1,64 +1,80 @@
+import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { TextField, Button, Box } from '@mui/material';
-import { db } from '../../services/firebase';
-import { collection, doc, setDoc } from 'firebase/firestore';
-import useAuth from '../../hooks/useAuth';
-import { useParams, useNavigate } from 'react-router-dom';
+import { db } from '../../../services/firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import useAuth from '../../../hooks/useAuth';
+import { useNavigate, useParams } from 'react-router-dom';
 
-// Zod schema for Topic data validation
-const topicSchema = z.object({
+// Zod schema for Forum data validation
+const forumSchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters'),
-    description: z.string().min(6, 'Description must be at least 6 characters')
+    description: z.string().min(10, 'Description must be at least 10 characters')
 });
 
-type TopicFormData = z.infer<typeof topicSchema>;
+type ForumFormData = z.infer<typeof forumSchema>;
 
-type Props = {
-    forumId: string;
-};
+const EditForumForm: React.FC = () => {
+    const { signedInUserInfo } = useAuth();
 
-const NewTopicForm: React.FC<Props> = () => {
-    const { forumId } = useParams<{ forumId: string }>();
     const {
         control,
         handleSubmit,
         formState: { errors, isSubmitting },
-        reset
-    } = useForm<TopicFormData>({
-        resolver: zodResolver(topicSchema)
+        reset,
+        setValue
+    } = useForm<ForumFormData>({
+        resolver: zodResolver(forumSchema)
     });
-    const { signedInUserInfo } = useAuth();
+
+    const { forumId } = useParams<{ forumId: string }>();
 
     const navigate = useNavigate();
 
-    const onSubmit = async (data: TopicFormData) => {
+    useEffect(() => {
+        const fetchForum = async () => {
+            if (!forumId) {
+                console.error('Forum ID is undefined');
+                return;
+            }
+            const forumRef = doc(db, 'forums', forumId);
+            const forumSnap = await getDoc(forumRef);
+
+            if (forumSnap.exists()) {
+                const forumData = forumSnap.data();
+                setValue('title', forumData.title);
+                setValue('description', forumData.description);
+            }
+        };
+
+        fetchForum();
+    }, [forumId, setValue]);
+
+    const onSubmit = async (data: ForumFormData) => {
         if (!signedInUserInfo) {
-            alert('You must be logged in to create a topic.');
+            alert('You must be logged in to edit a forum.');
             return;
         }
-
         if (!forumId) {
             console.error('Forum ID is undefined');
             return;
         }
 
-        const newTopicRef = doc(collection(db, 'forums', forumId, 'topics'));
-        const newTopicData = {
+        const forumRef = doc(db, 'forums', forumId);
+        const updatedForumData = {
             ...data,
-            authorId: signedInUserInfo.uid,
-            createdAt: new Date(),
             updatedAt: new Date()
         };
 
-        await setDoc(newTopicRef, newTopicData);
+        await updateDoc(forumRef, updatedForumData);
         reset();
-        alert('Topic created successfully!');
+        alert('Forum updated successfully!');
     };
 
     const handleBack = () => {
-        navigate(`/forums/${forumId}`); // Navigate back to the topics list
+        navigate('/forums'); // Adjust the path as needed to navigate back to the forums list
     };
 
     return (
@@ -71,8 +87,8 @@ const NewTopicForm: React.FC<Props> = () => {
                 borderRadius: 2,
                 backgroundColor: 'background.paper',
                 maxWidth: 500,
-                mx: 'auto', // centers the box
-                my: 4 // margin top and bottom
+                mx: 'auto',
+                my: 4
             }}
         >
             <Controller
@@ -111,14 +127,14 @@ const NewTopicForm: React.FC<Props> = () => {
             />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
                 <Button variant="outlined" onClick={handleBack}>
-                    Back to Topics
+                    Back to Forums List
                 </Button>
                 <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-                    {isSubmitting ? 'Creating...' : 'Create Topic'}
+                    {isSubmitting ? 'Creating...' : 'Create Forum'}
                 </Button>
             </Box>
         </Box>
     );
 };
 
-export default NewTopicForm;
+export default EditForumForm;

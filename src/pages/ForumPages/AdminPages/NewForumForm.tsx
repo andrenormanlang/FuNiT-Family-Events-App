@@ -1,64 +1,53 @@
+import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { TextField, Button, Box } from '@mui/material';
-import { db } from '../../services/firebase';
-import { collection, doc, setDoc } from 'firebase/firestore';
-import useAuth from '../../hooks/useAuth';
-import { useParams, useNavigate } from 'react-router-dom';
+import { db } from '../../../services/firebase';
+import { collection, addDoc } from 'firebase/firestore';
+import useAuth from '../../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
-// Zod schema for Topic data validation
-const topicSchema = z.object({
+// Zod schema for Forum data validation
+const forumSchema = z.object({
     title: z.string().min(5, 'Title must be at least 5 characters'),
-    description: z.string().min(6, 'Description must be at least 6 characters')
+    description: z.string().min(10, 'Description must be at least 10 characters')
 });
 
-type TopicFormData = z.infer<typeof topicSchema>;
+type ForumFormData = z.infer<typeof forumSchema>;
 
-type Props = {
-    forumId: string;
-};
-
-const NewTopicForm: React.FC<Props> = () => {
-    const { forumId } = useParams<{ forumId: string }>();
+const NewForumForm: React.FC = () => {
     const {
         control,
         handleSubmit,
         formState: { errors, isSubmitting },
         reset
-    } = useForm<TopicFormData>({
-        resolver: zodResolver(topicSchema)
+    } = useForm<ForumFormData>({
+        resolver: zodResolver(forumSchema)
     });
     const { signedInUserInfo } = useAuth();
 
     const navigate = useNavigate();
 
-    const onSubmit = async (data: TopicFormData) => {
+    const onSubmit = async (data: ForumFormData) => {
         if (!signedInUserInfo) {
-            alert('You must be logged in to create a topic.');
+            alert('You must be logged in to create a forum.');
             return;
         }
 
-        if (!forumId) {
-            console.error('Forum ID is undefined');
-            return;
-        }
-
-        const newTopicRef = doc(collection(db, 'forums', forumId, 'topics'));
-        const newTopicData = {
+        const newForumData = {
             ...data,
-            authorId: signedInUserInfo.uid,
             createdAt: new Date(),
             updatedAt: new Date()
         };
 
-        await setDoc(newTopicRef, newTopicData);
+        await addDoc(collection(db, 'forums'), newForumData);
         reset();
-        alert('Topic created successfully!');
+        alert('Forum created successfully!');
     };
 
     const handleBack = () => {
-        navigate(`/forums/${forumId}`); // Navigate back to the topics list
+        navigate('/forums'); // Adjust the path as needed to navigate back to the forums list
     };
 
     return (
@@ -71,8 +60,8 @@ const NewTopicForm: React.FC<Props> = () => {
                 borderRadius: 2,
                 backgroundColor: 'background.paper',
                 maxWidth: 500,
-                mx: 'auto', // centers the box
-                my: 4 // margin top and bottom
+                mx: 'auto',
+                my: 4
             }}
         >
             <Controller
@@ -110,15 +99,15 @@ const NewTopicForm: React.FC<Props> = () => {
                 )}
             />
             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                <Button variant="outlined" onClick={handleBack}>
-                    Back to Topics
+                <Button variant="outlined" onClick={handleBack} sx={{ width: 'fit-content' }}>
+                    Back to Forums List
                 </Button>
-                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting}>
-                    {isSubmitting ? 'Creating...' : 'Create Topic'}
+                <Button type="submit" variant="contained" color="primary" disabled={isSubmitting} sx={{ width: 'fit-content' }}>
+                    {isSubmitting ? 'Creating...' : 'Create Forum'}
                 </Button>
             </Box>
         </Box>
     );
 };
 
-export default NewTopicForm;
+export default NewForumForm;

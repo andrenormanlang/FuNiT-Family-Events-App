@@ -68,13 +68,15 @@ const AdminEventsListPage: React.FC = () => {
     };
 
     return (
-        <Container maxWidth="xl" >
+        <Container maxWidth="xl">
             <Typography variant="h4" component="h2" gutterBottom>
                 Events Review List
             </Typography>
             <Search onSearch={handleSearch} placeholder={isDateSearch ? 'Search by date...' : 'Search events...'} />
             {renderSearchResultsMessage()}
-            <Box mt={2}> {/* Set the top margin here */}
+            <Box mt={2}>
+                {' '}
+                {/* Set the top margin here */}
                 {renderContent()}
             </Box>
         </Container>
