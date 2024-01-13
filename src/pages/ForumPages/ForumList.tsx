@@ -128,8 +128,8 @@ const ForumList: React.FC = () => {
                                                 }}
                                                 sx={{
                                                     position: 'absolute',
-                                                    top: 8,
-                                                    right: 40,
+                                                    top: -5,
+                                                    right: 2,
                                                     color: theme.palette.primary.main
                                                 }}
                                             >
@@ -144,8 +144,8 @@ const ForumList: React.FC = () => {
                                                 }}
                                                 sx={{
                                                     position: 'absolute',
-                                                    top: 8,
-                                                    right: 8,
+                                                    top: 160,
+                                                    right: 2,
                                                     color: theme.palette.error.main
                                                 }}
                                             >

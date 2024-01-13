@@ -91,7 +91,7 @@ const EventReview: React.FC<EventReviewProps> = ({ event }) => {
         // Return the message with the formatted date and time
         return (
             <Typography variant='body2' sx={{color: theme.palette.error.dark, fontWeight: 'bold' }}>
-                You may only submit reviews after {date} at {time}.
+                You may only submit a review after {date} at {time}.
             </Typography>
         );
     }
