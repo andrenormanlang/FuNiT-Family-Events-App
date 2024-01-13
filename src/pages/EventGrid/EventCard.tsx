@@ -13,6 +13,7 @@ import { db } from '../../services/firebase';
 import { Delete, Edit } from '@mui/icons-material';
 import { formatDate } from '../../helpers/FormatDate';
 
+
 interface EventCardProps {
     event: Event;
     isSaved: boolean;

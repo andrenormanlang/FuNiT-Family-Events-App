@@ -128,7 +128,7 @@ const TopicList = () => {
                 field: 'title',
                 headerName: 'Topic',
                 headerAlign: 'center',
-
+                flex: 1,
                 width: 300,
                 renderCell: (params) => (
                     <NavLink to={`/forums/${forumId}/topics/${params.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -139,7 +139,7 @@ const TopicList = () => {
             {
                 field: 'authorId',
                 headerName: 'Author',
-
+            
                 width: 150,
                 renderCell: (params) => {
                     const authorInfo = usersInfo[params.value as string];
@@ -156,6 +156,7 @@ const TopicList = () => {
                 headerName: 'Created At',
                 headerAlign: 'center',
                 align: 'center',
+               
                 width: 200,
                 renderCell: (params) => (
                     <Typography>{params.value}</Typography> // Use value directly
@@ -166,7 +167,8 @@ const TopicList = () => {
                 headerName: 'Voices',
                 headerAlign: 'center',
                 align: 'center',
-                width: 150,
+             
+                width: 120,
                 renderCell: (params) => (
                     <Typography>{params.value}</Typography> // Use value directly
                 )
@@ -175,8 +177,9 @@ const TopicList = () => {
                 field: 'postCount',
                 headerName: 'Posts',
                 headerAlign: 'center',
-                align: 'center', // Add this line
-                width: 150,
+                align: 'center',
+           // Add this line
+                width: 120,
                 renderCell: (params) => (
                     <Typography>{params.value}</Typography> // Use value directly
                 )
@@ -185,6 +188,7 @@ const TopicList = () => {
                 field: 'lastPostTime',
                 headerName: 'Freshness',
                 width: 200,
+ 
                 renderCell: (params) => (
                     <Typography>{params.value}</Typography> // Use value directly
                 )
@@ -221,7 +225,7 @@ const TopicList = () => {
     };
 
     if (!forumId || !forum) {
-        return <div>Please select a forum to view topics.</div>;
+        return <div></div>;
     }
 
     return (
@@ -246,7 +250,7 @@ const TopicList = () => {
                     )}
                 </Box>
                 <Box display="flex" flexDirection="column" alignItems="center" marginTop={theme.spacing(1)} marginBottom={theme.spacing(4)}>
-                    <Box padding={2} sx={{ width: '100%', maxWidth: '1200px' }}>
+                    <Box padding={2} display='flex' sx={{ width: '100%', height: '100%', maxWidth: '1200px' }}>
                         <DataGrid
                             rows={topics}
                             columns={columns}

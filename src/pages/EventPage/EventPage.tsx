@@ -10,6 +10,7 @@ import useAuth from '../../hooks/useAuth';
 import { auth } from '../../services/firebase';
 import { LocationOn } from '@mui/icons-material';
 import AddressMap from '../../helpers/AddressMap';
+import EventReview from '../../components/MUI/EventReview';
 
 const formatDateTime = (date: Date): string => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -216,6 +217,13 @@ const EventPage = () => {
                                 </Typography>
                             </CardContent>
                         </Card>
+                        <Card sx={{ mt: 2 , p:2}}>
+                            <Typography variant="h5" gutterBottom>
+                                    Reviews
+                            </Typography>
+                          
+                        <EventReview event={event} />
+                        </Card>
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <Card>
@@ -268,7 +276,9 @@ const EventPage = () => {
                                 </Button>
                             )}
                         </Card>
+                        
                     </Grid>
+                    
                 </Grid>
             </Box>
         </Box>

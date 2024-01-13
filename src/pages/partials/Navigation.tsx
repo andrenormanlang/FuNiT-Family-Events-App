@@ -37,7 +37,7 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
     position: 'sticky', // Changed from 'static' to 'sticky'
     top: 0, // Ensures the AppBar sticks to the top
-    zIndex: +1, // Ensure AppBar stays on top of other content, like a drawer
+    zIndex: 1100, // Ensure AppBar stays on top of other content, like a drawer
     [theme.breakpoints.up('sm')]: {
         marginBottom: theme.spacing(4)
     }
@@ -73,7 +73,7 @@ const Navbar: React.FC = () => {
 
     return (
         <StyledAppBar>
-            <Container maxWidth="lg">
+            <Container maxWidth={false}>
                 <Toolbar>
                     <Typography variant="h6" component="div" style={{ flexGrow: 1, cursor: 'pointer' }}>
                         <a href="/" style={{ color: 'inherit', textDecoration: 'inherit' }}>

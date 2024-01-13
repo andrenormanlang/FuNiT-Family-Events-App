@@ -33,6 +33,13 @@ declare module '@mui/material/styles/createPalette' {
 
 const theme = createTheme({
     typography: typography,
+
+    zIndex: {
+        appBar: 1100,
+        drawer: 1200,
+        // ... other zIndex values
+    },
+
     palette: {
         primary: {
             main: '#1976D2',
