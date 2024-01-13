@@ -119,7 +119,7 @@ const EventReview: React.FC<EventReviewProps> = ({ event }) => {
                 <Rating
                     name="event-rating"
                     value={rating}
-                    onChange={(event, newValue) => {
+                    onChange={(_event, newValue) => {
                         setRating(newValue);
                     }}
                 />
