@@ -77,7 +77,7 @@ const Navbar: React.FC = () => {
                 <Toolbar>
                     <Typography variant="h6" component="div" style={{ flexGrow: 1, cursor: 'pointer' }}>
                         <a href="/" style={{ color: 'inherit', textDecoration: 'inherit' }}>
-                            FunniT
+                            FuNiT!
                         </a>
                     </Typography>
                     <Box display={isMobile ? 'none' : 'block'}>

@@ -9,7 +9,8 @@ import { Review } from '../../types/Review.types'; // Importing the Review type
 import { Rating, TextField, Button, Avatar, Typography, Box, List, ListItem } from '@mui/material';
 import { db } from '../../services/firebase';
 import { addDoc, collection, query, where, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
-import { formatDate } from '../../helpers/FormatDate';
+import {  formatDateWithoutYear } from '../../helpers/FormatDate';
+import { useTheme } from '@mui/material/styles';
 
 interface EventReviewProps {
     event: Event;
@@ -22,6 +23,7 @@ const EventReview: React.FC<EventReviewProps> = ({ event }) => {
     const [rating, setRating] = useState<number | null>(null);
     const [canReview, setCanReview] = useState(false);
     const [loading, setLoading] = useState(false);
+    const theme = useTheme();
 
     useEffect(() => {
         // Fetch reviews for the event
@@ -76,7 +78,7 @@ const EventReview: React.FC<EventReviewProps> = ({ event }) => {
 
 
     if (!signedInUserInfo) {
-        return <Typography variant='h5'>You must be logged in to submit a review.</Typography>;
+        return <Typography variant='body2' sx={{color: theme.palette.error.dark, fontWeight: 'bold' }}>You must be logged in to submit a review.</Typography>;
     }
     
     if (!canReview) {
@@ -84,11 +86,11 @@ const EventReview: React.FC<EventReviewProps> = ({ event }) => {
         const reviewTime = new Date(event.eventDateTime.toDate().getTime() + 60 * 60 * 1000);
     
         // Use your formatDate helper to format this new Date object
-        const { date, time } = formatDate(reviewTime);
+        const { date, time } = formatDateWithoutYear(reviewTime);
     
         // Return the message with the formatted date and time
         return (
-            <Typography variant='body2' color='danger'>
+            <Typography variant='body2' sx={{color: theme.palette.error.dark, fontWeight: 'bold' }}>
                 You may only submit reviews after {date} at {time}.
             </Typography>
         );
