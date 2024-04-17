@@ -1,30 +1,45 @@
-# React + TypeScript + Vite
+# "Funit!" Web Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<https://fed22m-exjobb-funit-andrelang.netlify.app/>
 
-Currently, two official plugins are available:
+## Project Overview
 
--   [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
--   [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+"Funit!" is a web application that enables the sharing and discovery of child-friendly events in Malmö and Copenhagen. It integrates the Google Places API for address input and leverages Firebase for backend functionalities, including data storage, user authentication, and event management. The app features advanced search capabilities powered by Algolia and includes a forum section for community engagement.
+pi>
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- Event discovery and sharing for child-friendly activities.
+- Google Places API integration for precise event location input.
+- User functionalities: event submission, reviews, bookmarking.
+- Personalized filters: age group, event category, city, and date.
+- Admin control for content curation and user management.
+- Firebase backend for data handling and user authentication.
+- Forum feature for community discussions and engagement.
 
--   Configure the top-level `parserOptions` property like this:
+![Main page](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/1.png)
 
-```js
-export default {
-    // other rules...
-    parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        project: ['./tsconfig.json', './tsconfig.node.json'],
-        tsconfigRootDir: __dirname
-    }
-};
-```
+![Mobile Menu](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/1.2.png)
 
--   Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
--   Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
--   Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+![Search by Filter](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/1.1.png)
+
+![Search by Date](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/2.png)
+
+![Event Forms Limited Address Search](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/3.png)
+
+![Event Page](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/1.3.png)
+
+![Admin Events List Approval](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/4.png)
+
+![Forums List](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/5.png)
+
+![Topics List](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/6.png)
+
+![Posts](https://utbweb.its.ltu.se/~anolan-1/medieinstitutet/screenshots-readmes-github/Funit/7.png)
+
+## Prerequisites
+
+- Node.js and npm installed.
+- A Firebase account for backend services.
+- Google API key for Google Places integration.
+- Algolia API key for Algolia Search integration.
