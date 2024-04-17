@@ -1,6 +1,6 @@
 # "Funit!" Web Application
 
-<https://fed22m-exjobb-funit-andrelang.netlify.app/>
+<https://funit.netlify.app/?page=1/>
 
 ## Project Overview
 
