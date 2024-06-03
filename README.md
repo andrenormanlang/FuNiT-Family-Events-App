@@ -5,7 +5,7 @@
 ## Project Overview
 
 "Funit!" is a web application that enables the sharing and discovery of child-friendly events in Malmö and Copenhagen. It integrates the Google Places API for address input and leverages Firebase for backend functionalities, including data storage, user authentication, and event management. The app features advanced search capabilities powered by Algolia and includes a forum section for community engagement.
-pi>
+
 
 ## Features
 
